@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/experimental
+    username: root
+    password: 110120
+    name: experimental
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+excellent:
+  cancer:
+    fastdfs:
+      enabled: false
+    jdbc:
+      enabled: false
