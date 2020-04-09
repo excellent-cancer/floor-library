@@ -15,7 +15,7 @@ import java.util.Set;
  */
 @Data
 @AllArgsConstructor
-public class Project {
+public class OwnerProject {
 
     @Id @With
     private final Long id;
@@ -24,8 +24,8 @@ public class Project {
 
     private String description;
 
-    private Set<OwnerLink> links;
+    // private Set<OwnerLink> links;
 
-    private Set<Document> docs;
+    // private Set<Document> docs;
 
 }

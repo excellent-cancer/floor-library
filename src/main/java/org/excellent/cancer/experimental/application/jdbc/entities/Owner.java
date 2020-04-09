@@ -29,6 +29,7 @@ public class Owner {
     @MappedCollection(idColumn = "id", keyColumn = "owner_id")
     private Set<OwnerLink> links;
 
-    private Set<Project> projects;
+    @MappedCollection(idColumn = "id", keyColumn = "owner_id")
+    private Set<OwnerProject> projects;
 
 }

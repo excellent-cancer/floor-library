@@ -11,7 +11,20 @@ spring:
 
 excellent:
   cancer:
+    owner:
+      name: XyParaCrim
+      organization: Excellent-Cancer
     fastdfs:
+      properties: fastdfs.properties
       enabled: false
     jdbc:
       enabled: false
+
+logging:
+  level:
+    web: DEBUG
+    org:
+      springframework:
+        jdbc:
+          core:
+            JdbcTemplate: DEBUG

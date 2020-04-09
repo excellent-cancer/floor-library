@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 @CommonsLog
 @ConditionalOnBean(TrackerClient.class)
-public class DocumentService {
+public class DocumentFileService {
 
     private final TrackerClient trackerClient;
 
     @Autowired
-    public DocumentService(TrackerClient trackerClient) {
+    public DocumentFileService(TrackerClient trackerClient) {
         this.trackerClient = trackerClient;
     }
 

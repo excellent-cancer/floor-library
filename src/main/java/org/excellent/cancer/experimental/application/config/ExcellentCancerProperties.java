@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ImportResource;
  * @author XyParaCrim
  */
 @Data
-@ImportResource("excellent-cancer.yml")
 @ConfigurationProperties("excellent.cancer")
 public class ExcellentCancerProperties {
 
