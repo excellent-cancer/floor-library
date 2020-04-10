@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.With;
 import org.springframework.data.annotation.Id;
 
-import java.util.Set;
-
 /**
  * 表示存在过的项目，可以git项目，或者svn项目等
  *
@@ -24,8 +22,8 @@ public class OwnerProject {
 
     private String description;
 
-    // private Set<OwnerLink> links;
+    // private Set<ProjectLink> links;
 
-    // private Set<Document> docs;
+    // private Set<ProjectDocumentCatalog> docs;
 
 }

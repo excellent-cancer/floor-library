@@ -26,10 +26,10 @@ public class Owner {
 
     private String organization;
 
-    @MappedCollection(idColumn = "id", keyColumn = "owner_id")
+    @MappedCollection(idColumn = "owner_id")
     private Set<OwnerLink> links;
 
-    @MappedCollection(idColumn = "id", keyColumn = "owner_id")
+    @MappedCollection(idColumn = "owner_id")
     private Set<OwnerProject> projects;
 
 }

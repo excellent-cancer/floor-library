@@ -2,27 +2,17 @@ package org.excellent.cancer.experimental.application.jdbc.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.With;
 import org.springframework.data.annotation.AccessType;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
 
 /**
- * 表示一条链接：指定是在主页上引导的链接
+ * 表示一条链接：指定是在项目上引导的链接
  *
  * @author XyParaCrim
  */
 @Data
 @AccessType(AccessType.Type.PROPERTY)
 @AllArgsConstructor
-public class OwnerLink {
-
-    @Id
-    @With
-    private final Long id;
-
-    @With
-    private final Long ownerId;
+public class ProjectLink {
 
     private String url;
 

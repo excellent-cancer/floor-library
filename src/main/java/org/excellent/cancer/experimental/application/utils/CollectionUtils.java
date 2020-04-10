@@ -1,7 +1,12 @@
 package org.excellent.cancer.experimental.application.utils;
 
+import lombok.NonNull;
+
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,5 +30,9 @@ public final class CollectionUtils {
                 StreamSupport.stream(elements.spliterator(), false).collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Optional<T> firstFilter(@NonNull Collection<T> elements, @NonNull Predicate<? super T> filter) {
+        return elements.stream().filter(filter).findFirst();
+    }
 
 }

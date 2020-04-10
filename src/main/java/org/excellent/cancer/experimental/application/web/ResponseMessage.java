@@ -36,6 +36,7 @@ public class ResponseMessage {
                 data(data).
                 build();
     }
+
     public static ResponseMessage success(String message) {
         return prepare(ResponseCode.SUCCESS).
                 msg(message).
