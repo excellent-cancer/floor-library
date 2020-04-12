@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author XyParaCrim
  */
-public interface OwnerRepository extends CrudRepository<Owner, Long>, OwnerProjectRepository {
+public interface OwnerRepository extends CrudRepository<Owner, Long> {
 
 /*    @Async
     @Modifying

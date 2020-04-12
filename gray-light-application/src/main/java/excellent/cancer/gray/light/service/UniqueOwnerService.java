@@ -3,6 +3,7 @@ package excellent.cancer.gray.light.service;
 import excellent.cancer.gray.light.error.UniqueOwnerException;
 import excellent.cancer.gray.light.jdbc.entities.Owner;
 import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
+import excellent.cancer.gray.light.jdbc.repositories.OwnerProjectRepository;
 import excellent.cancer.gray.light.jdbc.repositories.OwnerRepository;
 import lombok.Getter;
 import lombok.extern.apachecommons.CommonsLog;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
 
 import static perishing.constraint.treasure.chest.CollectionsTreasureChest.asList;
 
@@ -22,22 +22,28 @@ import static perishing.constraint.treasure.chest.CollectionsTreasureChest.asLis
  */
 @Service
 @CommonsLog
-public final class OwnerService {
+public final class UniqueOwnerService {
 
     @Getter
     private final Owner owner;
 
+    @Getter
     private final OwnerRepository ownerRepository;
+
+    @Getter
+    private final OwnerProjectRepository projectRepository;
 
     /**
      * 不仅在构造函数中设置必要的参数，而且会查询出唯一的owner，并且将其设置到全局变量中
      *
+     * @param ownerRepository   owner jdbc repository
+     * @param projectRepository project jdbc repository
      * @throws UniqueOwnerException 如果不能够成功初始化唯一owner
-     * @param ownerRepository jdbc repository
      */
     @Autowired
-    public OwnerService(OwnerRepository ownerRepository) {
+    public UniqueOwnerService(OwnerRepository ownerRepository, OwnerProjectRepository projectRepository) {
         this.ownerRepository = ownerRepository;
+        this.projectRepository = projectRepository;
         this.owner = UniqueOwnerException.extractOwnerRequireUniqueOwner(asList(ownerRepository.findAll()));
         GlobalFinalVariables.set(Owner.class, this.owner);
     }
@@ -48,7 +54,7 @@ public final class OwnerService {
      * @return 返回一个包含项目列表的flux
      */
     public Mono<List<OwnerProject>> projects() {
-        return Mono.fromFuture(ownerRepository.findProjectsByOwnerId(owner.getId()));
+        return Mono.fromFuture(projectRepository.findByOwnerId(owner.getId()));
     }
 
     /**
@@ -57,7 +63,8 @@ public final class OwnerService {
      * @param projectId 项目Id
      * @return 返回包含项目操作的flux
      */
-    public Mono<Optional<OwnerProject>> project(Long projectId) {
-        return Mono.fromFuture(ownerRepository.findProjectByOwnerIdAndProjectId(owner.getId(), projectId));
+    public Mono<OwnerProject> project(Long projectId) {
+        return Mono.fromFuture(projectRepository.findByOwnerIdAndId(owner.getId(), projectId));
     }
+
 }

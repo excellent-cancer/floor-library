@@ -1,6 +1,6 @@
 package excellent.cancer.gray.light.handler;
 
-import excellent.cancer.gray.light.service.OwnerService;
+import excellent.cancer.gray.light.service.UniqueOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -16,17 +16,17 @@ import static excellent.cancer.gray.light.web.ResponseToClient.allRightFromValue
 @SuppressWarnings("unused")
 public class DetailsHandler {
 
-    private final OwnerService ownerService;
+    private final UniqueOwnerService uniqueOwnerService;
 
     @Autowired
-    public DetailsHandler(OwnerService ownerService) {
-        this.ownerService = ownerService;
+    public DetailsHandler(UniqueOwnerService uniqueOwnerService) {
+        this.uniqueOwnerService = uniqueOwnerService;
     }
 
     // 导出的handlers
 
     public Mono<ServerResponse> ownerDetails(ServerRequest request) {
-        return allRightFromValue(ownerService.getOwner());
+        return allRightFromValue(uniqueOwnerService.getOwner());
     }
 
 
