@@ -1,18 +1,19 @@
 package excellent.cancer.gray.light.service;
 
+import excellent.cancer.gray.light.error.UniqueOwnerException;
 import excellent.cancer.gray.light.jdbc.entities.Owner;
 import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
 import excellent.cancer.gray.light.jdbc.repositories.OwnerRepository;
 import lombok.Getter;
 import lombok.extern.apachecommons.CommonsLog;
-import excellent.cancer.gray.light.error.UniqueOwnerException;
-import excellent.cancer.gray.light.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
+
+import static perishing.constraint.treasure.chest.CollectionsTreasureChest.asList;
 
 /**
  * 定义关于所属者的相关服务，例如：项目，介绍等等
@@ -37,7 +38,7 @@ public final class OwnerService {
     @Autowired
     public OwnerService(OwnerRepository ownerRepository) {
         this.ownerRepository = ownerRepository;
-        this.owner = UniqueOwnerException.extractOwnerRequireUniqueOwner(CollectionUtils.asList(ownerRepository.findAll()));
+        this.owner = UniqueOwnerException.extractOwnerRequireUniqueOwner(asList(ownerRepository.findAll()));
         GlobalFinalVariables.set(Owner.class, this.owner);
     }
 

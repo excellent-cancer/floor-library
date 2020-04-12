@@ -1,25 +1,32 @@
 package excellent.cancer.gray.light.handler;
 
 import excellent.cancer.gray.light.service.OwnerService;
-import excellent.cancer.gray.light.web.ServerResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-@Component
-public class MessageHandler {
+import static excellent.cancer.gray.light.web.ResponseToClient.allRightFromValue;
 
-    private OwnerService ownerService;
+/**
+ * @author XyParaCrim
+ */
+@Component
+@SuppressWarnings("unused")
+public class DetailsHandler {
+
+    private final OwnerService ownerService;
 
     @Autowired
-    public MessageHandler(OwnerService ownerService) {
+    public DetailsHandler(OwnerService ownerService) {
         this.ownerService = ownerService;
     }
 
-    public Mono<ServerResponse> ownerMessage(ServerRequest request) {
-        return ServerResponses.allRightFromValue(ownerService.getOwner());
+    // 导出的handlers
+
+    public Mono<ServerResponse> ownerDetails(ServerRequest request) {
+        return allRightFromValue(ownerService.getOwner());
     }
 
 
