@@ -14,8 +14,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
+import static excellent.cancer.gray.light.jdbc.ReactiveJdbc.flatMapperIfPresent;
 import static perishing.constraint.treasure.chest.CollectionsTreasureChest.asList;
 
 /**
@@ -63,23 +63,33 @@ public final class UniqueOwnerService {
     /**
      * 查询指定Id的项目
      *
-     * @param projectId 项目Id
+     * @param project 请求项目
      * @return 返回包含项目操作的flux
      */
-    public Mono<Optional<OwnerProject>> project(Long projectId) {
-        return ReactiveJdbc.reactive(() -> projectRepository.findByOwnerIdAndId(owner.getId(), projectId));
+    public Mono<Optional<OwnerProject>> project(OwnerProject project) {
+        return ReactiveJdbc.reactive(() -> projectRepository.findByOwnerIdAndId(owner.getId(), project.getId()));
+    }
+
+    /**
+     * 根据Id查询项目，只在查询到匹配项目时发布订阅
+     *
+     * @param project 请求项目
+     * @return publisher of OwnerProject which will publish on matched
+     */
+    public Mono<OwnerProject> matchedProject(OwnerProject project) {
+        return project(project).flatMap(flatMapperIfPresent(project));
     }
 
     public Mono<Boolean> existsProject(Long projectId) {
-        return Mono.fromFuture(CompletableFuture.supplyAsync(() -> projectRepository.existsById(projectId)));
+        return ReactiveJdbc.reactive(() -> projectRepository.existsById(projectId));
     }
 
     public Mono<OwnerProject> addProject(OwnerProject ownerProject) {
-        return Mono.fromFuture(CompletableFuture.supplyAsync(() -> projectRepository.save(ownerProject)));
+        return ReactiveJdbc.reactive(() -> projectRepository.save(ownerProject));
     }
 
     public Mono<Void> removeProject(OwnerProject project) {
-        return Mono.fromFuture(CompletableFuture.runAsync(() -> projectRepository.delete(project)));
+        return ReactiveJdbc.reactive(() -> projectRepository.delete(project));
     }
 
 }

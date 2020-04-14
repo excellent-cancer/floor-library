@@ -13,7 +13,6 @@ import static excellent.cancer.gray.light.web.ResponseToClient.allRightFromValue
  * @author XyParaCrim
  */
 @Component
-@SuppressWarnings("unused")
 public class DetailsHandler {
 
     private final UniqueOwnerService uniqueOwnerService;
@@ -25,9 +24,9 @@ public class DetailsHandler {
 
     // 导出的handlers
 
+    @SuppressWarnings("unused")
     public Mono<ServerResponse> ownerDetails(ServerRequest request) {
         return allRightFromValue(uniqueOwnerService.getOwner());
     }
-
 
 }

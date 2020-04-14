@@ -1,10 +1,10 @@
 package excellent.cancer.gray.light.service;
 
 import excellent.cancer.gray.light.error.IllegalEntryStateException;
-import excellent.cancer.gray.light.error.NoSuchEntityException;
 import excellent.cancer.gray.light.jdbc.ReactiveJdbc;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentCatalog;
+import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
 import excellent.cancer.gray.light.jdbc.repositories.DocumentCatalogRepository;
 import excellent.cancer.gray.light.jdbc.repositories.DocumentRepository;
 import lombok.Getter;
@@ -16,8 +16,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
+
 /**
- * 提供关于文档之间的关系功能，例如：文件树、查询、删除等等
+ * 提供对于文档之间的关系功能，例如：文件树、查询、删除等等
  *
  * @author XyParaCrim
  */
@@ -54,17 +56,13 @@ public class DocumentRelationService {
      * @return publisher of DocumentCatalog
      */
     public Mono<DocumentCatalog> createCatalogForProject(DocumentCatalog rootCatalog) {
-        return uniqueOwnerService.
-                project(rootCatalog.getProjectId()).
-                flatMap(found -> {
-                    if (found.isEmpty()) {
-                        return Mono.error(new NoSuchEntityException("The entity was not found in repository: OwnerProject(id=" + rootCatalog.getProjectId() + ")"));
-                    }
-
-                    return found.get().getDocs().isEmpty() ?
-                            ReactiveJdbc.reactive(() -> documentCatalogRepository.save(rootCatalog)) :
-                            Mono.error(new IllegalEntryStateException("The OwnerProject#docs's size is not empty, expect empty size"));
-                });
+        return uniqueOwnerService
+                .matchedProject(OwnerProject.justIdProject(rootCatalog.getProjectId()))
+                .flatMap(project ->
+                        project.getDocs().isEmpty() ?
+                                ReactiveJdbc.reactive(() -> documentCatalogRepository.save(rootCatalog)) :
+                                Mono.error(new IllegalEntryStateException("The OwnerProject#docs's size is not empty, expect empty size"))
+                );
     }
 
     /**
@@ -75,20 +73,32 @@ public class DocumentRelationService {
      * @return publisher of Document
      */
     public Mono<Document> createDocumentForCatalog(DocumentCatalog parentCatalog, Document document) {
-        return ReactiveJdbc.reactive(() ->
-                documentCatalogRepository.findById(parentCatalog.getId())).
-                handle((found, sink) -> {
-                    if (found.isEmpty()) {
-                        ReactiveJdbc.signalOnNotFoundEntity(parentCatalog, sink);
-                        return;
-                    }
+        return matchedDocumentCatalog(parentCatalog)
+                .flatMap(catalog ->
+                        catalog.getHasDocs() ?
+                                ReactiveJdbc.reactive(() -> documentRepository.save(document)) :
+                                Mono.error(new IllegalEntryStateException("The DocumentCatalog#hasDocs value is 'false', expect 'true'"))
+                );
+    }
 
-                    if (found.get().getHasDocs()) {
-                        ReactiveJdbc.transformToSink(ReactiveJdbc.reactive(() -> documentRepository.save(document)), sink);
-                    } else {
-                        sink.error(new IllegalEntryStateException("The DocumentCatalog#hasDocs value is 'false', expect 'true'"));
-                    }
-                });
+    /**
+     * 根据Id查询文档目录
+     *
+     * @param catalog 请求目录
+     * @return publisher of optional DocumentCatalog
+     */
+    public Mono<Optional<DocumentCatalog>> documentCatalog(DocumentCatalog catalog) {
+        return ReactiveJdbc.reactive(() -> documentCatalogRepository.findById(catalog.getId()));
+    }
+
+    /**
+     * 根据Id查询文档目录，只在查询到匹配项目时发布订阅
+     *
+     * @param catalog 请求目录
+     * @return publisher of DocumentCatalog which will publish on matched
+     */
+    public Mono<DocumentCatalog> matchedDocumentCatalog(DocumentCatalog catalog) {
+        return documentCatalog(catalog).flatMap(ReactiveJdbc.flatMapperIfPresent(catalog));
     }
 
 }

@@ -43,20 +43,20 @@ public class UniqueOwnerServiceTest {
             Assertions.assertNotNull(saved.getId());
 
             Optional<OwnerProject> found;
-            Assertions.assertNotNull(found = uniqueOwnerService.project(project.getId()).block());
+            Assertions.assertNotNull(found = uniqueOwnerService.project(project).block());
             Assertions.assertTrue(found.isPresent());
 
             uniqueOwnerService.removeProject(saved).block();
-            Assertions.assertNotNull(found = uniqueOwnerService.project(project.getId()).block());
+            Assertions.assertNotNull(found = uniqueOwnerService.project(project).block());
             Assertions.assertTrue(found.isEmpty());
         }
 
         @Test
         @DisplayName("查询不存在的项目")
         public void queryProjectTest() {
-            Optional<OwnerProject> found;
+            Optional<OwnerProject> found = uniqueOwnerService.project(OwnerProject.justIdProject(Long.MAX_VALUE)).block();
 
-            Assertions.assertNotNull(found = uniqueOwnerService.project(Long.MAX_VALUE).block());
+            Assertions.assertNotNull(found);
             Assertions.assertTrue(found.isEmpty());
         }
     }

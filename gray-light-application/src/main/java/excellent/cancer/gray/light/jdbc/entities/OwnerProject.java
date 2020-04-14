@@ -38,4 +38,13 @@ public class OwnerProject {
     @MappedCollection(idColumn = "project_id")
     private Set<DocumentCatalog> docs;
 
+    /**
+     * 返回一个只包含Id的项目
+     *
+     * @param id 项目ID
+     * @return 只包含Id的项目
+     */
+    public static OwnerProject justIdProject(Long id) {
+        return builder().id(id).build();
+    }
 }

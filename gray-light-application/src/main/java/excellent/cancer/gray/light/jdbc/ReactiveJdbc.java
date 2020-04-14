@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -20,27 +21,6 @@ import java.util.function.Supplier;
  */
 @CommonsLog
 public final class ReactiveJdbc {
-
-    /**
-     * 将一个Mono传递给sink
-     *
-     * @param mono 上游mono
-     * @param sink 下游sink
-     * @param <T>  传递类型
-     */
-    public static <T> void transformToSink(Mono<T> mono, SynchronousSink<T> sink) {
-        // mono.subscribe(log::error, log::error);
-        mono.doOnSuccess(s -> {
-            log.error(s);
-            sink.next(s);
-            sink.complete();
-        }).
-                doOnError(e -> {
-                    log.error(e);
-                    sink.error(e);
-                }).
-                subscribe();
-    }
 
     /**
      * 检查从repository中查询出的实例是否存在，若不存在则发布一个{@link NoSuchEntityException}的异常给下游
@@ -103,5 +83,17 @@ public final class ReactiveJdbc {
 
     public static Mono<Void> reactive(Runnable action) {
         return Mono.fromFuture(CompletableFuture.runAsync(action, COMMON_POOL));
+    }
+
+    public static <T> Mono<T> flatMapIfPresent(T source, T missing) {
+        return source == null ? Mono.error(new NoSuchEntityException(missing)) : Mono.just(source);
+    }
+
+    public static <T> Function<? super Optional<T>, ? extends Mono<? extends T>> flatMapperIfPresent(T missing) {
+        return found -> found.isEmpty() ? Mono.error(new NoSuchEntityException(missing)) : Mono.just(found.get());
+    }
+
+    public static <T> Mono<T> flatMapIfPresent(T source, Supplier<T> missingSupplier) {
+        return source == null ? Mono.error(new NoSuchEntityException(missingSupplier.get())) : Mono.just(source);
     }
 }

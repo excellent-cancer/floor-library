@@ -95,7 +95,6 @@ public class DocumentRelationServiceTest {
                             doOnSuccess(catalog -> log.info("新建文档已保存：" + catalog))
             );
 
-
             // 已建文档项目
 
             assertPublishError(
