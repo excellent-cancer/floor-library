@@ -52,3 +52,16 @@ create table  experimental.document(
     catalog_id bigint unsigned not null references experimental.document_catalog(id),
     primary key (id)
 );
+
+drop table if exists experimental.internal;
+create table experimental.internal(
+    id bigint unsigned not null auto_increment,
+    primary key (id)
+);
+
+drop table if exists experimental.internal_link;
+create table experimental.internal_link(
+    id bigint unsigned not null  auto_increment,
+    primary key (id),
+    internal_id bigint unsigned not null references experimental.internal(id)
+);

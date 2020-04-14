@@ -54,10 +54,14 @@ public class UniqueOwnerServiceTest {
         @Test
         @DisplayName("查询不存在的项目")
         public void queryProjectTest() {
-            Optional<OwnerProject> found = uniqueOwnerService.project(OwnerProject.justIdProject(Long.MAX_VALUE)).block();
+/*            Optional<OwnerProject> found = uniqueOwnerService.project(OwnerProject.justIdProject(Long.MAX_VALUE)).block();
 
             Assertions.assertNotNull(found);
-            Assertions.assertTrue(found.isEmpty());
+            Assertions.assertTrue(found.isEmpty());*/
+            Iterable<OwnerProject> iterable = uniqueOwnerService.projects().block();
+
+            assert iterable != null;
+            iterable.forEach(log::info);
         }
     }
 

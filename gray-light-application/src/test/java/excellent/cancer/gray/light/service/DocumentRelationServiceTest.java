@@ -2,12 +2,9 @@ package excellent.cancer.gray.light.service;
 
 import excellent.cancer.gray.light.component.UniqueOwnerRandomService;
 import excellent.cancer.gray.light.jdbc.entities.DocumentCatalog;
-import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
 import lombok.extern.apachecommons.CommonsLog;
-import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import reactor.core.publisher.Mono;
 
 /**
  * 对{@link DocumentCatalog}进行单元测试
@@ -30,7 +27,7 @@ public class DocumentRelationServiceTest {
     /**
      * 针对创建文档进行测试
      */
-    @Nested
+/*    @Nested
     @DisplayName("创建新文档 - ")
     public class CreateDocumentTest {
 
@@ -117,6 +114,6 @@ public class DocumentRelationServiceTest {
             Assertions.assertNotEquals(ERROR_RESULT, publisher.onErrorReturn(ERROR_RESULT).block());
         }
 
-    }
+    }*/
 
 }

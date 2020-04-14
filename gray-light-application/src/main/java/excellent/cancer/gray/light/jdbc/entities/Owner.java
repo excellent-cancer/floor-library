@@ -1,13 +1,10 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.With;
-import org.springframework.data.annotation.AccessType;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.MappedCollection;
+import lombok.EqualsAndHashCode;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import java.util.Set;
+import javax.persistence.Entity;
 
 /**
  * 表示整个产品的拥有者
@@ -15,21 +12,12 @@ import java.util.Set;
  * @author XyParaCrim
  */
 @Data
-@AllArgsConstructor
-@AccessType(AccessType.Type.PROPERTY)
-public class Owner {
-
-    @Id @With
-    private final Long id;
+@EqualsAndHashCode(callSuper = true)
+@Entity
+public class Owner extends AbstractPersistable<Long> {
 
     private String username;
 
     private String organization;
-
-    @MappedCollection(idColumn = "owner_id")
-    private Set<OwnerLink> links;
-
-    @MappedCollection(idColumn = "owner_id")
-    private Set<OwnerProject> projects;
 
 }

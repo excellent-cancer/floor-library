@@ -4,7 +4,6 @@ import excellent.cancer.gray.light.error.IllegalEntryStateException;
 import excellent.cancer.gray.light.jdbc.ReactiveJdbc;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentCatalog;
-import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
 import excellent.cancer.gray.light.jdbc.repositories.DocumentCatalogRepository;
 import excellent.cancer.gray.light.jdbc.repositories.DocumentRepository;
 import lombok.Getter;
@@ -56,13 +55,18 @@ public class DocumentRelationService {
      * @return publisher of DocumentCatalog
      */
     public Mono<DocumentCatalog> createCatalogForProject(DocumentCatalog rootCatalog) {
-        return uniqueOwnerService
+        return Mono.empty();
+/*        return uniqueOwnerService
                 .matchedProject(OwnerProject.justIdProject(rootCatalog.getProjectId()))
                 .flatMap(project ->
                         project.getDocs().isEmpty() ?
                                 ReactiveJdbc.reactive(() -> documentCatalogRepository.save(rootCatalog)) :
-                                Mono.error(new IllegalEntryStateException("The OwnerProject#docs's size is not empty, expect empty size"))
-                );
+                                Mono.error(new IllegalEntryStateException("The OwnerProject#docs size is not empty, expect empty size"))
+                );*/
+    }
+
+    public Mono<DocumentCatalog> addCatalogForProject(DocumentCatalog catalog) {
+        return Mono.empty();
     }
 
     /**

@@ -1,10 +1,9 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Embedded;
+import lombok.EqualsAndHashCode;
 
+import javax.persistence.Entity;
 import java.util.Date;
 
 /**
@@ -13,14 +12,9 @@ import java.util.Date;
  * @author XyParaCrim
  */
 @Data
-@AllArgsConstructor
-public class Document {
-
-    /**
-     * 文档ID
-     */
-    @Id
-    private Long id;
+@Entity
+@EqualsAndHashCode(callSuper = true)
+public class Document extends AbstractTimestampPersistable<Long> {
 
     /**
      * 创建日期
@@ -43,26 +37,12 @@ public class Document {
     private Long catalogId;
 
     /**
-     * 一组关于具体资源的属性
+     * 一组对于具体资源的属性
      */
-    @Embedded.Empty
-    private DocumentResource resource;
+    private boolean isEmpty;
 
-    @Data
-    @AllArgsConstructor
-    private static class DocumentResource {
+    private String downloadLink;
 
-        private boolean isEmpty;
-
-        private String downloadLink;
-
-        private String uploadLink;
-
-    }
-
-    /**
-     * 通用空资源属性
-     */
-    private static final DocumentResource EMPTY_RESOURCE = new DocumentResource(false, "", "");
+    private String uploadLink;
 
 }

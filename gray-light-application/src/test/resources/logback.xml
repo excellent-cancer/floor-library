@@ -12,6 +12,13 @@
 
     <logger name="org.springframework.jdbc.core.JdbcTemplate" level="DEBUG"/>
 
+    <logger name="jdbc.sqltiming" level="INFO"></logger>
+    <logger name="jdbc.resultsettable" level="INFO"></logger>
+    <logger name="jdbc.sqlonly" level="OFF"></logger>
+    <logger name="jdbc.audit" level="OFF"></logger>
+    <logger name="jdbc.resultset" level="OFF"></logger>
+    <logger name="jdbc.connection" level="OFF"></logger>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
