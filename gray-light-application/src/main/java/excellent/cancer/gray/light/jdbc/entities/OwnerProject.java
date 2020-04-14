@@ -2,10 +2,12 @@ package excellent.cancer.gray.light.jdbc.entities;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -14,6 +16,7 @@ import java.util.Set;
  * @author XyParaCrim
  */
 @Data
+@Builder
 @AllArgsConstructor
 public class OwnerProject {
 
@@ -25,6 +28,10 @@ public class OwnerProject {
     private String name;
 
     private String description;
+
+    private Date createdDate;
+
+    private Date updatedDate;
 
     // private Set<ProjectLink> links;
 

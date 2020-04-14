@@ -1,6 +1,7 @@
 package excellent.cancer.gray.light.service;
 
 import excellent.cancer.gray.light.error.UniqueOwnerException;
+import excellent.cancer.gray.light.jdbc.ReactiveJdbc;
 import excellent.cancer.gray.light.jdbc.entities.Owner;
 import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
 import excellent.cancer.gray.light.jdbc.repositories.OwnerProjectRepository;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static perishing.constraint.treasure.chest.CollectionsTreasureChest.asList;
 
@@ -63,8 +66,20 @@ public final class UniqueOwnerService {
      * @param projectId 项目Id
      * @return 返回包含项目操作的flux
      */
-    public Mono<OwnerProject> project(Long projectId) {
-        return Mono.fromFuture(projectRepository.findByOwnerIdAndId(owner.getId(), projectId));
+    public Mono<Optional<OwnerProject>> project(Long projectId) {
+        return ReactiveJdbc.reactive(() -> projectRepository.findByOwnerIdAndId(owner.getId(), projectId));
+    }
+
+    public Mono<Boolean> existsProject(Long projectId) {
+        return Mono.fromFuture(CompletableFuture.supplyAsync(() -> projectRepository.existsById(projectId)));
+    }
+
+    public Mono<OwnerProject> addProject(OwnerProject ownerProject) {
+        return Mono.fromFuture(CompletableFuture.supplyAsync(() -> projectRepository.save(ownerProject)));
+    }
+
+    public Mono<Void> removeProject(OwnerProject project) {
+        return Mono.fromFuture(CompletableFuture.runAsync(() -> projectRepository.delete(project)));
     }
 
 }

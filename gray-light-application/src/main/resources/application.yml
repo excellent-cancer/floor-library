@@ -22,7 +22,7 @@ excellent:
 
 logging:
   level:
-    web: DEBUG
+#    web: DEBUG
     org:
       springframework:
         jdbc:
