@@ -1,6 +1,5 @@
 package excellent.cancer.gray.light.service;
 
-import excellent.cancer.gray.light.jdbc.repositories.DocumentCatalogRepository;
 import excellent.cancer.gray.light.jdbc.repositories.DocumentRepository;
 import excellent.cancer.gray.light.jdbc.repositories.OwnerProjectRepository;
 import excellent.cancer.gray.light.jdbc.repositories.OwnerRepository;
@@ -24,21 +23,19 @@ public class RepositoryService {
     private final OwnerProjectRepository ownerProjectRepository;
 
     @NonNull
-    private final DocumentCatalogRepository documentCatalogRepository;
-
-    @NonNull
     private final DocumentRepository documentRepository;
 
-    @Autowired
+
     public RepositoryService(@NonNull OwnerRepository ownerRepository,
                              @NonNull OwnerProjectRepository ownerProjectRepository,
-                             @NonNull DocumentCatalogRepository documentCatalogRepository,
                              @NonNull DocumentRepository documentRepository) {
         this.ownerRepository = ownerRepository;
         this.ownerProjectRepository = ownerProjectRepository;
-        this.documentCatalogRepository = documentCatalogRepository;
         this.documentRepository = documentRepository;
     }
+
+    @Autowired
+
 
     public OwnerRepository ofOwner() {
         return ownerRepository;
@@ -48,11 +45,7 @@ public class RepositoryService {
         return ownerProjectRepository;
     }
 
-    public DocumentRepository ofDocument() {
+    public DocumentRepository document() {
         return documentRepository;
-    }
-
-    public DocumentCatalogRepository ofDocumentCatalog() {
-        return documentCatalogRepository;
     }
 }

@@ -14,7 +14,7 @@ public interface OwnerProjectRepository {
      * 通过OwnerId获取owner的所有project
      *
      * @param ownerId 项目所属者Id
-     * @return 异步的项目列表
+     * @return 通过OwnerId获取owner的所有project
      */
     List<OwnerProject> findByOwnerId(@Param("ownerId") Long ownerId);
 
@@ -23,7 +23,7 @@ public interface OwnerProjectRepository {
      *
      * @param ownerId 项目所属者ID
      * @param id      项目ID
-     * @return 异步项目
+     * @return 所属者Id和项目Id查询出是否此项目
      */
     Optional<OwnerProject> findByOwnerIdAndId(@Param("ownerId") Long ownerId, @Param("id") Long id);
 
@@ -37,5 +37,4 @@ public interface OwnerProjectRepository {
 
     boolean delete(OwnerProject project);
 
-    boolean updateContainsDocs(@Param("id") long id, @Param("containsDocs") boolean containsDocs);
 }

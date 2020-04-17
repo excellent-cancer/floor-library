@@ -3,7 +3,6 @@ package excellent.cancer.gray.light.jdbc.entities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import org.apache.ibatis.type.Alias;
 
 import java.util.Date;
@@ -20,58 +19,47 @@ import java.util.Date;
 public class DocumentCatalog {
 
     /**
-     * 目录Id，它有如下特征：
-     * 低 1～32位表示当前目录组的位置
-     * 高33～47位表示当前目录的父目录
-     * 高48～64位表示当前目录的深度
+     * 目录ID
      */
     private Long id;
 
     /**
-     * 隶属组的ID：例如项目Id等等
+     * 隶属项目ID：例如项目Id等等
      */
-    @NonNull
     private Long projectId;
+
+    /**
+     * 隶属文档ID：例如项目Id等等
+     */
+    private Long documentId;
 
     /**
      * 父目录Id
      */
-    @NonNull
     private Long parentId;
 
     /**
      * 创建日期
      */
-    @NonNull
     private Date createdDate;
 
     /**
      * 最近修改日期
      */
-    @NonNull
     private Date updatedDate;
 
     /**
      * 目录标题
      */
-    @NonNull
     @Builder.Default
     private String title = "";
 
     /**
      * 是否是一个包含文档的
      */
-    @NonNull
     @Builder.Default
-    private Folder folder = Folder.EMPTY;
+    private DocumentCatalogFolder folder = DocumentCatalogFolder.EMPTY;
 
-    public enum Folder {
-        EMPTY,
-
-        CATALOG,
-
-        DOCS,
-    }
 
     /**
      * 返回一个此时新建的builder，即创建时间和最近更新时间是此时

@@ -54,10 +54,4 @@
         where id = #{id}
     </delete>
 
-    <update id="updateContainsDocs">
-        update owner_project
-        set contains_docs = #{containsDocs}
-        where id = #{id}
-    </update>
-
 </mapper>

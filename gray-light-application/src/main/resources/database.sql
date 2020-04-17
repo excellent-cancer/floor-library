@@ -30,32 +30,35 @@ create table experimental.owner_project(
 );
 
 drop table if exists experimental.document_catalog;
-create table experimental.document_catalog(
-    id bigint unsigned not null auto_increment,
-    project_id bigint unsigned not null references experimental.owner_project(id),
-    parent_id bigint unsigned not null,
-    created_date timestamp not null default CURRENT_TIMESTAMP,
-    updated_date timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    title varchar(32) not null default '',
-    has_docs boolean not null default false,
+create table experimental.document_catalog
+(
+    id           bigint unsigned not null auto_increment,
+    project_id   bigint unsigned not null references experimental.owner_project (id),
+    parent_id    bigint unsigned not null,
+    created_date timestamp       not null default CURRENT_TIMESTAMP,
+    updated_date timestamp       not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    title        varchar(32)     not null default '',
+    has_docs     boolean         not null default false,
     primary key (id)
 );
 
-drop table if exists experimental.document;
-create table  experimental.document(
-    id bigint unsigned not null auto_increment,
-    created_date timestamp null default CURRENT_TIMESTAMP,
-    updated_date timestamp null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    title varchar(32) not null default '',
-    isEmpty boolean not null default true,
-    download_link varchar(128) not null default '',
-    upload_link varchar(128) not null default '',
-    catalog_id bigint unsigned not null references experimental.document_catalog(id),
+drop table if exists experimental.documentChapter;
+create table experimental.documentChapter
+(
+    id            bigint unsigned not null auto_increment,
+    created_date  timestamp       null     default CURRENT_TIMESTAMP,
+    updated_date  timestamp       null     default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    title         varchar(32)     not null default '',
+    isEmpty       boolean         not null default true,
+    download_link varchar(128)    not null default '',
+    upload_link   varchar(128)    not null default '',
+    catalog_id    bigint unsigned not null references experimental.document_catalog (id),
     primary key (id)
 );
 
 drop table if exists experimental.internal;
-create table experimental.internal(
+create table experimental.internal
+(
     id bigint unsigned not null auto_increment,
     primary key (id)
 );

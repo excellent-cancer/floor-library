@@ -2,6 +2,9 @@ package excellent.cancer.gray.light.service;
 
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentCatalog;
+import excellent.cancer.gray.light.jdbc.entities.DocumentCatalogFolder;
+import excellent.cancer.gray.light.jdbc.entities.DocumentChapter;
+import excellent.cancer.gray.light.jdbc.repositories.DocumentRepository;
 import lombok.NonNull;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,58 +20,57 @@ import org.springframework.transaction.annotation.Transactional;
 @CommonsLog
 public class DocumentRelationService {
 
+
     /**
-     * 为项目创建新根文档
+     * 为项目添加新文档
+     *
+     * @param document 添加的新文档
+     * @return 是否创建并保存成功
+     */
+    @Transactional(rollbackFor = RuntimeException.class)
+    public boolean createDocumentForProject(Document document) {
+        return documentRepository.saveIfMatchedProject(document);
+    }
+
+    /**
+     * 为项目文档创建新根目录
      *
      * @param rootCatalog 需要创建的文档目录
      * @return 是否创建成功
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean createRootCatalogForProject(DocumentCatalog rootCatalog) {
-        return repositoryService.
-                ofDocumentCatalog().
-                saveIfMatchedEmptyDocsProject(rootCatalog) &&
-                repositoryService.
-                        ofOwnerProject().
-                        updateContainsDocs(rootCatalog.getProjectId(), true);
+    public boolean createRootCatalogForDocument(DocumentCatalog rootCatalog) {
+        return documentRepository.saveCatalogIfMatchedProject(rootCatalog);
     }
 
     /**
-     * 为项目添加子目录
+     * 为项目文档添加子目录
      *
      * @param catalog 子目录
      * @return 是否添加成功
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean addCatalogForProject(DocumentCatalog catalog) {
-        return repositoryService.
-                ofDocumentCatalog().
-                saveIfMatchedCatalogAndExcludeFolder(catalog, DocumentCatalog.Folder.DOCS) &&
-                repositoryService.
-                        ofDocumentCatalog().
-                        updateFolder(catalog.getProjectId(), DocumentCatalog.Folder.CATALOG);
+    public boolean addCatalogForDocument(DocumentCatalog catalog) {
+        return documentRepository.saveCatalogIfMatchedParentAndExcludeFolder(catalog, DocumentCatalogFolder.CHAPTER) &&
+                documentRepository.updateCatalogFolder(catalog.getParentId(), DocumentCatalogFolder.CATALOG);
     }
 
     /**
-     * 为目录添加文档
+     * 为项目文档添加文档
      *
-     * @param document 添加的文档
+     * @param documentChapter 添加的文档
      * @return 是否添加成功
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean addDocumentForCatalog(Document document) {
-        return repositoryService.
-                ofDocument().
-                saveIfMatchedDocumentCatalogAndExcludeFolder(document, DocumentCatalog.Folder.CATALOG) &&
-                repositoryService.
-                        ofDocumentCatalog().
-                        updateFolder(document.getCatalogId(), DocumentCatalog.Folder.DOCS);
+    public boolean addDocumentForCatalog(DocumentChapter documentChapter) {
+        return documentRepository.saveChapterIfMatchedDocumentCatalogAndExcludeFolder(documentChapter, DocumentCatalogFolder.CATALOG) &&
+                documentRepository.updateCatalogFolder(documentChapter.getCatalogId(), DocumentCatalogFolder.CHAPTER);
     }
 
-    private final RepositoryService repositoryService;
+    private final DocumentRepository documentRepository;
 
     @Autowired
     public DocumentRelationService(@NonNull RepositoryService repositoryService) {
-        this.repositoryService = repositoryService;
+        this.documentRepository = repositoryService.document();
     }
 }

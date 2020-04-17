@@ -23,8 +23,6 @@ public class DocumentRelationServiceTest {
     @Autowired
     private DocumentRelationService documentRelationService;
 
-    @Autowired
-    private SuperOwnerService superOwnerService;
 
     @Autowired
     private SuperOwnerRandomService superOwnerRandomService;
@@ -39,7 +37,7 @@ public class DocumentRelationServiceTest {
                 build();
 
         // 提交给服务，则期望其发布的是错误
-        Assertions.assertFalse(documentRelationService.createRootCatalogForProject(invalidCatalog));
+        Assertions.assertFalse(documentRelationService.createRootCatalogForDocument(invalidCatalog));
         ;
     }
 
@@ -56,13 +54,13 @@ public class DocumentRelationServiceTest {
                 .build();
 
         // 如果创建文档时发生错误，则返回错误结果
-        Assertions.assertTrue(documentRelationService.createRootCatalogForProject(documentCatalog));
+        Assertions.assertTrue(documentRelationService.createRootCatalogForDocument(documentCatalog));
         Assertions.assertNotNull(documentCatalog.getId());
 
         log.info("新建文档已保存：" + documentCatalog);
 
         // 已建文档项目
-        Assertions.assertFalse(documentRelationService.createRootCatalogForProject(documentCatalog));
+        Assertions.assertFalse(documentRelationService.createRootCatalogForDocument(documentCatalog));
     }
 
 }

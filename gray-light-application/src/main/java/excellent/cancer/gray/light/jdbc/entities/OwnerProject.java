@@ -31,8 +31,6 @@ public class OwnerProject {
 
     private Date updatedDate;
 
-    private boolean containsDocs;
-
     /**
      * 返回一个只包含Id的项目
      *

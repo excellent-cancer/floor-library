@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="excellent.cancer.gray.light.jdbc.repositories.DocumentRepository">
+
+    <!-- ***************** -->
+    <!-- **** Catalog **** -->
+    <!-- ***************** -->
+
+    <!-- Insert SQL -->
+
+    <insert id="saveIfMatchedProject"
+            parameterType="Document"
+            useGeneratedKeys="true">
+        insert into project_document (project_id, title, description, repoUrl)
+        select #{projectId}, #{title}, #{description}, #{repoUrl}
+        from owner_project as p
+        where p.id = #{projectId}
+    </insert>
+
+    <!-- ***************** -->
+    <!-- **** Catalog **** -->
+    <!-- ***************** -->
+
+    <!-- Select SQL -->
+
+    <select id="findCatalogById"
+            resultType="DocumentCatalog">
+        select *
+        from document_catalog
+        where id = #{id}
+        limit 1
+    </select>
+
+    <!-- Insert SQL -->
+
+    <insert id="saveCatalog"
+            parameterType="DocumentCatalog"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_catalog (project_id, parent_id, document_id, created_date, updated_date, title, folder)
+        values (#{projectId}, #{parentId}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder})
+    </insert>
+
+    <insert id="saveCatalogIfMatchedProject"
+            parameterType="DocumentCatalog"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_catalog (project_id, document_id, parent_id, created_date, updated_date, title, folder)
+        select #{projectId}, #{parentId}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
+        from project_document as d
+        where d.id = #{documentId}
+    </insert>
+
+    <insert id="saveCatalogIfMatchedParentAndExcludeFolder"
+            parameterType="DocumentCatalog"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_catalog (project_id, parent_id, created_date, updated_date, title, folder)
+        select #{projectId}, #{parentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
+        from document_catalog as c
+        where c.id = #{parentId}
+          and c.folder != #{exclude}
+    </insert>
+
+    <!-- Update SQL -->
+
+    <update id="updateCatalogFolder">
+        update document_catalog
+        set folder = #{folder}
+        where id = #{id}
+        limit 1
+    </update>
+
+    <!-- ***************** -->
+    <!-- **** Chapter **** -->
+    <!-- ***************** -->
+
+    <!--  Select SQL  -->
+
+    <select id="findChapterAll" resultType="DocumentChapter">
+        select *
+        from document_chapter
+    </select>
+
+    <!-- Insert SQL -->
+
+    <insert id="saveChapter"
+            parameterType="DocumentChapter"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_chapter (created_date, updated_date, title, isEmpty, download_link, upload_link,
+                                      catalog_id)
+        values (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{isEmpty}, #{downloadLink}, #{uploadLink},
+                #{catalogId})
+    </insert>
+
+    <insert id="saveChapterIfMatchedDocumentCatalogAndExcludeFolder"
+            parameterType="DocumentChapter"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_chapter (created_date, updated_date, title, isEmpty, download_link, upload_link,
+                                      catalog_id)
+        select CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{isEmpty}, #{downloadLink}, #{uploadLink}, #{catalogId}
+        from document_catalog as c
+        where c.id = #{catalogId}
+          and c.folder != #{exclude}
+    </insert>
+
+</mapper>

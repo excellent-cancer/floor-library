@@ -1,53 +1,25 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
-import java.util.Date;
-
 /**
- * 文档中的一章，是具有具体文件的
+ * 项目文档，包括文档仓库地址、标题、描述等等
  *
  * @author XyParaCrim
  */
 @Data
-@AllArgsConstructor
 @Alias("Document")
 public class Document {
 
-    /**
-     * 文档ID
-     */
     private Long id;
 
-    /**
-     * 创建日期
-     */
-    private Date createdDate;
+    private Long projectId;
 
-    /**
-     * 最近修改日期
-     */
-    private Date updatedDate;
-
-    /**
-     * 目录标题
-     */
     private String title;
 
-    /**
-     * 隶属的目录Id
-     */
-    private Long catalogId;
+    private String description;
 
-    /**
-     * 一组关于具体资源的属性
-     */
-    private boolean isEmpty;
-
-    private String downloadLink;
-
-    private String uploadLink;
+    private String repoUrl;
 
 }
