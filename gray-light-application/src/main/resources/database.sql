@@ -19,13 +19,14 @@ create table experimental.owner_link(
 
 drop table if exists experimental.owner_project;
 create table experimental.owner_project(
-    id bigint unsigned not null auto_increment,
-    name varchar(32) not null ,
-    description varchar(128) default '',
-    owner_id bigint unsigned not null references experimental.owner(id),
-    created_date timestamp not null default CURRENT_TIMESTAMP,
-    updated_date timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key (id)
+                                           id            bigint unsigned not null auto_increment,
+                                           name          varchar(32)     not null,
+                                           description   varchar(128)             default '',
+                                           owner_id      bigint unsigned not null references experimental.owner (id),
+                                           created_date  timestamp       not null default CURRENT_TIMESTAMP,
+                                           updated_date  timestamp       not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+                                           contains_docs tinyint(1)               default 0 not null,
+                                           primary key (id)
 );
 
 drop table if exists experimental.document_catalog;

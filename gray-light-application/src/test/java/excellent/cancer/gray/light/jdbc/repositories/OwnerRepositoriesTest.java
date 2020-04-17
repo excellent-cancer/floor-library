@@ -1,17 +1,15 @@
 package excellent.cancer.gray.light.jdbc.repositories;
 
-import excellent.cancer.gray.light.config.ExcellentCancerProperties;
-import excellent.cancer.gray.light.config.OwnerProperties;
 import excellent.cancer.gray.light.jdbc.entities.Owner;
+import excellent.cancer.gray.light.service.RepositoryService;
 import lombok.extern.apachecommons.CommonsLog;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 对JdbcRepositories的基本测试
@@ -23,42 +21,30 @@ import java.util.List;
 public class OwnerRepositoriesTest {
 
     @Autowired
-    private OwnerRepository ownerRepository;
+    private RepositoryService repositoryService;
 
-    @Autowired
-    private ExcellentCancerProperties excellentCancerProperties;
+    @CsvSource("'test-name', 'test-organization'")
+    @ParameterizedTest
+    @Transactional
+    @DisplayName("验证save方法的返回值")
+    public void verifyWhetherExecuteSqlWhenCallGetFromReference(String ownerName, String ownerOrganization) {
+        Owner owner = new Owner(null, ownerName, ownerOrganization);
 
-    @Test
-    @DisplayName("验证唯一用户名")
-    public void verifyUserUniqueness() {
-        List<Owner> allOwners = Lists.newArrayList(ownerRepository.findAll());
-        Assertions.assertEquals(1, allOwners.size(), "存在多个所属者");
-
-        Owner owner = allOwners.get(0);
-        OwnerProperties ownerProperties = excellentCancerProperties.getOwner();
-
-        Assertions.assertEquals(ownerProperties.getName(), owner.getUsername());
-        Assertions.assertEquals(ownerProperties.getOrganization(), owner.getOrganization());
+        Assertions.assertTrue(repositoryService.ofOwner().save(owner));
+        Assertions.assertNotNull(owner.getId());
     }
 
-    @Test
-    @DisplayName("验证关联表在实体类调用get方法时，是否执行Sql操作")
-    public void verifyWhetherExecuteSqlWhenCallGetFromReference() {
-/*        Owner owner = UniqueOwnerException.extractOwnerRequireUniqueOwner(asList(ownerRepository.findAll()));
-        OwnerLink ownerLink = new OwnerLink(null, owner.getId(), "www.excellent-cancer.com", "主页" + new Random().nextInt());
-        owner.getLinks().add(ownerLink);
+    @CsvSource("'test-name', 'test-organization'")
+    @ParameterizedTest
+    @Transactional
+    @DisplayName("验证exists方法的返回值")
+    public void verifyReturnTypeWhenCallExistsMethod(String ownerName, String ownerOrganization) {
+        Owner owner = new Owner(null, ownerName, ownerOrganization);
 
-        Assertions.assertNull(ownerLink.getId());
+        repositoryService.ofOwner().save(owner);
 
-        Set<OwnerLink> origin = owner.getLinks();
-
-        // 执行储存
-        Owner savedOwner = ownerRepository.save(owner);
-
-        Assertions.assertEquals(owner, savedOwner);
-        Assertions.assertEquals(origin, savedOwner.getLinks());
-        Assertions.assertTrue(savedOwner.getLinks().contains(ownerLink));
-        Assertions.assertNull(ownerLink.getId());*/
+        Assertions.assertNotNull(owner.getId());
+        Assertions.assertTrue(repositoryService.ofOwner().existsById(owner.getId()));
+        Assertions.assertFalse(repositoryService.ofOwner().existsById(Long.MAX_VALUE));
     }
-
 }

@@ -1,21 +1,25 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.apache.ibatis.type.Alias;
 
-import javax.persistence.Entity;
+import java.util.Date;
 
 /**
  * 表示存在过的项目，可以git项目，或者svn项目等
  *
  * @author XyParaCrim
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
-//@Builder
-@Entity
-public class OwnerProject extends AbstractTimestampPersistable<Long> {
+@Builder
+@AllArgsConstructor
+@Alias("OwnerProject")
+public class OwnerProject {
+
+    private Long id;
 
     private Long ownerId;
 
@@ -23,16 +27,19 @@ public class OwnerProject extends AbstractTimestampPersistable<Long> {
 
     private String description;
 
+    private Date createdDate;
+
+    private Date updatedDate;
+
+    private boolean containsDocs;
+
     /**
      * 返回一个只包含Id的项目
      *
      * @param id 项目ID
      * @return 只包含Id的项目
      */
-/*    public static OwnerProject justIdProject(Long id) {
-        OwnerProject project = builder().build();
-        project.setId(id);
-
-        return project;
-    }*/
+    public static OwnerProject justIdProject(Long id) {
+        return builder().id(id).build();
+    }
 }

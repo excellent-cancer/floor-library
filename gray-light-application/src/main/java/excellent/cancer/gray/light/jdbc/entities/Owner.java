@@ -1,10 +1,8 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
-import javax.persistence.Entity;
+import org.apache.ibatis.type.Alias;
 
 /**
  * 表示整个产品的拥有者
@@ -12,9 +10,11 @@ import javax.persistence.Entity;
  * @author XyParaCrim
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@Entity
-public class Owner extends AbstractPersistable<Long> {
+@AllArgsConstructor
+@Alias("Owner")
+public class Owner {
+
+    private Long id;
 
     private String username;
 

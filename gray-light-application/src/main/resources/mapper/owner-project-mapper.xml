@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="excellent.cancer.gray.light.jdbc.repositories.OwnerProjectRepository">
+
+    <select id="findAll"
+            resultType="OwnerProject">
+        select *
+        from owner_project
+    </select>
+
+    <select id="findByOwnerIdAndId"
+            resultType="OwnerProject">
+        select *
+        from owner_project
+        where id = #{id}
+          and owner_id = #{ownerId}
+    </select>
+
+    <select id="findByOwnerId"
+            resultType="OwnerProject">
+        select *
+        from owner_project
+        where owner_id = #{ownerId}
+    </select>
+
+    <select id="existsById"
+            resultType="boolean">
+        select COUNT(0)
+        from owner_project
+        where id = #{id}
+        limit 1
+    </select>
+
+    <select id="existsByIdAndOwnerId"
+            resultType="boolean">
+        select COUNT(0)
+        from owner_project
+        where id = #{id}
+          and owner_id = #{ownerId}
+        limit 1
+    </select>
+
+    <insert id="save"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into owner_project (name, description, owner_id, created_date, updated_date)
+        values (#{name}, #{description}, #{ownerId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    </insert>
+
+    <delete id="delete"
+            parameterType="OwnerProject">
+        delete
+        from owner_project
+        where id = #{id}
+    </delete>
+
+    <update id="updateContainsDocs">
+        update owner_project
+        set contains_docs = #{containsDocs}
+        where id = #{id}
+    </update>
+
+</mapper>

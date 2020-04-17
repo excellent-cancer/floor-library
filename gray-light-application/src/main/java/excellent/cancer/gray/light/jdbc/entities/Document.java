@@ -1,9 +1,9 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import org.apache.ibatis.type.Alias;
 
-import javax.persistence.Entity;
 import java.util.Date;
 
 /**
@@ -12,9 +12,14 @@ import java.util.Date;
  * @author XyParaCrim
  */
 @Data
-@Entity
-@EqualsAndHashCode(callSuper = true)
-public class Document extends AbstractTimestampPersistable<Long> {
+@AllArgsConstructor
+@Alias("Document")
+public class Document {
+
+    /**
+     * 文档ID
+     */
+    private Long id;
 
     /**
      * 创建日期
@@ -37,7 +42,7 @@ public class Document extends AbstractTimestampPersistable<Long> {
     private Long catalogId;
 
     /**
-     * 一组对于具体资源的属性
+     * 一组关于具体资源的属性
      */
     private boolean isEmpty;
 

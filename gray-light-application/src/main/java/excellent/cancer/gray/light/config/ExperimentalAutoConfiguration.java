@@ -1,5 +1,6 @@
 package excellent.cancer.gray.light.config;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @author XyParaCrim
  */
 @Configuration
+@MapperScan("excellent.cancer.gray.light.jdbc.repositories")
 public class ExperimentalAutoConfiguration {
 
     @Bean

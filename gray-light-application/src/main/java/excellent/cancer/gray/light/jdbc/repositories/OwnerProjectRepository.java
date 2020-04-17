@@ -1,14 +1,14 @@
 package excellent.cancer.gray.light.jdbc.repositories;
 
 import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.scheduling.annotation.Async;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
-public interface OwnerProjectRepository extends CrudRepository<OwnerProject, Long> {
+@Mapper
+public interface OwnerProjectRepository {
 
     /**
      * 通过OwnerId获取owner的所有project
@@ -16,8 +16,7 @@ public interface OwnerProjectRepository extends CrudRepository<OwnerProject, Lon
      * @param ownerId 项目所属者Id
      * @return 异步的项目列表
      */
-    @Async
-    CompletableFuture<List<OwnerProject>> findByOwnerId(Long ownerId);
+    List<OwnerProject> findByOwnerId(@Param("ownerId") Long ownerId);
 
     /**
      * 通过所属者Id和项目Id查询出是否此项目
@@ -26,7 +25,17 @@ public interface OwnerProjectRepository extends CrudRepository<OwnerProject, Lon
      * @param id      项目ID
      * @return 异步项目
      */
-    Optional<OwnerProject> findByOwnerIdAndId(Long ownerId, Long id);
+    Optional<OwnerProject> findByOwnerIdAndId(@Param("ownerId") Long ownerId, @Param("id") Long id);
 
+    Iterable<OwnerProject> findAll();
 
+    boolean existsById(@Param("id") long id);
+
+    boolean existsByIdAndOwnerId(@Param("id") long id, @Param("ownerId") long ownerId);
+
+    boolean save(OwnerProject project);
+
+    boolean delete(OwnerProject project);
+
+    boolean updateContainsDocs(@Param("id") long id, @Param("containsDocs") boolean containsDocs);
 }

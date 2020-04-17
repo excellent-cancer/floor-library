@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="excellent.cancer.gray.light.jdbc.repositories.DocumentCatalogRepository">
+
+    <!-- Select SQL -->
+
+    <select id="findById"
+            resultType="DocumentCatalog">
+        select *
+        from document_catalog
+        where id = #{id}
+        limit 1
+    </select>
+
+    <!-- Insert SQL -->
+
+    <insert id="save"
+            parameterType="DocumentCatalog"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_catalog (project_id, parent_id, created_date, updated_date, title, folder)
+        values (#{projectId}, #{parentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder})
+    </insert>
+
+    <insert id="saveIfMatchedEmptyDocsProject"
+            parameterType="DocumentCatalog"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_catalog (project_id, parent_id, created_date, updated_date, title, folder)
+        select #{projectId}, #{parentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
+        from owner_project as p
+        where p.id = #{projectId}
+          and p.contains_docs = false
+    </insert>
+
+    <insert id="saveIfMatchedCatalogAndExcludeFolder"
+            parameterType="DocumentCatalog"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_catalog (project_id, parent_id, created_date, updated_date, title, folder)
+        select #{projectId}, #{parentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
+        from document_catalog as c
+        where c.id = #{projectId}
+          and c.folder != ${exclude}
+    </insert>
+
+    <!-- Update SQL -->
+
+    <update id="updateFolder">
+        update document_catalog
+        set folder = #{folder}
+        where id = #{id}
+    </update>
+
+</mapper>

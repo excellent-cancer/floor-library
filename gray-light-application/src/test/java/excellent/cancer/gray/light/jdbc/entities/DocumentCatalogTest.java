@@ -22,7 +22,7 @@ public class DocumentCatalogTest {
                     parentId(1L).
                     build();
 
-            Assertions.assertEquals(false, documentCatalog.getHasDocs());
+            Assertions.assertEquals(DocumentCatalog.Folder.EMPTY, documentCatalog.getFolder());
             Assertions.assertEquals("", documentCatalog.getTitle());
         });*/
     }

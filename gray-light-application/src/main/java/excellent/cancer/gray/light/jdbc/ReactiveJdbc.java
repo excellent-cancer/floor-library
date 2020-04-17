@@ -2,7 +2,6 @@ package excellent.cancer.gray.light.jdbc;
 
 import excellent.cancer.gray.light.error.NoSuchEntityException;
 import lombok.extern.apachecommons.CommonsLog;
-import org.springframework.data.repository.CrudRepository;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
 
@@ -72,10 +71,6 @@ public final class ReactiveJdbc {
     }
 
     private static final Executor COMMON_POOL = ForkJoinPool.commonPool();
-
-    public static <T, ID> ReactiveRepository<T, ID> reactiveRepository(CrudRepository<T, ID> crudRepository) {
-        return new ReactiveRepository<>(crudRepository, COMMON_POOL);
-    }
 
     public static <V> Mono<V> reactive(Supplier<V> supplier) {
         return Mono.fromFuture(CompletableFuture.supplyAsync(supplier, COMMON_POOL));
