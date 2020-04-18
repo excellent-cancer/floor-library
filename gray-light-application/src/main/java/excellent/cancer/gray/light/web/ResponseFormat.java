@@ -2,12 +2,14 @@ package excellent.cancer.gray.light.web;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Data;
 
 /**
  * 定义服务器回复格式
  *
  * @author XyParaCrim
  */
+@Data
 @Builder(access = AccessLevel.PACKAGE)
 public class ResponseFormat {
 

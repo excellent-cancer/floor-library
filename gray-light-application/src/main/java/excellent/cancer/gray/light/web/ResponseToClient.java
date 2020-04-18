@@ -93,4 +93,10 @@ public final class ResponseToClient {
                 code(responseCode.value());
     }
 
+    // 参数检查
+
+    public static UnsatisfiedBodyExtractorChain unsatisfiedChain() {
+        return new UnsatisfiedBodyExtractorChain();
+    }
+
 }
