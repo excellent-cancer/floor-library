@@ -19,6 +19,8 @@ excellent:
       enabled: false
     jdbc:
       enabled: false
+    running:
+      document-repositories: /Users/yanjiaxun/document
 
 logging:
   level:
@@ -31,3 +33,5 @@ logging:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: excellent.cancer.gray.light.jdbc.entities
+
+

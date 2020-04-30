@@ -2,7 +2,20 @@ POST http://localhost:8080/
 Content-Type: application/json
 
 {
-  "ok": "hhh"
+  "name": "mock project-name",
+  "description": "it's great project"
+}
+
+###
+
+POST http://localhost:8080/add-document
+Content-Type: application/json
+
+{
+  "title": "mack document",
+  "description": "mock description",
+  "repoUrl": "http://hhh.xx",
+  "projectId": "111"
 }
 
 ###

@@ -1,32 +1,35 @@
 create database experimental;
 
 drop table if exists experimental.owner;
-create table experimental.owner(
-    id bigint unsigned not null auto_increment,
-    username varchar(32) not null unique,
-    organization varchar(128) not null,
+create table experimental.owner
+(
+    id           bigint unsigned not null auto_increment,
+    username     varchar(32)     not null unique,
+    organization varchar(128)    not null,
     primary key (id)
 );
 
 drop table if exists experimental.owner_link;
-create table experimental.owner_link(
-    id bigint unsigned not null auto_increment,
-    url varchar(128) not null,
-    name varchar(32) not null,
-    owner_id bigint unsigned not null references experimental.owner(id),
+create table experimental.owner_link
+(
+    id       bigint unsigned not null auto_increment,
+    url      varchar(128)    not null,
+    name     varchar(32)     not null,
+    owner_id bigint unsigned not null references experimental.owner (id),
     primary key (id)
 );
 
 drop table if exists experimental.owner_project;
-create table experimental.owner_project(
-                                           id            bigint unsigned not null auto_increment,
-                                           name          varchar(32)     not null,
-                                           description   varchar(128)             default '',
-                                           owner_id      bigint unsigned not null references experimental.owner (id),
-                                           created_date  timestamp       not null default CURRENT_TIMESTAMP,
-                                           updated_date  timestamp       not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-                                           contains_docs tinyint(1)               default 0 not null,
-                                           primary key (id)
+create table experimental.owner_project
+(
+    id            bigint unsigned not null auto_increment,
+    name          varchar(32)     not null,
+    description   varchar(128)             default '',
+    owner_id      bigint unsigned not null references experimental.owner (id),
+    created_date  timestamp       not null default CURRENT_TIMESTAMP,
+    updated_date  timestamp       not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    contains_docs tinyint(1)               default 0 not null,
+    primary key (id)
 );
 
 drop table if exists experimental.document_catalog;
@@ -35,15 +38,16 @@ create table experimental.document_catalog
     id           bigint unsigned not null auto_increment,
     project_id   bigint unsigned not null references experimental.owner_project (id),
     parent_id    bigint unsigned not null,
-    created_date timestamp       not null default CURRENT_TIMESTAMP,
-    updated_date timestamp       not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    title        varchar(32)     not null default '',
-    has_docs     boolean         not null default false,
+    document_id  bigint unsigned not null references experimental.document (id),
+    created_date timestamp       not null             default CURRENT_TIMESTAMP,
+    updated_date timestamp       not null             default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    title        varchar(32)     not null             default '',
+    folder       enum ('EMPTY', 'CATALOG', 'CHAPTER') default 'EMPTY',
     primary key (id)
 );
 
-drop table if exists experimental.documentChapter;
-create table experimental.documentChapter
+drop table if exists experimental.document_chapter;
+create table experimental.document_chapter
 (
     id            bigint unsigned not null auto_increment,
     created_date  timestamp       null     default CURRENT_TIMESTAMP,
@@ -64,8 +68,24 @@ create table experimental.internal
 );
 
 drop table if exists experimental.internal_link;
-create table experimental.internal_link(
-    id bigint unsigned not null  auto_increment,
+create table experimental.internal_link
+(
+    id          bigint unsigned not null auto_increment,
     primary key (id),
-    internal_id bigint unsigned not null references experimental.internal(id)
+    internal_id bigint unsigned not null references experimental.internal (id)
+);
+
+drop table if exists experimental.document;
+create table experimental.document
+(
+    id              bigint unsigned not null auto_increment,
+    project_id      bigint unsigned not null references experimental.owner_project (id),
+    title           varchar(32)     not null                 default '',
+    description     varchar(128)                             default '',
+    repo_url        varchar(128)    not null                 default '',
+    created_date    timestamp       not null                 default CURRENT_TIMESTAMP,
+    updated_date    timestamp       not null                 default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    version         varchar(32),
+    document_status enum ('INVALID', 'EMPTY', 'SYNC', 'NEW') default 'INVALID',
+    primary key (id)
 );

@@ -1,9 +1,6 @@
 package excellent.cancer.gray.light.jdbc.repositories;
 
-import excellent.cancer.gray.light.jdbc.entities.Document;
-import excellent.cancer.gray.light.jdbc.entities.DocumentCatalog;
-import excellent.cancer.gray.light.jdbc.entities.DocumentCatalogFolder;
-import excellent.cancer.gray.light.jdbc.entities.DocumentChapter;
+import excellent.cancer.gray.light.jdbc.entities.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,21 +19,31 @@ public interface DocumentRepository {
 
     boolean saveIfMatchedProject(Document document);
 
+    boolean batchSave(List<Document> documents);
+
+    boolean batchUpdateDocumentStatus(List<Document> documents);
+
+    List<Document> findByStatus(@Param("status") DocumentStatus status);
+
     // query for catalog
 
     DocumentCatalog saveCatalog(DocumentCatalog rootCatalog);
 
     Optional<DocumentCatalog> findCatalogById(@Param("id") Long id);
 
+    boolean batchSaveCatalog(List<DocumentCatalog> catalogs);
+
     boolean saveCatalogIfMatchedProject(DocumentCatalog documentCatalog);
 
     boolean saveCatalogIfMatchedParentAndExcludeFolder(DocumentCatalog catalog, @Param("exclude") DocumentCatalogFolder exclude);
 
-    boolean updateCatalogFolder(@Param("id") long id, @Param("folder") DocumentCatalogFolder folder);
+    boolean updateCatalogFolder(@Param("uid") String uid, @Param("folder") DocumentCatalogFolder folder);
 
     // query for chapter
 
     List<DocumentChapter> findChapterAll();
+
+    boolean batchSaveChapter(List<DocumentChapter> chapters);
 
     boolean saveChapter(DocumentChapter documentChapter);
 

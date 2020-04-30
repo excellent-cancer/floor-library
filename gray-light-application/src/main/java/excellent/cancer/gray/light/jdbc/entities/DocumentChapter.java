@@ -1,6 +1,7 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
@@ -12,6 +13,7 @@ import java.util.Date;
  * @author XyParaCrim
  */
 @Data
+@Builder
 @AllArgsConstructor
 @Alias("DocumentChapter")
 public class DocumentChapter {
@@ -39,12 +41,13 @@ public class DocumentChapter {
     /**
      * 隶属的目录Id
      */
-    private Long catalogId;
+    private String catalogUid;
 
     /**
      * 一组对于具体资源的属性
      */
-    private boolean isEmpty;
+    @Builder.Default
+    private boolean isEmpty = true;
 
     private String downloadLink;
 

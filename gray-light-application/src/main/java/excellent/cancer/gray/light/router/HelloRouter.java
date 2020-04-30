@@ -28,4 +28,11 @@ public class HelloRouter {
                 route(RequestPredicates.POST("/"), helloHandler::addFavoriteProject);
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> helloWhathh(OwnerFavoritesHandler helloHandler) {
+        return RouterFunctions.
+                route(RequestPredicates.POST("/add-document"), helloHandler::addFavoriteDocument);
+    }
+
+
 }

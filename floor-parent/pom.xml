@@ -33,6 +33,7 @@
                 <artifactId>perishing-constraint-web</artifactId>
                 <version>${perishing.constraint.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

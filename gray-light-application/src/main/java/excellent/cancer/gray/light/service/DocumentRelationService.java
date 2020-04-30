@@ -1,15 +1,14 @@
 package excellent.cancer.gray.light.service;
 
-import excellent.cancer.gray.light.jdbc.entities.Document;
-import excellent.cancer.gray.light.jdbc.entities.DocumentCatalog;
-import excellent.cancer.gray.light.jdbc.entities.DocumentCatalogFolder;
-import excellent.cancer.gray.light.jdbc.entities.DocumentChapter;
+import excellent.cancer.gray.light.jdbc.entities.*;
 import excellent.cancer.gray.light.jdbc.repositories.DocumentRepository;
 import lombok.NonNull;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 提供对于文档之间的关系功能，例如：文件树、查询、删除等等
@@ -52,7 +51,7 @@ public class DocumentRelationService {
     @Transactional(rollbackFor = Exception.class)
     public boolean addCatalogForDocument(DocumentCatalog catalog) {
         return documentRepository.saveCatalogIfMatchedParentAndExcludeFolder(catalog, DocumentCatalogFolder.CHAPTER) &&
-                documentRepository.updateCatalogFolder(catalog.getParentId(), DocumentCatalogFolder.CATALOG);
+                documentRepository.updateCatalogFolder(catalog.getParentUid(), DocumentCatalogFolder.CATALOG);
     }
 
     /**
@@ -64,7 +63,29 @@ public class DocumentRelationService {
     @Transactional(rollbackFor = Exception.class)
     public boolean addDocumentForCatalog(DocumentChapter documentChapter) {
         return documentRepository.saveChapterIfMatchedDocumentCatalogAndExcludeFolder(documentChapter, DocumentCatalogFolder.CATALOG) &&
-                documentRepository.updateCatalogFolder(documentChapter.getCatalogId(), DocumentCatalogFolder.CHAPTER);
+                documentRepository.updateCatalogFolder(documentChapter.getCatalogUid(), DocumentCatalogFolder.CHAPTER);
+    }
+
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
+    public List<Document> allSyncDocument() {
+        return documentRepository.findByStatus(DocumentStatus.SYNC);
+    }
+
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
+    public List<Document> allEmptyDocument() {
+        return documentRepository.findByStatus(DocumentStatus.EMPTY);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchUpdateDocumentRepositories(List<Document> documents, List<DocumentCatalog> catalogs, List<DocumentChapter> chapters) {
+        return documentRepository.batchSave(documents) &&
+                documentRepository.batchSaveCatalog(catalogs) &&
+                documentRepository.batchSaveChapter(chapters);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchUpdateDocumentStatus(List<Document> documents) {
+        return documentRepository.batchUpdateDocumentStatus(documents);
     }
 
     private final DocumentRepository documentRepository;

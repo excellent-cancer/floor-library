@@ -1,7 +1,10 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
+
+import java.util.Date;
 
 /**
  * 项目文档，包括文档仓库地址、标题、描述等等
@@ -10,6 +13,7 @@ import org.apache.ibatis.type.Alias;
  */
 @Data
 @Alias("Document")
+@AllArgsConstructor
 public class Document {
 
     private Long id;
@@ -20,6 +24,14 @@ public class Document {
 
     private String description;
 
+    private Date createdDate;
+
+    private Date updatedDate;
+
     private String repoUrl;
+
+    private String version;
+
+    private DocumentStatus status;
 
 }

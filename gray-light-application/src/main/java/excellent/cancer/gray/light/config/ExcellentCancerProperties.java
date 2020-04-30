@@ -16,4 +16,6 @@ public class ExcellentCancerProperties {
 
     private FastdfsProperties fastdfs;
 
+    private RunningProperties running;
+
 }

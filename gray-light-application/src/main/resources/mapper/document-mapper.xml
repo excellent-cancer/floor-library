@@ -6,12 +6,22 @@
     <!-- **** Catalog **** -->
     <!-- ***************** -->
 
+    <!-- Select SQL -->
+
+    <select id="findByStatus"
+            resultType="Document">
+        select *
+        from document
+        where status = #{status}
+    </select>
+
     <!-- Insert SQL -->
 
     <insert id="saveIfMatchedProject"
             parameterType="Document"
-            useGeneratedKeys="true">
-        insert into project_document (project_id, title, description, repoUrl)
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document (project_id, title, description, repo_url)
         select #{projectId}, #{title}, #{description}, #{repoUrl}
         from owner_project as p
         where p.id = #{projectId}
@@ -38,7 +48,7 @@
             useGeneratedKeys="true"
             keyProperty="id">
         insert into document_catalog (project_id, parent_id, document_id, created_date, updated_date, title, folder)
-        values (#{projectId}, #{parentId}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder})
+        values (#{projectId}, #{parentUid}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder})
     </insert>
 
     <insert id="saveCatalogIfMatchedProject"
@@ -46,8 +56,8 @@
             useGeneratedKeys="true"
             keyProperty="id">
         insert into document_catalog (project_id, document_id, parent_id, created_date, updated_date, title, folder)
-        select #{projectId}, #{parentId}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
-        from project_document as d
+        select #{projectId}, #{parentUid}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
+        from document as d
         where d.id = #{documentId}
     </insert>
 
@@ -55,10 +65,10 @@
             parameterType="DocumentCatalog"
             useGeneratedKeys="true"
             keyProperty="id">
-        insert into document_catalog (project_id, parent_id, created_date, updated_date, title, folder)
-        select #{projectId}, #{parentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
+        insert into document_catalog (project_id, parent_id, document_id, created_date, updated_date, title, folder)
+        select #{projectId}, #{parentUid}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
         from document_catalog as c
-        where c.id = #{parentId}
+        where c.id = #{parentUid}
           and c.folder != #{exclude}
     </insert>
 
@@ -67,7 +77,7 @@
     <update id="updateCatalogFolder">
         update document_catalog
         set folder = #{folder}
-        where id = #{id}
+        where uid = #{uid}
         limit 1
     </update>
 
@@ -91,7 +101,7 @@
         insert into document_chapter (created_date, updated_date, title, isEmpty, download_link, upload_link,
                                       catalog_id)
         values (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{isEmpty}, #{downloadLink}, #{uploadLink},
-                #{catalogId})
+                #{catalogUid})
     </insert>
 
     <insert id="saveChapterIfMatchedDocumentCatalogAndExcludeFolder"
@@ -100,9 +110,9 @@
             keyProperty="id">
         insert into document_chapter (created_date, updated_date, title, isEmpty, download_link, upload_link,
                                       catalog_id)
-        select CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{isEmpty}, #{downloadLink}, #{uploadLink}, #{catalogId}
+        select CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{isEmpty}, #{downloadLink}, #{uploadLink}, #{catalogUid}
         from document_catalog as c
-        where c.id = #{catalogId}
+        where c.id = #{catalogUid}
           and c.folder != #{exclude}
     </insert>
 

@@ -20,15 +20,15 @@ import java.util.function.Supplier;
  * @author XyParaCrim
  */
 public class UnsatisfiedBodyExtractorChain implements
-        UnsatisfiedPropertyExtractorChain<Mono<ServerResponse>, Map<String, ?>, UnsatisfiedBodyExtractor> {
+        UnsatisfiedPropertyExtractorChain<Mono<ServerResponse>, Map<String, Object>, UnsatisfiedBodyExtractor> {
 
     private final List<Tuple2<String,
-            UnsatisfiedPropertyExtractor<Mono<ServerResponse>, Map<String, ?>>>> chain = new LinkedList<>();
+            UnsatisfiedPropertyExtractor<Mono<ServerResponse>, Map<String, Object>>>> chain = new LinkedList<>();
 
     @Override
-    public Optional<Mono<ServerResponse>> extract(@NonNull Map<String, ?> properties) {
+    public Optional<Mono<ServerResponse>> extract(@NonNull Map<String, Object> properties) {
         Optional<Mono<ServerResponse>> unsatisfied = Optional.empty();
-        for (Tuple2<String, UnsatisfiedPropertyExtractor<Mono<ServerResponse>, Map<String, ?>>> pair : chain) {
+        for (Tuple2<String, UnsatisfiedPropertyExtractor<Mono<ServerResponse>, Map<String, Object>>> pair : chain) {
             if ((unsatisfied = pair.getT2().extract(pair.getT1(), properties)).isPresent()) {
                 break;
             }
@@ -39,7 +39,7 @@ public class UnsatisfiedBodyExtractorChain implements
 
     @SuppressWarnings("unchecked")
     public Mono<ServerResponse> extractOrOther(Map<?, ?> properties, Supplier<Mono<ServerResponse>> other) {
-        return extract((Map<String, ?>) properties).orElseGet(other);
+        return extract((Map<String, Object>) properties).orElseGet(other);
     }
 
     @Override

@@ -24,6 +24,10 @@ public final class ResponseToClient {
         return assemblyResponse(ServerResponse.ok(), success(value));
     }
 
+    public static Mono<ServerResponse> failWithMessage(String message) {
+        return assemblyResponse(ServerResponse.ok(), error(message));
+    }
+
     private static Mono<ServerResponse> assemblyResponse(ServerResponse.BodyBuilder body, ResponseFormat response) {
         return body.body(BodyInserters.fromValue(response));
     }
@@ -83,8 +87,9 @@ public final class ResponseToClient {
      * @return 回复对象
      */
     public static ResponseFormat error(String msg) {
-        return prepare(ResponseCode.CommonResponseCode.ERROR)
-                .build();
+        return prepare(ResponseCode.CommonResponseCode.ERROR).
+                msg(msg).
+                build();
     }
 
     private static ResponseFormat.ResponseFormatBuilder prepare(ResponseCode responseCode) {

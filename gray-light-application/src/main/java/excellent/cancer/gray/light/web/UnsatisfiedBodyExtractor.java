@@ -11,7 +11,6 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface UnsatisfiedBodyExtractor extends
-        UnsatisfiedPropertyExtractor<Mono<ServerResponse>, Map<String, ?>> {
-
+        UnsatisfiedPropertyExtractor<Mono<ServerResponse>, Map<String, Object>> {
 
 }

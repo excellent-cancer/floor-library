@@ -23,6 +23,8 @@ public class DocumentCatalog {
      */
     private Long id;
 
+    private String uid;
+
     /**
      * 隶属项目ID：例如项目Id等等
      */
@@ -36,7 +38,7 @@ public class DocumentCatalog {
     /**
      * 父目录Id
      */
-    private Long parentId;
+    private String parentUid;
 
     /**
      * 创建日期
@@ -77,19 +79,19 @@ public class DocumentCatalog {
      * 返回一个此时新建的builder，即创建时间和最近更新时间是此时，特别地，输出参数包含了
      * 所有没有默认参数的成员变量，即这么函数生成的DocumentCatalog不会报错
      *
-     * @param parentId  父目录Id
+     * @param parentUid 父目录Id
      * @param projectId 隶属组的ID：例如项目Id等等
      * @return 返回一个此时新建的builder
      */
-    public static DocumentCatalogBuilder builderOnCreateWithNoDefault(Long parentId, Long projectId) {
+    public static DocumentCatalogBuilder builderOnCreateWithNoDefault(String parentUid, Long projectId) {
         return builderOnCreate().
-                parentId(parentId).
+                parentUid(parentUid).
                 projectId(projectId);
     }
 
     /**
-     * 默认将根目录的{@link DocumentCatalog#parentId}设为0
+     * 默认将根目录的{@link DocumentCatalog#parentUid}设为0
      */
-    public static final Long ROOT = 0L;
+    public static final String ROOT = "*";
 
 }
