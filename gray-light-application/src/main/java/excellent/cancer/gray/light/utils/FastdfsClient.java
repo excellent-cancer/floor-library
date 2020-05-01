@@ -12,6 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+/**
+ * @author XyParaCrim
+ */
 @Getter
 public class FastdfsClient implements AutoCloseable {
 

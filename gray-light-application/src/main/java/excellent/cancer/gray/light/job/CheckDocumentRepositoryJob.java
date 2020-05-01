@@ -1,8 +1,11 @@
 package excellent.cancer.gray.light.job;
 
+import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
+import excellent.cancer.gray.light.document.RepositoryOptions;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentStatus;
 import excellent.cancer.gray.light.service.DocumentRelationService;
+import lombok.SneakyThrows;
 import lombok.extern.apachecommons.CommonsLog;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
@@ -18,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 
 /**
  * 检查文档仓库是否更新，自动拉取最新版本，并存储到数据库
@@ -38,6 +42,9 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
 
     private DocumentRelationService documentService;
 
+    private DocumentRepositoryDatabase repositoryDatabase;
+
+    @SneakyThrows
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         List<Document> syncDocument = documentService.allSyncDocument();
@@ -45,20 +52,34 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
 
         while (iterator.hasNext()) {
             Document document = iterator.next();
-            File gitDir = documentRepositories.resolve(document.getId().toString()).toFile();
-            try (Git git = Git.open(gitDir)) {
-                fetchRemote(git);
+            RepositoryOptions options = repositoryDatabase.getRepositoryOptions(document.getId());
+            Optional<Long> stamp = options.getReadLockWithTimeout();
 
-                // 比较版本差异
-                if (hasUpdate(git)) {
-                    updateLocal(git);
-                    document.setStatus(DocumentStatus.NEW);
-                } else {
-                    iterator.remove();
+            if (stamp.isPresent()) {
+
+                try {
+                    File gitDir = options.getLocation().toFile();
+
+                    try (Git git = Git.open(gitDir)) {
+                        fetchRemote(git);
+
+                        // 比较版本差异
+                        if (hasUpdate(git)) {
+                            updateLocal(git);
+                            document.setStatus(DocumentStatus.NEW);
+                        } else {
+                            iterator.remove();
+                        }
+
+                    } catch (GitAPIException | IOException e) {
+                        log.error("Unable to check document repository updates: " + document, e);
+                        iterator.remove();
+                    }
+                } finally {
+                    options.unlockWrite(stamp.get());
                 }
 
-            } catch (GitAPIException | IOException e) {
-                log.error("Unable to check document repository updates: " + document, e);
+            } else {
                 iterator.remove();
             }
         }
