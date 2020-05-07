@@ -19,7 +19,6 @@ import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import reactor.util.function.Tuple2;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -31,15 +30,15 @@ import java.util.stream.Collectors;
  * @author XyParaCrim
  */
 @CommonsLog
-@SuppressWarnings("unused")
 public class UploadDocumentRepositoryJob extends QuartzJobBean {
 
+    @SuppressWarnings("unused")
     private DocumentRelationService documentService;
 
+    @SuppressWarnings("unused")
     private TrackerClient trackerClient;
 
-    private Path documentRepositories;
-
+    @SuppressWarnings("unused")
     private DocumentRepositoryDatabase repositoryDatabase;
 
     @SneakyThrows(InterruptedException.class)
@@ -205,10 +204,6 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
 
     // 帮助方法
 
-    private File getGitDir(Document document) {
-        return documentRepositories.resolve(document.getId().toString()).toFile();
-    }
-
     private void processFailedError(Document document, ListIterator<?> iterator, String message, Throwable e) {
         processFailedError(document, message, e);
         iterator.remove();
@@ -216,13 +211,13 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
 
     private void processFailedError(Document document, ListIterator<?> iterator, String message) {
         log.error(message + ": " + document);
-        document.setStatus(DocumentStatus.INVALID);
+        document.setDocumentStatus(DocumentStatus.INVALID);
         iterator.remove();
     }
 
     private void processFailedError(Document document, String message, Throwable e) {
         log.error(message + ": " + document, e);
-        document.setStatus(DocumentStatus.INVALID);
+        document.setDocumentStatus(DocumentStatus.INVALID);
     }
 
     private void processUploadUnfinishedChapter(List<Tuple2<DocumentChapter, Path>> chapters, int cursor) {

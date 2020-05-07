@@ -1,8 +1,6 @@
 package excellent.cancer.gray.light.service;
 
-import excellent.cancer.gray.light.jdbc.repositories.DocumentRepository;
-import excellent.cancer.gray.light.jdbc.repositories.OwnerProjectRepository;
-import excellent.cancer.gray.light.jdbc.repositories.OwnerRepository;
+import excellent.cancer.gray.light.jdbc.repositories.*;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
  * @author XyParaCrim
  */
 @Service
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class RepositoryService {
 
     @NonNull
@@ -25,27 +22,43 @@ public class RepositoryService {
     @NonNull
     private final DocumentRepository documentRepository;
 
+    @NonNull
+    private final DocumentCatalogsRepository catalogsRepository;
 
+    @NonNull
+    private final DocumentChapterRepository chapterRepository;
+
+    @Autowired
     public RepositoryService(@NonNull OwnerRepository ownerRepository,
                              @NonNull OwnerProjectRepository ownerProjectRepository,
-                             @NonNull DocumentRepository documentRepository) {
+                             @NonNull DocumentRepository documentRepository,
+                             @NonNull DocumentCatalogsRepository catalogsRepository,
+                             @NonNull DocumentChapterRepository chapterRepository) {
         this.ownerRepository = ownerRepository;
         this.ownerProjectRepository = ownerProjectRepository;
         this.documentRepository = documentRepository;
+        this.catalogsRepository = catalogsRepository;
+        this.chapterRepository = chapterRepository;
     }
-
-    @Autowired
 
 
     public OwnerRepository ofOwner() {
         return ownerRepository;
     }
 
-    public OwnerProjectRepository ofOwnerProject() {
+    public OwnerProjectRepository ownerProject() {
         return ownerProjectRepository;
     }
 
     public DocumentRepository document() {
         return documentRepository;
+    }
+
+    public DocumentCatalogsRepository documentCatalogs() {
+        return catalogsRepository;
+    }
+
+    public DocumentChapterRepository documentChapter() {
+        return chapterRepository;
     }
 }

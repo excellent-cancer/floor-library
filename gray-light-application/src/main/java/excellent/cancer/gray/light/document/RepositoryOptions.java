@@ -17,6 +17,10 @@ import java.util.concurrent.locks.StampedLock;
  */
 public class RepositoryOptions {
 
+    private static final long DEFAULT_TIMEOUT = 30L;
+
+    private static final TimeUnit DEFAULT_UNIT = TimeUnit.SECONDS;
+
     @Getter
     private final Path location;
 
@@ -37,12 +41,12 @@ public class RepositoryOptions {
     }
 
     public Optional<Long> getWriteLockWithTimeout() throws InterruptedException {
-        long stamp = stampedLock.tryWriteLock(30L, TimeUnit.SECONDS);
+        long stamp = stampedLock.tryWriteLock(DEFAULT_TIMEOUT, DEFAULT_UNIT);
         return stampToOptional(stamp);
     }
 
     public Optional<Long> getReadLockWithTimeout() throws InterruptedException {
-        long stamp = stampedLock.tryReadLock(30L, TimeUnit.SECONDS);
+        long stamp = stampedLock.tryReadLock(DEFAULT_TIMEOUT, DEFAULT_UNIT);
         return stampToOptional(stamp);
     }
 

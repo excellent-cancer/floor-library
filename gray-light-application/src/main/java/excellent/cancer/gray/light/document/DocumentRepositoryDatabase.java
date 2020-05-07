@@ -45,7 +45,7 @@ public class DocumentRepositoryDatabase {
     // 导出部分
 
     public RepositoryOptions getRepositoryOptions(@NonNull Object id) {
-        return options.computeIfAbsent(id.toString(), RepositoryOptions::new);
+        return options.computeIfAbsent(id.toString(), k -> new RepositoryOptions(dir.toPath(), k));
     }
 
     private void addShutdownHook() {

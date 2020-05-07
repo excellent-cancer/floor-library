@@ -1,6 +1,7 @@
 package excellent.cancer.gray.light.jdbc.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
@@ -14,6 +15,7 @@ import java.util.Date;
 @Data
 @Alias("Document")
 @AllArgsConstructor
+@Builder
 public class Document {
 
     private Long id;
@@ -32,6 +34,7 @@ public class Document {
 
     private String version;
 
-    private DocumentStatus status;
+    @Builder.Default
+    private DocumentStatus documentStatus = DocumentStatus.EMPTY;
 
 }

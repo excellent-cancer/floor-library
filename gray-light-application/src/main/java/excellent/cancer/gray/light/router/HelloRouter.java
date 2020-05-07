@@ -16,12 +16,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 @Configuration
 public class HelloRouter {
 
-/*    @Bean
-    public RouterFunction<ServerResponse> hello(HelloHandler helloHandler) {
-        return RouterFunctions.
-                route(RequestPredicates.GET("/"), helloHandler::hello);
-    }*/
-
     @Bean
     public RouterFunction<ServerResponse> helloWhat(OwnerFavoritesHandler helloHandler) {
         return RouterFunctions.
@@ -33,6 +27,5 @@ public class HelloRouter {
         return RouterFunctions.
                 route(RequestPredicates.POST("/add-document"), helloHandler::addFavoriteDocument);
     }
-
 
 }

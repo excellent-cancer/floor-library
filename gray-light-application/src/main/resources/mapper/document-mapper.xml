@@ -3,8 +3,13 @@
 <mapper namespace="excellent.cancer.gray.light.jdbc.repositories.DocumentRepository">
 
     <!-- ***************** -->
-    <!-- **** Catalog **** -->
+    <!-- **** Document *** -->
     <!-- ***************** -->
+
+    <!-- Common SQL -->
+
+    <sql id="docs_columns">(project_id, title, description, created_date, updated_date, repo_url, version,
+                            document_status)</sql>
 
     <!-- Select SQL -->
 
@@ -12,7 +17,13 @@
             resultType="Document">
         select *
         from document
-        where status = #{status}
+        where document_status = #{status}
+    </select>
+
+    <select id="findAll"
+            resultType="Document">
+        select *
+        from document
     </select>
 
     <!-- Insert SQL -->
@@ -21,99 +32,53 @@
             parameterType="Document"
             useGeneratedKeys="true"
             keyProperty="id">
-        insert into document (project_id, title, description, repo_url)
-        select #{projectId}, #{title}, #{description}, #{repoUrl}
+        insert into document (project_id, title, description, created_date, updated_date, repo_url, version,
+        document_status)
+        select #{projectId},
+        #{title},
+        #{description},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        #{repoUrl},
+        #{version},
+        #{documentStatus}
         from owner_project as p
         where p.id = #{projectId}
     </insert>
 
-    <!-- ***************** -->
-    <!-- **** Catalog **** -->
-    <!-- ***************** -->
-
-    <!-- Select SQL -->
-
-    <select id="findCatalogById"
-            resultType="DocumentCatalog">
-        select *
-        from document_catalog
-        where id = #{id}
-        limit 1
-    </select>
-
-    <!-- Insert SQL -->
-
-    <insert id="saveCatalog"
-            parameterType="DocumentCatalog"
+    <insert id="batchSave"
+            parameterType="java.util.List"
             useGeneratedKeys="true"
             keyProperty="id">
-        insert into document_catalog (project_id, parent_id, document_id, created_date, updated_date, title, folder)
-        values (#{projectId}, #{parentUid}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder})
-    </insert>
-
-    <insert id="saveCatalogIfMatchedProject"
-            parameterType="DocumentCatalog"
-            useGeneratedKeys="true"
-            keyProperty="id">
-        insert into document_catalog (project_id, document_id, parent_id, created_date, updated_date, title, folder)
-        select #{projectId}, #{parentUid}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
-        from document as d
-        where d.id = #{documentId}
-    </insert>
-
-    <insert id="saveCatalogIfMatchedParentAndExcludeFolder"
-            parameterType="DocumentCatalog"
-            useGeneratedKeys="true"
-            keyProperty="id">
-        insert into document_catalog (project_id, parent_id, document_id, created_date, updated_date, title, folder)
-        select #{projectId}, #{parentUid}, #{documentId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{folder}
-        from document_catalog as c
-        where c.id = #{parentUid}
-          and c.folder != #{exclude}
+        insert into document
+        <include refid="docs_columns">
+        </include>
+        values(
+        <foreach collection="documents" index="index" item="docs" separator="),(">
+            #{docs.projectId},
+            #{docs.title},
+            #{docs.description},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP,
+            #{docs.repoUrl},
+            #{docs.version},
+            #{docs.documentStatus}
+        </foreach>
+        )
     </insert>
 
     <!-- Update SQL -->
 
-    <update id="updateCatalogFolder">
-        update document_catalog
-        set folder = #{folder}
-        where uid = #{uid}
-        limit 1
+    <update id="batchUpdateDocumentStatus"
+            parameterType="java.util.List">
+        update document d
+        join(
+        <foreach collection="documents" index="index" item="docs" separator=" UNION ">
+            select #{docs.id} as id, #{docs.documentStatus} as document_status
+        </foreach>
+        ) b using(id)
+        set d.document_status = b.document_status
     </update>
 
-    <!-- ***************** -->
-    <!-- **** Chapter **** -->
-    <!-- ***************** -->
-
-    <!--  Select SQL  -->
-
-    <select id="findChapterAll" resultType="DocumentChapter">
-        select *
-        from document_chapter
-    </select>
-
-    <!-- Insert SQL -->
-
-    <insert id="saveChapter"
-            parameterType="DocumentChapter"
-            useGeneratedKeys="true"
-            keyProperty="id">
-        insert into document_chapter (created_date, updated_date, title, isEmpty, download_link, upload_link,
-                                      catalog_id)
-        values (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{isEmpty}, #{downloadLink}, #{uploadLink},
-                #{catalogUid})
-    </insert>
-
-    <insert id="saveChapterIfMatchedDocumentCatalogAndExcludeFolder"
-            parameterType="DocumentChapter"
-            useGeneratedKeys="true"
-            keyProperty="id">
-        insert into document_chapter (created_date, updated_date, title, isEmpty, download_link, upload_link,
-                                      catalog_id)
-        select CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{isEmpty}, #{downloadLink}, #{uploadLink}, #{catalogUid}
-        from document_catalog as c
-        where c.id = #{catalogUid}
-          and c.folder != #{exclude}
-    </insert>
 
 </mapper>

@@ -1,6 +1,8 @@
 package excellent.cancer.gray.light.service;
 
 import excellent.cancer.gray.light.jdbc.entities.*;
+import excellent.cancer.gray.light.jdbc.repositories.DocumentCatalogsRepository;
+import excellent.cancer.gray.light.jdbc.repositories.DocumentChapterRepository;
 import excellent.cancer.gray.light.jdbc.repositories.DocumentRepository;
 import lombok.NonNull;
 import lombok.extern.apachecommons.CommonsLog;
@@ -18,7 +20,6 @@ import java.util.List;
 @Service
 @CommonsLog
 public class DocumentRelationService {
-
 
     /**
      * 为项目添加新文档
@@ -39,7 +40,7 @@ public class DocumentRelationService {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean createRootCatalogForDocument(DocumentCatalog rootCatalog) {
-        return documentRepository.saveCatalogIfMatchedProject(rootCatalog);
+        return catalogsRepository.saveIfMatchedProject(rootCatalog);
     }
 
     /**
@@ -50,8 +51,8 @@ public class DocumentRelationService {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean addCatalogForDocument(DocumentCatalog catalog) {
-        return documentRepository.saveCatalogIfMatchedParentAndExcludeFolder(catalog, DocumentCatalogFolder.CHAPTER) &&
-                documentRepository.updateCatalogFolder(catalog.getParentUid(), DocumentCatalogFolder.CATALOG);
+        return catalogsRepository.saveIfMatchedParentAndExcludeFolder(catalog, DocumentCatalogFolder.CHAPTER) &&
+                catalogsRepository.updateByFolder(catalog.getParentUid(), DocumentCatalogFolder.CATALOG);
     }
 
     /**
@@ -62,27 +63,69 @@ public class DocumentRelationService {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean addDocumentForCatalog(DocumentChapter documentChapter) {
-        return documentRepository.saveChapterIfMatchedDocumentCatalogAndExcludeFolder(documentChapter, DocumentCatalogFolder.CATALOG) &&
-                documentRepository.updateCatalogFolder(documentChapter.getCatalogUid(), DocumentCatalogFolder.CHAPTER);
+        return chapterRepository.saveIfMatchedDocumentCatalogAndExcludeFolder(documentChapter, DocumentCatalogFolder.CATALOG) &&
+                catalogsRepository.updateByFolder(documentChapter.getCatalogUid(), DocumentCatalogFolder.CHAPTER);
     }
 
+    /**
+     * 获取所有状态为{@link DocumentStatus#SYNC}的文档
+     *
+     * @return 返回已同步的文档
+     */
     @Transactional(rollbackFor = Exception.class, readOnly = true)
     public List<Document> allSyncDocument() {
         return documentRepository.findByStatus(DocumentStatus.SYNC);
     }
 
+    /**
+     * 获取所有状态为{@link DocumentStatus#EMPTY}的文档
+     *
+     * @return 返回空文档
+     */
     @Transactional(rollbackFor = Exception.class, readOnly = true)
     public List<Document> allEmptyDocument() {
         return documentRepository.findByStatus(DocumentStatus.EMPTY);
     }
 
+    /**
+     * 批量更新文档，以及文档包含的目录、文章
+     *
+     * @param documents 文档
+     * @param catalogs  目录
+     * @param chapters  文章
+     * @return 是否更新成功
+     */
     @Transactional(rollbackFor = Exception.class)
     public boolean batchUpdateDocumentRepositories(List<Document> documents, List<DocumentCatalog> catalogs, List<DocumentChapter> chapters) {
-        return documentRepository.batchSave(documents) &&
-                documentRepository.batchSaveCatalog(catalogs) &&
-                documentRepository.batchSaveChapter(chapters);
+        if (documents.isEmpty()) {
+            return true;
+        }
+
+        if (!documentRepository.batchSave(documents)) {
+            return false;
+        }
+
+        if (catalogs.isEmpty()) {
+            return true;
+        }
+
+        if (!catalogsRepository.batchSave(catalogs)) {
+            return false;
+        }
+
+        if (chapters.isEmpty()) {
+            return true;
+        }
+
+        return chapterRepository.batchSave(chapters);
     }
 
+    /**
+     * 批量更新文档状态
+     *
+     * @param documents 文档
+     * @return 是否更新成功
+     */
     @Transactional(rollbackFor = Exception.class)
     public boolean batchUpdateDocumentStatus(List<Document> documents) {
         return documentRepository.batchUpdateDocumentStatus(documents);
@@ -90,8 +133,14 @@ public class DocumentRelationService {
 
     private final DocumentRepository documentRepository;
 
+    private final DocumentCatalogsRepository catalogsRepository;
+
+    private final DocumentChapterRepository chapterRepository;
+
     @Autowired
     public DocumentRelationService(@NonNull RepositoryService repositoryService) {
         this.documentRepository = repositoryService.document();
+        this.catalogsRepository = repositoryService.documentCatalogs();
+        this.chapterRepository = repositoryService.documentChapter();
     }
 }

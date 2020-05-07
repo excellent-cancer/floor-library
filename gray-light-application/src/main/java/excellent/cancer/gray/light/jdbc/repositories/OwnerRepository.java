@@ -13,6 +13,7 @@ import java.util.List;
 @Mapper
 public interface OwnerRepository {
 
+
     List<Owner> findAll();
 
     boolean existsById(long id);

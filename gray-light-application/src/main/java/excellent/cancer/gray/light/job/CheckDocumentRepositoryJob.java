@@ -18,7 +18,6 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
@@ -29,7 +28,6 @@ import java.util.Optional;
  * @author XyParaCrim
  */
 @CommonsLog
-@SuppressWarnings("unused")
 public class CheckDocumentRepositoryJob extends QuartzJobBean {
 
     // 默认使用git ref名
@@ -38,10 +36,10 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
 
     private static final String LOCAL_REF = "refs/heads/master";
 
-    private Path documentRepositories;
-
+    @SuppressWarnings("unused")
     private DocumentRelationService documentService;
 
+    @SuppressWarnings("unused")
     private DocumentRepositoryDatabase repositoryDatabase;
 
     @SneakyThrows
@@ -66,7 +64,7 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
                         // 比较版本差异
                         if (hasUpdate(git)) {
                             updateLocal(git);
-                            document.setStatus(DocumentStatus.NEW);
+                            document.setDocumentStatus(DocumentStatus.NEW);
                         } else {
                             iterator.remove();
                         }

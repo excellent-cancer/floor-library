@@ -20,6 +20,7 @@ excellent:
     jdbc:
       enabled: false
     running:
+      enabled: false
       document-repositories: /Users/yanjiaxun/document
 
 logging:
