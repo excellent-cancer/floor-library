@@ -1,7 +1,9 @@
 package excellent.cancer.gray.light.document;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.apachecommons.CommonsLog;
+import perishing.constraint.io.FileSupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,8 @@ public class DocumentRepositoryDatabase {
 
     private static final int REPOSITORIES_COUNT = 2 << COUNT_BIT;
 
-    private final File dir;
+    @Getter
+    private final File location;
 
     private final boolean requireRemove;
 
@@ -32,28 +35,31 @@ public class DocumentRepositoryDatabase {
 
     public DocumentRepositoryDatabase(String path, boolean requireRemove) throws IOException {
         this.requireRemove = requireRemove;
-        this.dir = checkOrCreateTemp(Paths.get(path));
+        this.location = checkOrCreateTemp(Paths.get(path));
         initSemaphores();
         addShutdownHook();
     }
 
     private void initSemaphores() throws IOException {
-        Files.walk(this.dir.toPath()).
+        Files.walk(this.location.toPath()).
                 forEach(cellPath -> options.put(cellPath.getFileName().toString(), new RepositoryOptions(cellPath)));
     }
 
     // 导出部分
 
     public RepositoryOptions getRepositoryOptions(@NonNull Object id) {
-        return options.computeIfAbsent(id.toString(), k -> new RepositoryOptions(dir.toPath(), k));
+        return options.computeIfAbsent(id.toString(), k -> new RepositoryOptions(location.toPath(), k));
     }
 
     private void addShutdownHook() {
         if (requireRemove) {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                log.debug("delete document repository database...");
                 try {
-                    Files.delete(dir.toPath());
-                } catch (IOException ignored) {
+                    FileSupport.deleteFile(location, true);
+                    log.debug("delete document repository database - success");
+                } catch (IOException e) {
+                    log.error("delete document repository database - failed", e);
                 }
             }));
         }
@@ -76,7 +82,7 @@ public class DocumentRepositoryDatabase {
     }
 
     private File repositoryLocation(String key) {
-        return new File(dir, key);
+        return new File(location, key);
     }
 
 }

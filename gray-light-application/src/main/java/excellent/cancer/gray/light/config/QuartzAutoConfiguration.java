@@ -22,7 +22,9 @@ public class QuartzAutoConfiguration {
     @Bean
     public Trigger trigger() {
         SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
-                simpleSchedule().withIntervalInMinutes(1).repeatForever();
+                simpleSchedule().
+                withIntervalInMinutes(1).
+                repeatForever();
 
         return TriggerBuilder.newTrigger().forJob(testJobDetail()).withSchedule(scheduleBuilder).build();
     }
@@ -34,7 +36,7 @@ public class QuartzAutoConfiguration {
         private String name;
 
         @Override
-        protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+        protected void executeInternal(JobExecutionContext context) {
             log.error("执行任务");
             log.error(name);
         }

@@ -71,6 +71,8 @@
 
     <update id="batchUpdateDocumentStatus"
             parameterType="java.util.List">
+        # noinspection SqlWithoutWhere
+
         update document d
         join(
         <foreach collection="documents" index="index" item="docs" separator=" UNION ">
@@ -79,6 +81,5 @@
         ) b using(id)
         set d.document_status = b.document_status
     </update>
-
 
 </mapper>

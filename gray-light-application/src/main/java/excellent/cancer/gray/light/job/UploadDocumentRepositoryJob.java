@@ -41,8 +41,8 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
     @SuppressWarnings("unused")
     private DocumentRepositoryDatabase repositoryDatabase;
 
-    @SneakyThrows(InterruptedException.class)
     @Override
+    @SneakyThrows(InterruptedException.class)
     protected void executeInternal(JobExecutionContext context) {
         // 克隆远程仓库到本地
         List<Document> emptyDocument = documentService.allEmptyDocument();

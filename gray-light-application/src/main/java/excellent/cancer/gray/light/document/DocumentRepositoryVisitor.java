@@ -47,12 +47,15 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
             return FileVisitResult.SKIP_SUBTREE;
         }
 
+        String parentUid = parentUid(dir);
+        String title = parentUid.equals(DocumentCatalog.ROOT) ? document.getTitle() : name;
+
         DocumentCatalog catalog = DocumentCatalog.builder().
-                title(name).
+                title(title).
                 folder(DocumentCatalogFolder.EMPTY).
                 documentId(document.getId()).
                 projectId(document.getProjectId()).
-                parentUid(parentUid(dir)).
+                parentUid(parentUid).
                 uid(UUID.randomUUID().toString()).
                 build();
 
@@ -112,6 +115,12 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
 
     private static String filename(Path path) {
         return path.getFileName().toString();
+    }
+
+    public static DocumentRepositoryVisitor failedVisitor(Document document, Throwable e) {
+        DocumentRepositoryVisitor visitor = new DocumentRepositoryVisitor(document);
+        visitor.failed = e;
+        return visitor;
     }
 
 }

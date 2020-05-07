@@ -34,6 +34,12 @@
                 <version>${perishing.constraint.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>perishing-constraint-io</artifactId>
+                <version>${perishing.constraint.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

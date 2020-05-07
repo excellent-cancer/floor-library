@@ -76,6 +76,11 @@
             <artifactId>perishing-constraint-web</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>perishing-constraint-io</artifactId>
+        </dependency>
+
         <!-- 文件拉去 -->
 
         <dependency>
