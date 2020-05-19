@@ -42,7 +42,7 @@ public class RepositoryService {
     }
 
 
-    public OwnerRepository ofOwner() {
+    public OwnerRepository owner() {
         return ownerRepository;
     }
 

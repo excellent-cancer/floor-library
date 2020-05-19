@@ -21,13 +21,13 @@ public class DocumentBuilder {
      * @param properties 属性值
      * @return 文档实体的构建器
      */
-    public static DocumentBuilder buildNecessaryProperties(Map<?, ?> properties) {
-        return builder().
+    public static Document.DocumentBuilder buildNecessaryProperties(Map<?, ?> properties) {
+        return Document.builder().
                 title((String) properties.get("title")).
                 description((String) properties.get("description")).
                 repoUrl((String) properties.get("repoUrl")).
                 projectId((Long) properties.get("projectId")).
-                status(DocumentStatus.EMPTY);
+                documentStatus(DocumentStatus.EMPTY);
     }
 
     // 机器生成的代码

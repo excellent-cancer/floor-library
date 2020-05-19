@@ -18,6 +18,13 @@
         limit 1
     </select>
 
+    <select id="findByDocumentId"
+            resultType="DocumentCatalog">
+        select *
+        from document_catalog
+        where document_id = #{documentId}
+    </select>
+
     <!-- Insert SQL -->
 
     <insert id="save"

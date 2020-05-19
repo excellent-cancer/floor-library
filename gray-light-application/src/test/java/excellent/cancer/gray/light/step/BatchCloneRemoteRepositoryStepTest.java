@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -60,6 +62,8 @@ public class BatchCloneRemoteRepositoryStepTest {
                                 Document.
                                         builder().
                                         id(i).
+                                        title("文档库" + new Time(new Date().getTime())).
+                                        description("情况可能不妙，但至少我们拥有彼此。").
                                         repoUrl("https://github.com/XyParaCrim/test-document.git").
                                         build()
                 ).

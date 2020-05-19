@@ -30,7 +30,7 @@ public class OwnerRepositoriesTest {
     public void verifyWhetherExecuteSqlWhenCallGetFromReference(String ownerName, String ownerOrganization) {
         Owner owner = new Owner(null, ownerName, ownerOrganization);
 
-        Assertions.assertTrue(repositoryService.ofOwner().save(owner));
+        Assertions.assertTrue(repositoryService.owner().save(owner));
         Assertions.assertNotNull(owner.getId());
     }
 
@@ -41,10 +41,10 @@ public class OwnerRepositoriesTest {
     public void verifyReturnTypeWhenCallExistsMethod(String ownerName, String ownerOrganization) {
         Owner owner = new Owner(null, ownerName, ownerOrganization);
 
-        repositoryService.ofOwner().save(owner);
+        repositoryService.owner().save(owner);
 
         Assertions.assertNotNull(owner.getId());
-        Assertions.assertTrue(repositoryService.ofOwner().existsById(owner.getId()));
-        Assertions.assertFalse(repositoryService.ofOwner().existsById(Long.MAX_VALUE));
+        Assertions.assertTrue(repositoryService.owner().existsById(owner.getId()));
+        Assertions.assertFalse(repositoryService.owner().existsById(Long.MAX_VALUE));
     }
 }

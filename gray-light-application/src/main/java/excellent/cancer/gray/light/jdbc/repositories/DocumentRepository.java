@@ -2,6 +2,7 @@ package excellent.cancer.gray.light.jdbc.repositories;
 
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentStatus;
+import excellent.cancer.gray.light.jdbc.support.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,6 +18,8 @@ public interface DocumentRepository {
 
     // query for document
 
+    boolean save(Document document);
+
     boolean saveIfMatchedProject(Document document);
 
     boolean batchSave(@Param("documents") List<Document> documents);
@@ -26,4 +29,6 @@ public interface DocumentRepository {
     List<Document> findByStatus(@Param("status") DocumentStatus status);
 
     List<Document> findAll();
+
+    List<Document> findAllByOwnerId(@Param("ownerID") Long ownerId, @Param("page") Page page);
 }

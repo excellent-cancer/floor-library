@@ -133,7 +133,7 @@ public class DocumentRelationServiceTest {
     }
 
     @Test
-    @Transactional
+    // @Transactional
     @DisplayName("批量更新文档状态")
     public void batchUpdateDocumentStatusTest() {
         DocumentStatus status = DocumentStatus.EMPTY;

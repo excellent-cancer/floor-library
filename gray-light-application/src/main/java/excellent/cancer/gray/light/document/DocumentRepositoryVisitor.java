@@ -38,7 +38,7 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
     @Getter
     private Throwable failed = null;
 
-    private final Map<Path, String> uidTable = new HashMap<>();
+    private final Map<Path, DocumentCatalog> catalogTable = new HashMap<>();
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
@@ -47,7 +47,7 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
             return FileVisitResult.SKIP_SUBTREE;
         }
 
-        String parentUid = parentUid(dir);
+        String parentUid = parentUid(dir, DocumentCatalogFolder.CATALOG);
         String title = parentUid.equals(DocumentCatalog.ROOT) ? document.getTitle() : name;
 
         DocumentCatalog catalog = DocumentCatalog.builder().
@@ -59,7 +59,7 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
                 uid(UUID.randomUUID().toString()).
                 build();
 
-        uidTable.put(dir, catalog.getUid());
+        catalogTable.put(dir, catalog);
         catalogs.add(catalog);
 
         return FileVisitResult.CONTINUE;
@@ -73,8 +73,9 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
         }
 
         DocumentChapter chapter = DocumentChapter.builder().
-                catalogUid(parentUid(file)).
-                title(name).
+                catalogUid(parentUid(file, DocumentCatalogFolder.CHAPTER)).
+                documentId(document.getId()).
+                title(trimSuffix(name)).
                 build();
 
         chapters.add(Tuples.of(chapter, file));
@@ -98,8 +99,14 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    private String parentUid(Path path) {
-        return uidTable.getOrDefault(path.getParent(), DocumentCatalog.ROOT);
+    private String parentUid(Path path, DocumentCatalogFolder folder) {
+        if (catalogTable.containsKey(path.getParent())) {
+            DocumentCatalog catalog = catalogTable.get((path.getParent()));
+            catalog.setFolder(folder);
+            return catalog.getUid();
+        } else {
+            return DocumentCatalog.ROOT;
+        }
     }
 
     // 公共帮助方法
@@ -115,6 +122,10 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
 
     private static String filename(Path path) {
         return path.getFileName().toString();
+    }
+
+    private static String trimSuffix(String filename) {
+        return filename.substring(0, filename.lastIndexOf("."));
     }
 
     public static DocumentRepositoryVisitor failedVisitor(Document document, Throwable e) {

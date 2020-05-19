@@ -44,13 +44,20 @@ public class DocumentChapter {
     private String catalogUid;
 
     /**
+     * 文档Id
+     */
+    private Long documentId;
+
+    /**
      * 一组对于具体资源的属性
      */
     @Builder.Default
     private boolean isEmpty = true;
 
-    private String downloadLink;
+    @Builder.Default
+    private String downloadLink = "";
 
-    private String uploadLink;
+    @Builder.Default
+    private String uploadLink = "";
 
 }

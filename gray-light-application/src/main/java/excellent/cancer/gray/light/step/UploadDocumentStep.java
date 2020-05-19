@@ -3,6 +3,7 @@ package excellent.cancer.gray.light.step;
 import excellent.cancer.gray.light.document.DocumentRepositoryVisitor;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentChapter;
+import excellent.cancer.gray.light.jdbc.entities.DocumentStatus;
 import excellent.cancer.gray.light.utils.FastdfsClient;
 import lombok.Getter;
 import lombok.NonNull;
@@ -94,8 +95,10 @@ public class UploadDocumentStep {
             );
             if (failed.get()) {
                 Document uploadFailedDoc = visitor.getDocument();
+                uploadFailedDoc.setDocumentStatus(DocumentStatus.INVALID);
                 log.error("Failed to upload document repository: {}", uploadFailedDoc);
             } else {
+                visitor.getDocument().setDocumentStatus(DocumentStatus.SYNC);
                 visitors.add(visitor);
             }
         }

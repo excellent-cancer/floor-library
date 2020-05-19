@@ -15,6 +15,8 @@ public interface DocumentCatalogsRepository {
 
     Optional<DocumentCatalog> findById(@Param("id") Long id);
 
+    List<DocumentCatalog> findByDocumentId(@Param("documentId") long documentId);
+
     boolean batchSave(@Param("catalogs") List<DocumentCatalog> catalogs);
 
     boolean saveIfMatchedProject(DocumentCatalog documentCatalog);

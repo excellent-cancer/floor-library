@@ -6,13 +6,20 @@
     <!-- **** Chapter **** -->
     <!-- ***************** -->
 
-    <sql id="columns">(created_date, updated_date, title, catalog_uid, is_empty, download_link, upload_link)</sql>
+    <sql id="columns">(created_date, updated_date, title, catalog_uid, document_id, is_empty, download_link,
+                       upload_link)</sql>
 
     <!--  Select SQL  -->
 
     <select id="findAll" resultType="DocumentChapter">
         select *
         from document_chapter
+    </select>
+
+    <select id="findByDocumentId" resultType="DocumentChapter">
+        select *
+        from document_chapter
+        where document_id = #{documentId}
     </select>
 
     <!-- Insert SQL -->
@@ -24,7 +31,8 @@
         insert into document_chapter
         <include refid="columns">
         </include>
-        values (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{catalogUid}, #{isEmpty}, #{downloadLink},
+        values (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{catalogUid}, #{documentId}, #{isEmpty},
+        #{downloadLink},
         #{uploadLink})
     </insert>
 
@@ -35,7 +43,8 @@
         insert into document_chapter
         <include refid="columns">
         </include>
-        select CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{chapter.title}, #{chapter.catalogUid}, #{chapter.isEmpty},
+        select CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{chapter.title}, #{chapter.catalogUid}, #{chapter.documentId},
+        #{chapter.isEmpty},
         #{chapter.downloadLink}, #{chapter.uploadLink}
         from document_catalog as c
         where c.id = #{chapter.catalogUid}
@@ -55,6 +64,7 @@
             CURRENT_TIMESTAMP,
             #{item.title},
             #{item.catalogUid},
+            #{item.documentId},
             #{item.isEmpty},
             #{item.downloadLink},
             #{item.uploadLink}

@@ -24,8 +24,6 @@ create table if not exists document_catalog
     updated_date timestamp                            default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     title        varchar(32)                          default ''                not null,
     folder       enum ('EMPTY', 'CATALOG', 'CHAPTER') default 'EMPTY'           null,
-    constraint parent_uid
-        unique (parent_uid),
     constraint uid
         unique (uid)
 );
@@ -39,11 +37,10 @@ create table if not exists document_chapter
     updated_date  timestamp    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
     title         varchar(32)  default ''                not null,
     catalog_uid   varchar(64)                            not null,
+    document_id   bigint unsigned                        not null,
     is_empty      tinyint(1)   default 1                 not null,
     download_link varchar(128) default ''                not null,
-    upload_link   varchar(128) default ''                not null,
-    constraint catalog_uid
-        unique (catalog_uid)
+    upload_link   varchar(128) default ''                not null
 );
 
 create table if not exists owner

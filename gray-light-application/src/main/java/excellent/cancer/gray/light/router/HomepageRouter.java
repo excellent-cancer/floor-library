@@ -4,10 +4,13 @@ import excellent.cancer.gray.light.handler.DetailsHandler;
 import excellent.cancer.gray.light.handler.OwnerFavoritesHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
+
+import java.util.function.Predicate;
 
 /**
  * @author XyParaCrim
@@ -27,10 +30,25 @@ public class HomepageRouter {
                 favoritesHandler::addFavoriteProject);
     }
 
-
     @Bean
     public RouterFunction<ServerResponse> postFavoriteDocument(OwnerFavoritesHandler favoritesHandler) {
         return RouterFunctions.route(RequestPredicates.POST("/owner/docs/add"),
                 favoritesHandler::addFavoriteDocument);
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> getFavoriteDocumentSet(OwnerFavoritesHandler favoritesHandler) {
+        return RouterFunctions.route(RequestPredicates.GET("/owner/docs"),
+                favoritesHandler::queryFavoriteDocument);
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getFavoriteDocumentRepositoryTree(OwnerFavoritesHandler favoritesHandler) {
+        return RouterFunctions.route(
+                RequestPredicates.GET("/owner/docs/tree").
+                        and(RequestPredicates.queryParam("id", Predicate.not(StringUtils::isEmpty))),
+                favoritesHandler::queryFavoriteDocumentRepositoryTree
+        );
+    }
+
 }

@@ -9,6 +9,8 @@ import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.util.List;
 
@@ -130,6 +132,21 @@ public class DocumentRelationService {
     public boolean batchUpdateDocumentStatus(List<Document> documents) {
         return documentRepository.batchUpdateDocumentStatus(documents);
     }
+
+    /**
+     * 根据文档仓库Id，返回属于此仓库的所有目录与章节
+     *
+     * @param documentId 文档仓库ID
+     * @return 属于此仓库的所有目录与章节
+     */
+    @Transactional(readOnly = true)
+    public Tuple2<List<DocumentCatalog>, List<DocumentChapter>> documentRepositoryCatalogAndChapter(long documentId) {
+        List<DocumentCatalog> catalogs = catalogsRepository.findByDocumentId(documentId);
+        List<DocumentChapter> chapters = chapterRepository.findByDocumentId(documentId);
+
+        return Tuples.of(catalogs, chapters);
+    }
+
 
     private final DocumentRepository documentRepository;
 

@@ -26,6 +26,17 @@
         from document
     </select>
 
+    <select id="findAllByOwnerId"
+            resultType="excellent.cancer.gray.light.jdbc.entities.Document">
+        select d.*
+        from document as d
+        inner join owner_project as p
+        on p.owner_id = #{ownerID} and p.id = d.project_id
+        <if test="page != null">
+            limit #{page.from}, #{page.count}
+        </if>
+    </select>
+
     <!-- Insert SQL -->
 
     <insert id="saveIfMatchedProject"
@@ -44,6 +55,25 @@
         #{documentStatus}
         from owner_project as p
         where p.id = #{projectId}
+    </insert>
+
+    <insert id="save"
+            parameterType="Document"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document
+        <include refid="docs_columns">
+        </include>
+        values (
+        #{projectId},
+        #{title},
+        #{description},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        #{repoUrl},
+        #{version},
+        #{documentStatus}
+        )
     </insert>
 
     <insert id="batchSave"

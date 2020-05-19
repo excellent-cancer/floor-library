@@ -1,10 +1,13 @@
 package excellent.cancer.gray.light.service;
 
 import excellent.cancer.gray.light.error.UniqueOwnerException;
+import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.Owner;
 import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
+import excellent.cancer.gray.light.jdbc.repositories.DocumentRepository;
 import excellent.cancer.gray.light.jdbc.repositories.OwnerProjectRepository;
 import excellent.cancer.gray.light.jdbc.repositories.OwnerRepository;
+import excellent.cancer.gray.light.jdbc.support.Page;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,17 +32,19 @@ public final class SuperOwnerService {
 
     private final OwnerProjectRepository projectRepository;
 
+    private final DocumentRepository documentRepository;
+
     /**
      * 不仅在构造函数中设置必要的参数，而且会查询出唯一的owner，并且将其设置到全局变量中
      *
-     * @param ownerRepository   owner jdbc repository
-     * @param projectRepository project jdbc repository
+     * @param repositoryService 仓库服务
      * @throws UniqueOwnerException 如果不能够成功初始化唯一owner
      */
     @Autowired
-    public SuperOwnerService(OwnerRepository ownerRepository, OwnerProjectRepository projectRepository) {
-        this.ownerRepository = ownerRepository;
-        this.projectRepository = projectRepository;
+    public SuperOwnerService(RepositoryService repositoryService) {
+        this.ownerRepository = repositoryService.owner();
+        this.projectRepository = repositoryService.ownerProject();
+        this.documentRepository = repositoryService.document();
 
         // 初始化唯一超级所属者
         this.owner = UniqueOwnerException.extractOwnerRequireUniqueOwner(asList(ownerRepository.findAll()));
@@ -90,13 +95,22 @@ public final class SuperOwnerService {
     }
 
     /**
-     * 根据Id查询项目，只在查询到匹配项目时发布订阅
+     * 返回超级所属者的所有文档
      *
-     * @param project 请求项目
-     * @return publisher of OwnerProject which will publish on matched
+     * @return 返回超级所属者的所有文档
      */
-/*    public Mono<OwnerProject> matchedProject(OwnerProject project) {
-        return project(project).flatMap(flatMapperIfPresent(project));
-    }*/
+    public List<Document> documents() {
+        return documentRepository.findAllByOwnerId(owner.getId(), null);
+    }
+
+    /**
+     * 返回指定数量超级所属者文档
+     *
+     * @param page 分页
+     * @return 返回超级所属者的所有文档
+     */
+    public List<Document> documents(Page page) {
+        return documentRepository.findAllByOwnerId(owner.getId(), page);
+    }
 
 }

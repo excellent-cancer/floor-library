@@ -12,6 +12,8 @@ public interface DocumentChapterRepository {
 
     List<DocumentChapter> findAll();
 
+    List<DocumentChapter> findByDocumentId(@Param("documentId") long documentId);
+
     boolean batchSave(@Param("chapters") List<DocumentChapter> chapters);
 
     boolean save(DocumentChapter documentChapter);
