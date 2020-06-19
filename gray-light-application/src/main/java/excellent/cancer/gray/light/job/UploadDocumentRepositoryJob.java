@@ -9,6 +9,7 @@ import excellent.cancer.gray.light.step.BatchCloneRemoteRepositoryStep;
 import excellent.cancer.gray.light.step.BatchUpdateDocumentRepositoriesStep;
 import excellent.cancer.gray.light.step.UploadDocumentStep;
 import excellent.cancer.gray.light.step.VisitDocumentRepositoryStep;
+import lombok.Setter;
 import lombok.extern.apachecommons.CommonsLog;
 import org.csource.fastdfs.TrackerClient;
 import org.quartz.JobExecutionContext;
@@ -24,13 +25,13 @@ import java.util.List;
 @CommonsLog
 public class UploadDocumentRepositoryJob extends QuartzJobBean {
 
-    @SuppressWarnings("unused")
+    @Setter
     private DocumentRelationService documentService;
 
-    @SuppressWarnings("unused")
+    @Setter
     private TrackerClient trackerClient;
 
-    @SuppressWarnings("unused")
+    @Setter
     private DocumentRepositoryDatabase repositoryDatabase;
 
     @Override

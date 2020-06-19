@@ -1,3 +1,12 @@
+POST http://localhost:8080/owner/projects/add
+Content-Type: application/json
+
+{
+  "name": "floor-library",
+  "description": "Floor-Library是一项摸关于索如何记录认知视角，推理认知演变的项目"
+}
+
+###
 GET http://localhost:8080/owner/docs/tree?id=141
 Accept: application/json
 
@@ -22,15 +31,17 @@ POST http://localhost:8080/add-document
 Content-Type: application/json
 
 {
-  "title": "mack document",
-  "description": "mock description",
-  "repoUrl": "https://github.com/excellent-cancer/perishing-constraint.git",
-  "projectId": "111"
+  "title": "floor-library-docs",
+  "description": "floor-library文档库",
+  "repoUrl": "https://github.com/excellent-cancer/floor-library-docs.git",
+  "projectId": "1"
 }
 
 ###
 
 GET http://127.0.0.1:8080/owner/docs?pages=1&count=10
 Content-Type: application/json
+
+
 
 

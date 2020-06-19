@@ -5,5 +5,7 @@ metadata:
 spec:
   selector:
     server: fastdfs-storage-server
+  type: LoadBalancer
   ports:
-    - port: 8080
+    - targetPort: 8080
+      port: 9528

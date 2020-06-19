@@ -16,16 +16,16 @@ excellent:
       organization: Excellent-Cancer
     fastdfs:
       properties: fastdfs.properties
-      enabled: true
+      enabled: false
     jdbc:
-      enabled: true
+      enabled: false
     running:
       enabled: true
       document-repositories: /Users/yanjiaxun/document
 
 logging:
   level:
-#    web: DEBUG
+    #    web: DEBUG
     org:
       springframework:
         jdbc:

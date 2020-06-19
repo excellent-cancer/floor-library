@@ -5,6 +5,7 @@ import excellent.cancer.gray.light.document.RepositoryOptions;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentStatus;
 import excellent.cancer.gray.light.service.DocumentRelationService;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.apachecommons.CommonsLog;
 import org.eclipse.jgit.api.Git;
@@ -13,7 +14,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.io.File;
@@ -36,15 +36,15 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
 
     private static final String LOCAL_REF = "refs/heads/master";
 
-    @SuppressWarnings("unused")
+    @Setter
     private DocumentRelationService documentService;
 
-    @SuppressWarnings("unused")
+    @Setter
     private DocumentRepositoryDatabase repositoryDatabase;
 
     @SneakyThrows
     @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+    protected void executeInternal(JobExecutionContext context) {
         List<Document> syncDocument = documentService.allSyncDocument();
         ListIterator<Document> iterator = syncDocument.listIterator();
 

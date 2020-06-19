@@ -103,7 +103,7 @@ public class DocumentRelationService {
             return true;
         }
 
-        if (!documentRepository.batchSave(documents)) {
+        if (!documentRepository.batchUpdateDocumentStatus(documents)) {
             return false;
         }
 

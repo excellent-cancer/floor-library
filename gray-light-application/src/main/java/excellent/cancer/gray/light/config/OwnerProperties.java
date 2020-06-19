@@ -2,6 +2,9 @@ package excellent.cancer.gray.light.config;
 
 import lombok.Data;
 
+/**
+ * @author XyParaCrim
+ */
 @Data
 public class OwnerProperties {
 
