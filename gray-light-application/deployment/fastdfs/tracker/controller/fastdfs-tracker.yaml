@@ -1,0 +1,48 @@
+# 因为在线上动态增加一个tracker服务器，那么就需要修改storage服务器上的tacker地址配置，然后重新启动
+# 所以这里暂时将tracker服务器固定为2个
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fastdfs-tracker
+spec:
+  serviceName: fastdfs-tracker-service
+  replicas: 2
+  selector:
+    matchLabels:
+      server: fastdfs-tracker-server
+  template:
+    metadata:
+      labels:
+        server: fastdfs-tracker-server
+    spec:
+      dnsConfig:
+        searches:
+          - fastdfs-storage-service
+      containers:
+        - name: fastdfs-tracker-container
+          image: xyparacrim/fastdfs:k8s-slim
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          command: ["xpc_fdfs_tracker.sh"]
+          volumeMounts:
+            - name: etc
+              mountPath: /etc/fdfs
+            - name: data
+              mountPath: /var/fdfs/tracker
+              subPathExpr: $(POD_NAME)
+          ports:
+            - containerPort: 22122
+            - containerPort: 8080
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: fastdfs-tracker-claim
+        - name: etc
+          hostPath:
+            path: /Users/yanjiaxun/IdeaProjects/excellentcancer/floor-applications/gray-light-application/deployment/fastdfs/etc

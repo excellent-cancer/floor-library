@@ -4,10 +4,7 @@ import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
 import excellent.cancer.gray.light.document.RepositoryOptions;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import lombok.extern.apachecommons.CommonsLog;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,6 +31,7 @@ public class BatchCloneRemoteRepositoryStepTest {
 
     @Test
     @DisplayName("测试远程克隆仓库到本地")
+    @Disabled
     public void cloneRemoteTest() {
         BatchCloneRemoteRepositoryStep.Result result = cloneRepositories(database, DOCS_COUNT);
 

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-router
+spec:
+  selector:
+    matchLabels:
+      server: mysql-router
+  template:
+    metadata:
+      labels:
+        server: mysql-router
+    spec:
+      containers:
+        - name: mysql-router
+          image: mysql/mysql-router:latest
+          env:
+            - name: MYSQL_HOST
+              value: mysql-server-0.mysql-local-service
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_USER
+              value: xyparacrim
+            - name: MYSQL_PASSWORD
+              value: "110120"

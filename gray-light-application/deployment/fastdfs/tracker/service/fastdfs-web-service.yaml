@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastdfs-web-service
+spec:
+  selector:
+    server: fastdfs-storage-server
+  ports:
+    - port: 8080

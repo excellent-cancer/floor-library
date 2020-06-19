@@ -145,5 +145,4 @@ public class OwnerFavoritesHandler {
         return allRightFromValue(rootSE.getCatalogs());
     }
 
-
 }

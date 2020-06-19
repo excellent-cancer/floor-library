@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastdfs-tracker-service
+spec:
+  selector:
+    server: fastdfs-tracker-server
+  ports:
+    - port: 22122
+  clusterIP: None

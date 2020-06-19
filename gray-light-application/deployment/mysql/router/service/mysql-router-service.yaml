@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-router-service
+spec:
+  selector:
+    server: mysql-router
+  ports:
+    - name: mysql
+      port: 6446
+    - port: 64460
+      name: xx
+  type: LoadBalancer

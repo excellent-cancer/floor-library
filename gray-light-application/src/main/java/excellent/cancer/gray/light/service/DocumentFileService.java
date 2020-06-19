@@ -2,7 +2,6 @@ package excellent.cancer.gray.light.service;
 
 import lombok.extern.apachecommons.CommonsLog;
 import org.csource.fastdfs.TrackerClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +15,11 @@ import org.springframework.stereotype.Service;
 @ConditionalOnBean(TrackerClient.class)
 public class DocumentFileService {
 
-    private final TrackerClient trackerClient;
+/*    private final TrackerClient trackerClient;
 
     @Autowired
     public DocumentFileService(TrackerClient trackerClient) {
         this.trackerClient = trackerClient;
-    }
+    }*/
 
 }

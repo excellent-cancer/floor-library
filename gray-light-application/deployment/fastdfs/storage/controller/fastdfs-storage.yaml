@@ -1,0 +1,44 @@
+# 一组storage服务器，包含两个containers
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: fastdfs-storage
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      server: fastdfs-storage-server
+  template:
+    metadata:
+      labels:
+        server: fastdfs-storage-server
+    spec:
+      containers:
+        - name: fastdfs-storage-server
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: etc
+              mountPath: /etc/fdfs
+            - name: data
+              mountPath: /var/fdfs/storage
+              subPathExpr: $(POD_NAME)
+          image: xyparacrim/fastdfs:k8s-slim
+          command: ["xpc_fdfs_storage_full.sh"]
+          ports:
+            - containerPort: 23000
+            - containerPort: 8080
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: fastdfs-storage-claim
+        - name: etc
+          hostPath:
+            path: /Users/yanjiaxun/IdeaProjects/excellentcancer/floor-applications/gray-light-application/deployment/fastdfs/etc
+  serviceName: fastdfs-storage-service

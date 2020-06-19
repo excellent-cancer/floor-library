@@ -4,10 +4,7 @@ import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
 import excellent.cancer.gray.light.document.DocumentRepositoryVisitor;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import lombok.extern.apachecommons.CommonsLog;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +26,7 @@ public class BatchVisitDocumentRepositoryTest {
 
     @Test
     @DisplayName("浏览-遍历文档仓库")
+    @Disabled
     public void visitTest() {
         List<Document> documents = cloneRemoteRepositories(database, 1);
 

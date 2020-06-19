@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      server: mysql
+  serviceName: mysql-local-service
+  template:
+    metadata:
+      labels:
+        server: mysql
+    spec:
+
+      volumes:
+        - name: conf
+          emptyDir: {}
+        - name: sample-conf
+          configMap:
+            name: mysql-configmap
+        - name: mysq-persistent-data
+          persistentVolumeClaim:
+            claimName: mysql-claim
+
+      initContainers:
+        - name: init-mysql
+          image: xyparacrim/alpine:slim
+          command:
+            - bash
+            - "-c"
+            - |
+              set -ex
+              [[ `hostname` =~ -([0-9]+)$ ]] || exit 1
+              cp /etc/base.cnf /etc/mysql/conf.d/cluster.cnf
+              echo server-id=$((100 + ${BASH_REMATCH[1]})) >> /etc/mysql/conf.d/cluster.cnf
+              echo report-host=mysql-server-${BASH_REMATCH[1]}.mysql-local-service >> /etc/mysql/conf.d/cluster.cnf
+              echo report-port=3306 >> /etc/mysql/conf.d/cluster.cnf
+          volumeMounts:
+            - mountPath: /etc/mysql/conf.d
+              name: conf
+            - mountPath: /etc/base.cnf
+              name: sample-conf
+              subPath: base.cnf
+          ports:
+            - containerPort: 3306
+            - containerPort: 33061
+      containers:
+        - name: mysql-container
+          image: mysql:latest
+
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "110120"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          volumeMounts:
+            - mountPath: /etc/mysql/conf.d
+              name: conf
+            - mountPath: /var/lib/mysql
+              name: mysq-persistent-data
+              subPathExpr: $(POD_NAME)

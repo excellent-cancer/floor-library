@@ -13,10 +13,12 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import java.util.function.Predicate;
 
 /**
+ * 个人主页请求路由
+ *
  * @author XyParaCrim
  */
 @Configuration
-public class HomepageRouter {
+public class PersonalPageRouter {
 
     @Bean
     public RouterFunction<ServerResponse> getOwnerDetails(DetailsHandler detailsHandler) {
@@ -46,6 +48,15 @@ public class HomepageRouter {
     public RouterFunction<ServerResponse> getFavoriteDocumentRepositoryTree(OwnerFavoritesHandler favoritesHandler) {
         return RouterFunctions.route(
                 RequestPredicates.GET("/owner/docs/tree").
+                        and(RequestPredicates.queryParam("id", Predicate.not(StringUtils::isEmpty))),
+                favoritesHandler::queryFavoriteDocumentRepositoryTree
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getFavoriteDocumentChapterContent(OwnerFavoritesHandler favoritesHandler) {
+        return RouterFunctions.route(
+                RequestPredicates.GET("/owner/docs/chapter-content").
                         and(RequestPredicates.queryParam("id", Predicate.not(StringUtils::isEmpty))),
                 favoritesHandler::queryFavoriteDocumentRepositoryTree
         );

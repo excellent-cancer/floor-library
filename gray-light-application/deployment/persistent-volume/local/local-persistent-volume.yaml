@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-persistent-volume
+  labels:
+    type: local
+spec:
+  storageClassName: mysql-persistent-volume
+  capacity:
+    storage: 4Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /Users/yanjiaxun/Kuternetes/persistent-volume/mysql
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-storage-persistent-volume
+  labels:
+    type: local
+spec:
+  storageClassName: storage-persistent-volume
+  capacity:
+    storage: 2.5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /Users/yanjiaxun/Kuternetes/persistent-volume/fastdfs
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-tracker-persistent-volume
+  labels:
+    type: local
+spec:
+  storageClassName: tracker-persistent-volume
+  capacity:
+    storage: 1.5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /Users/yanjiaxun/Kuternetes/persistent-volume/fastdfs

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-shell
+spec:
+  volumes:
+    - name: start-script
+      configMap:
+        name: mysql-shell-start-script
+  containers:
+    - name: mysql-shell-container
+      image: xyparacrim/mysql-shell:v1
+      volumeMounts:
+        - mountPath: /root/.mysqlsh/mysqlshrc.js
+          name: start-script
+          subPath: mysqlshrc.js
+      command: ["tail", "-f", "/dev/null"]

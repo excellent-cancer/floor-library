@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * @author XyParaCrim
+ */
 public final class EntitySupport {
 
     public static <T, V> Map<T, V> entityListToMap(List<V> entities, Function<V, T> extract) {
