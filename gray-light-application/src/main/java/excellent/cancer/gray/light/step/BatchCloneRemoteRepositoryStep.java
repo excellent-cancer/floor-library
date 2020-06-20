@@ -1,27 +1,21 @@
 package excellent.cancer.gray.light.step;
 
-import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
-import excellent.cancer.gray.light.document.RepositoryOptions;
+import excellent.cancer.floor.repository.RepositoryDatabase;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentStatus;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 /**
- * 批量将克隆远程仓库到{@link DocumentRepositoryDatabase}中，默认使用{@link java.util.concurrent.ForkJoinPool}进行
+ * 批量将克隆远程仓库到{@link RepositoryDatabase}中，默认使用{@link java.util.concurrent.ForkJoinPool}进行
  * 异步更新，但是该步骤会阻塞直至所有克隆任务全部完成
  *
  * @author XyParaCrim
@@ -47,10 +41,10 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
 
 
     @NonNull
-    private final DocumentRepositoryDatabase repositoryDatabase;
+    private RepositoryDatabase<Long, Long> repositoryDatabase;
 
     /**
-     * 根据一组文档实体，克隆其文档仓库至{@link DocumentRepositoryDatabase}
+     * 根据一组文档实体，克隆其文档仓库至{@link RepositoryDatabase}
      *
      * @param docs 文档
      * @return 执行结果
@@ -123,15 +117,6 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
 
     // 帮助方法
 
-    private void cloneRemote(Path location, Document document) throws GitAPIException {
-        try (Git ignored = Git.cloneRepository().
-                setURI(document.getRepoUrl()).
-                setDirectory(location.toFile()).
-                call()) {
-            log.info("clone document repository: " + document);
-        }
-    }
-
     @Override
     protected void failed(Document document, Throwable t) {
         super.failed(document, t);
@@ -155,38 +140,11 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
 
         @Override
         public Document get() {
-            // 获取文档仓库的使用权限
-            RepositoryOptions options = repositoryDatabase.getRepositoryOptions(document.getId());
-
-            Optional<Long> stamp;
             try {
-                stamp = options.getWriteLockWithTimeout();
-            } catch (InterruptedException e) {
-                // 执行线程若中断，则立即退出
-                failed(document, new IllegalStateException("Failed to acquire document repository semaphore"));
-                return document;
-            }
-
-            if (stamp.isPresent()) {
-                // 首先清除本地旧的仓库，然后再克隆
-                try {
-                    Path location = options.cleanLocation();
-
-                    try {
-                        cloneRemote(location, document);
-                        success(document);
-                    } catch (GitAPIException e) {
-                        failed(document, e);
-                    }
-                } catch (IOException e) {
-                    failed(document, e);
-                } finally {
-                    options.unlockWrite(stamp.get());
-                }
-
-            } else {
-                Throwable illegalState = new IllegalStateException("Failed to acquire document repository semaphore");
-                failed(document, illegalState);
+                repositoryDatabase.addRepositoryOptions(document.getId(), document.getRepoUrl());
+                success(document);
+            } catch (Exception e) {
+                failed(document, e);
             }
 
             return document;

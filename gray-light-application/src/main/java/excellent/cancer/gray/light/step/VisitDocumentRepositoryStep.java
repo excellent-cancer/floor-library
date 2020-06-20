@@ -1,8 +1,8 @@
 package excellent.cancer.gray.light.step;
 
-import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
+import excellent.cancer.floor.repository.RepositoryDatabase;
+import excellent.cancer.floor.repository.RepositoryOptions;
 import excellent.cancer.gray.light.document.DocumentRepositoryVisitor;
-import excellent.cancer.gray.light.document.RepositoryOptions;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentStatus;
 import lombok.Getter;
@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
     }
 
     @NonNull
-    private final DocumentRepositoryDatabase repositoryDatabase;
+    private final RepositoryDatabase<Long, Long> repositoryDatabase;
 
     /**
      * 根据一组文档实体，遍历仓库文件
@@ -136,10 +137,10 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
         @Override
         public DocumentRepositoryVisitor get() {
             // 获取文档仓库的使用权限
-            RepositoryOptions options = repositoryDatabase.getRepositoryOptions(document.getId());
+            RepositoryOptions<Long, Long> options = repositoryDatabase.repositoryOptions(document.getId());
             Optional<Long> stamp;
             try {
-                stamp = options.getReadLockWithTimeout();
+                stamp = options.readPermission();
             } catch (InterruptedException e) {
                 // 执行线程若中断，则立即退出
                 return DocumentRepositoryVisitor.failedVisitor(document, e);
@@ -152,14 +153,16 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
             try {
                 DocumentRepositoryVisitor visitor;
                 try {
-                    visitor = options.visitRepository(document);
+                    visitor = new DocumentRepositoryVisitor(document);
+                    Files.walkFileTree(options.getLocation().toPath(), visitor);
+
                 } catch (IOException e) {
                     return DocumentRepositoryVisitor.failedVisitor(document, e);
                 }
 
                 return visitor;
             } finally {
-                options.unlockRead(stamp.get());
+                options.cancelReadPermission(stamp.get());
             }
 
         }

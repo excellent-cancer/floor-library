@@ -1,7 +1,8 @@
 package excellent.cancer.gray.light.step;
 
+import excellent.cancer.floor.repository.LocalRepositoryDatabase;
+import excellent.cancer.floor.repository.RepositoryDatabase;
 import excellent.cancer.gray.light.component.SuperOwnerRandomService;
-import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentStatus;
 import excellent.cancer.gray.light.jdbc.entities.OwnerProject;
@@ -12,6 +13,7 @@ import org.csource.fastdfs.TrackerClient;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import perishing.constraint.treasure.chest.converter.Converters;
 
 import java.io.IOException;
 import java.sql.Time;
@@ -32,17 +34,16 @@ public class BatchUpdateDocumentRepositoriesStepTest {
     @Autowired
     private RepositoryService repositoryService;
 
-    private static final String TEMP_PATH = BatchCloneRemoteRepositoryStepTest.class.getSimpleName();
-
-    private static DocumentRepositoryDatabase database;
+    private static RepositoryDatabase<Long, Long> database;
 
     @Autowired
     private TrackerClient trackerClient;
 
     @BeforeAll
     static void setupRepositoryDatabase() throws IOException {
-        database = new DocumentRepositoryDatabase(TEMP_PATH, true);
-        log.info("Repository Location: " + database.getLocation());
+        LocalRepositoryDatabase<Long> localDatabase = LocalRepositoryDatabase.ofWithTemp(Converters.LONG_STRING);
+        log.info("Repository Location: " + localDatabase.getLocation());
+        database = localDatabase;
     }
 
     @Test

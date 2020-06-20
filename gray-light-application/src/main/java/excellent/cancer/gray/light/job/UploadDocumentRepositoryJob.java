@@ -1,6 +1,6 @@
 package excellent.cancer.gray.light.job;
 
-import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
+import excellent.cancer.floor.repository.RepositoryDatabase;
 import excellent.cancer.gray.light.document.DocumentRepositoryVisitor;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import excellent.cancer.gray.light.jdbc.entities.DocumentStatus;
@@ -32,10 +32,13 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
     private TrackerClient trackerClient;
 
     @Setter
-    private DocumentRepositoryDatabase repositoryDatabase;
+    private RepositoryDatabase<Long, Long> repositoryDatabase;
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
+
+        log.error("更新任务");
+
         List<Document> emptyDocument = documentService.allEmptyDocument();
 
         // 克隆远程仓库到本地

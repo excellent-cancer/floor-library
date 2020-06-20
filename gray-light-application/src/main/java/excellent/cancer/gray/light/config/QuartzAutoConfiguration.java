@@ -1,6 +1,8 @@
 package excellent.cancer.gray.light.config;
 
-import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
+import excellent.cancer.floor.repository.LocalRepositoryDatabase;
+import excellent.cancer.floor.repository.RepositoryDatabase;
+import excellent.cancer.gray.light.job.CheckDocumentRepositoryJob;
 import excellent.cancer.gray.light.job.UploadDocumentRepositoryJob;
 import excellent.cancer.gray.light.service.DocumentRelationService;
 import lombok.extern.apachecommons.CommonsLog;
@@ -9,6 +11,7 @@ import org.quartz.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import perishing.constraint.treasure.chest.converter.Converters;
 
 import java.io.IOException;
 
@@ -21,68 +24,89 @@ import java.io.IOException;
 public class QuartzAutoConfiguration {
 
     @Bean
-    public DocumentRepositoryDatabase documentRepositoryDatabase(ExcellentCancerProperties excellentCancerProperties) throws IOException {
-        return new DocumentRepositoryDatabase(excellentCancerProperties.getRunning().getDocumentRepositories(), true);
+    public RepositoryDatabase<Long, Long> documentRepositoryDatabase(ExcellentCancerProperties excellentCancerProperties) throws IOException {
+        String documentRepositoriesLocation = excellentCancerProperties.getRunning().getDocumentRepositories();
+
+        return LocalRepositoryDatabase.of(documentRepositoriesLocation, Converters.LONG_STRING);
     }
 
-//    @Bean("checkDocumentRepositoryJobDetail")
-//    public JobDetail checkDocumentRepositoryJobDetail(DocumentRelationService documentRelationService, DocumentRepositoryDatabase documentRepositoryDatabase) {
-//        JobDataMap jobDataMap = new JobDataMap();
-//
-//        jobDataMap.put("documentService", documentRelationService);
-//        jobDataMap.put("repositoryDatabase", documentRepositoryDatabase);
-//
-//        return JobBuilder.
-//                newJob(CheckDocumentRepositoryJob.class).
-//                usingJobData(jobDataMap).
-//                storeDurably().
-//                build();
-//    }
+    @Configuration
+    public static class CheckDocumentRepositoryConfiguration {
 
+        @Bean("checkRepositoryDataMap")
+        public JobDataMap jobData(DocumentRelationService documentRelationService, RepositoryDatabase<Long, Long> documentRepositoryDatabase) {
+            JobDataMap jobDataMap = new JobDataMap();
 
-    @Bean
-    public Trigger checkDocumentRepositoryTrigger(JobDetail checkDocumentRepositoryJobDetail) {
-        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
-                simpleSchedule().
-                withIntervalInMinutes(1).
-                repeatForever();
+            jobDataMap.put("documentService", documentRelationService);
+            jobDataMap.put("repositoryDatabase", documentRepositoryDatabase);
 
-        return TriggerBuilder.
-                newTrigger().
-                forJob(checkDocumentRepositoryJobDetail).
-                withSchedule(scheduleBuilder).
-                build();
+            return jobDataMap;
+        }
+
+        @Bean("checkDocumentRepositoryJobDetail")
+        public JobDetail checkDocumentRepositoryJobDetail(JobDataMap checkRepositoryDataMap) {
+            return JobBuilder.
+                    newJob(CheckDocumentRepositoryJob.class).
+                    usingJobData(checkRepositoryDataMap).
+                    storeDurably().
+                    build();
+        }
+
+        @Bean
+        public Trigger checkDocumentRepositoryTrigger(JobDetail checkDocumentRepositoryJobDetail) {
+            SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
+                    simpleSchedule().
+                    withIntervalInMinutes(1).
+                    repeatForever();
+
+            return TriggerBuilder.
+                    newTrigger().
+                    forJob(checkDocumentRepositoryJobDetail).
+                    withSchedule(scheduleBuilder).
+                    build();
+        }
+
     }
 
-    @Bean("uploadDocumentRepositoryJobDetail")
-    public JobDetail uploadDocumentRepositoryJobDetail(DocumentRelationService documentService,
-                                                       TrackerClient trackerClient,
-                                                       DocumentRepositoryDatabase repositoryDatabase) {
-        JobDataMap jobDataMap = new JobDataMap();
+    @Configuration
+    public static class UploadDocumentRepositoryConfiguration {
 
-        jobDataMap.put("documentService", documentService);
-        jobDataMap.put("repositoryDatabase", repositoryDatabase);
-        jobDataMap.put("trackerClient", trackerClient);
+        @Bean("updateRepositoryDataMap")
+        public JobDataMap jobData(DocumentRelationService documentService,
+                                  TrackerClient trackerClient,
+                                  RepositoryDatabase<Long, Long> repositoryDatabase) {
+            JobDataMap jobDataMap = new JobDataMap();
 
-        return JobBuilder.
-                newJob(UploadDocumentRepositoryJob.class).
-                usingJobData(jobDataMap).
-                storeDurably().
-                build();
-    }
+            jobDataMap.put("documentService", documentService);
+            jobDataMap.put("repositoryDatabase", repositoryDatabase);
+            jobDataMap.put("trackerClient", trackerClient);
 
-    @Bean
-    public Trigger uploadDocumentRepositoryTrigger(JobDetail uploadDocumentRepositoryJobDetail) {
-        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
-                simpleSchedule().
-                withIntervalInMinutes(1).
-                repeatForever();
+            return jobDataMap;
+        }
 
-        return TriggerBuilder.
-                newTrigger().
-                forJob(uploadDocumentRepositoryJobDetail).
-                withSchedule(scheduleBuilder).
-                build();
+
+        @Bean("uploadDocumentRepositoryJobDetail")
+        public JobDetail uploadDocumentRepositoryJobDetail(JobDataMap updateRepositoryDataMap) {
+            return JobBuilder.
+                    newJob(UploadDocumentRepositoryJob.class).
+                    usingJobData(updateRepositoryDataMap).
+                    storeDurably().
+                    build();
+        }
+
+        @Bean
+        public Trigger uploadDocumentRepositoryTrigger(JobDetail uploadDocumentRepositoryJobDetail) {
+            SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
+                    simpleSchedule().
+                    withIntervalInMinutes(1).
+                    repeatForever();
+
+            return TriggerBuilder.
+                    newTrigger().
+                    forJob(uploadDocumentRepositoryJobDetail).
+                    withSchedule(scheduleBuilder).
+                    build();
+        }
     }
 
 }

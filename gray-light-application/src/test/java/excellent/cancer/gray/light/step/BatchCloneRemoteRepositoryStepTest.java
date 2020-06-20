@@ -1,10 +1,12 @@
 package excellent.cancer.gray.light.step;
 
-import excellent.cancer.gray.light.document.DocumentRepositoryDatabase;
-import excellent.cancer.gray.light.document.RepositoryOptions;
+import excellent.cancer.floor.repository.LocalRepositoryDatabase;
+import excellent.cancer.floor.repository.RepositoryDatabase;
+import excellent.cancer.floor.repository.RepositoryOptions;
 import excellent.cancer.gray.light.jdbc.entities.Document;
 import lombok.extern.apachecommons.CommonsLog;
 import org.junit.jupiter.api.*;
+import perishing.constraint.treasure.chest.converter.Converters;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,16 +19,15 @@ import java.util.stream.LongStream;
 @CommonsLog
 public class BatchCloneRemoteRepositoryStepTest {
 
-    private static final String TEMP_PATH = BatchCloneRemoteRepositoryStepTest.class.getSimpleName();
-
     private static final int DOCS_COUNT = 20;
 
-    private static DocumentRepositoryDatabase database;
+    private static RepositoryDatabase<Long, Long> database;
 
     @BeforeAll
     static void setupRepositoryDatabase() throws IOException {
-        database = new DocumentRepositoryDatabase(TEMP_PATH, true);
-        log.info("Repository Location: " + database.getLocation());
+        LocalRepositoryDatabase<Long> localDatabase = LocalRepositoryDatabase.ofWithTemp(Converters.LONG_STRING);
+        log.info("Repository Location: " + localDatabase.getLocation());
+        database = localDatabase;
     }
 
     @Test
@@ -39,20 +40,20 @@ public class BatchCloneRemoteRepositoryStepTest {
         Assertions.assertEquals(0, result.getFailed().size());
 
         result.getSuccess().forEach(document -> {
-            RepositoryOptions options = database.getRepositoryOptions(document.getId());
-            Assertions.assertTrue(Files.isDirectory(options.getLocation()));
+            RepositoryOptions<Long, Long> options = database.repositoryOptions(document.getId());
+            Assertions.assertTrue(Files.isDirectory(options.getLocation().toPath()));
         });
 
     }
 
     /**
-     * 克隆指定数量的文档仓库至{@link DocumentRepositoryDatabase}中，并返回成功的文档
+     * 克隆指定数量的文档仓库至{@link RepositoryDatabase}中，并返回成功的文档
      *
      * @param database 仓库数据库
      * @param count    克隆数量
      * @return 克隆结果
      */
-    public static BatchCloneRemoteRepositoryStep.Result cloneRepositories(DocumentRepositoryDatabase database, int count) {
+    public static BatchCloneRemoteRepositoryStep.Result cloneRepositories(RepositoryDatabase<Long, Long> database, int count) {
         List<Document> docs = LongStream.
                 range(0, count).
                 mapToObj(
