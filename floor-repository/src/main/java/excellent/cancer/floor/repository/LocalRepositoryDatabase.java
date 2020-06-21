@@ -3,6 +3,7 @@ package excellent.cancer.floor.repository;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.apachecommons.CommonsLog;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import perishing.constraint.io.FileSupport;
 import perishing.constraint.treasure.chest.converter.Converter;
 
@@ -53,12 +54,16 @@ public class LocalRepositoryDatabase<K> implements RepositoryDatabase<K, Long> {
      * @return 仓库操作对象
      */
     @Override
-    @SneakyThrows
     public RepositoryOptions<K, Long> repositoryOptions(K key) {
         return optionsTable.computeIfAbsent(key, k -> {
             String fileName = converter.to(k);
 
-            return new LocalRepositoryOptions<>(key, location.toPath().resolve(fileName));
+            try {
+                return new LocalRepositoryOptions<>(key, location.toPath().resolve(fileName));
+            } catch (IOException e) {
+                log.error("Failed to create local repository options", e);
+                throw new RuntimeException(e);
+            }
         });
     }
 
@@ -73,31 +78,35 @@ public class LocalRepositoryDatabase<K> implements RepositoryDatabase<K, Long> {
      * @throws OccupiedPermissionException 需要删除旧仓库的情况下，若长时间未获取写许可
      */
     @Override
-    @SneakyThrows
     public RepositoryOptions<K, Long> addRepositoryOptions(K key, String remote) {
         return optionsTable.compute(key, (k, repositoryOptions) -> {
-            if (repositoryOptions == null) {
-                String fileName = converter.to(k);
+            try {
+                if (repositoryOptions == null) {
+                    String fileName = converter.to(k);
 
-                return new LocalRepositoryOptions<>(k, location.toPath().resolve(fileName), remote);
-            } else {
-                // 获取文档仓库的使用权限
-                // 执行线程若中断，则立即退出
-                Optional<Long> writePermission = repositoryOptions.writePermission();
-
-                if (writePermission.isPresent()) {
-                    try {
-                        // 首先清除本地旧的仓库，然后再克隆
-                        repositoryOptions.resetRemote(remote);
-
-                        return repositoryOptions;
-                    } finally {
-                        repositoryOptions.cancelWritePermission(writePermission.get());
-                    }
-
+                    return new LocalRepositoryOptions<>(k, location.toPath().resolve(fileName), remote);
                 } else {
-                    throw new OccupiedPermissionException("Failed to acquire write permission of repository options since the permission has been occupied");
+                    // 获取文档仓库的使用权限
+                    // 执行线程若中断，则立即退出
+                    Optional<Long> writePermission = repositoryOptions.writePermission();
+
+                    if (writePermission.isPresent()) {
+                        try {
+                            // 首先清除本地旧的仓库，然后再克隆
+                            repositoryOptions.resetRemote(remote);
+
+                            return repositoryOptions;
+                        } finally {
+                            repositoryOptions.cancelWritePermission(writePermission.get());
+                        }
+
+                    } else {
+                        throw new OccupiedPermissionException("Failed to acquire write permission of repository options since the permission has been occupied");
+                    }
                 }
+            } catch (IOException | InterruptedException | GitAPIException e) {
+                log.error("Failed to create local repository options", e);
+                throw new RuntimeException(e);
             }
         });
     }
@@ -190,7 +199,7 @@ public class LocalRepositoryDatabase<K> implements RepositoryDatabase<K, Long> {
     private static <K> ConcurrentHashMap<K, LocalRepositoryOptions<K>> initRepositoryOptionsTable(File location, Converter<K, String> converter) throws IOException {
         ConcurrentHashMap<K, LocalRepositoryOptions<K>> optionsTable = new ConcurrentHashMap<>(INITIAL_CAPACITY);
 
-        List<Path> allRepo = Files.walk(location.toPath()).collect(Collectors.toList());
+        List<Path> allRepo = Files.find(location.toPath(), 1,(p, a) -> Files.isDirectory(p) && p.getFileName().toString().startsWith(".")).collect(Collectors.toList());
         for (Path repo : allRepo) {
             K id = converter.from(repo.getFileName().toString());
             LocalRepositoryOptions<K> localOptions = new LocalRepositoryOptions<>(id, repo);

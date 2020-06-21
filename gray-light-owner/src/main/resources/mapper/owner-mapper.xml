@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gray.light.owner.repository.OwnerRepository">
+
+    <select id="findAll"
+            resultType="Owner">
+        select *
+        from owner
+    </select>
+
+    <select id="existsById"
+            resultType="boolean">
+        select COUNT(0)
+        from owner
+        where owner.id = #{id}
+        limit 1
+    </select>
+
+    <insert id="save"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into owner (username, organization)
+        values (#{username}, #{organization})
+    </insert>
+
+</mapper>

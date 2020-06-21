@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gray.light.document.repository.DocumentChapterRepository">
+
+    <!-- ***************** -->
+    <!-- **** Chapter **** -->
+    <!-- ***************** -->
+
+    <sql id="columns">(created_date, updated_date, title, catalog_uid, document_id, is_empty, download_link,
+                       upload_link)</sql>
+
+    <!--  Select SQL  -->
+
+    <select id="findAll" resultType="DocumentChapter">
+        select *
+        from document_chapter
+    </select>
+
+    <select id="findByDocumentId" resultType="DocumentChapter">
+        select *
+        from document_chapter
+        where document_id = #{documentId}
+    </select>
+
+    <!-- Insert SQL -->
+
+    <insert id="save"
+            parameterType="DocumentChapter"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_chapter
+        <include refid="columns">
+        </include>
+        values (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{title}, #{catalogUid}, #{documentId}, #{isEmpty},
+        #{downloadLink},
+        #{uploadLink})
+    </insert>
+
+    <insert id="saveIfMatchedDocumentCatalogAndExcludeFolder"
+            parameterType="DocumentChapter"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_chapter
+        <include refid="columns">
+        </include>
+        select CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{chapter.title}, #{chapter.catalogUid}, #{chapter.documentId},
+        #{chapter.isEmpty},
+        #{chapter.downloadLink}, #{chapter.uploadLink}
+        from document_catalog as c
+        where c.id = #{chapter.catalogUid}
+        and c.folder != #{exclude}
+    </insert>
+
+    <insert id="batchSave"
+            parameterType="java.util.List"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into document_chapter
+        <include refid="columns">
+        </include>
+        values (
+        <foreach collection="chapters" index="index" item="item" separator="),(">
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP,
+            #{item.title},
+            #{item.catalogUid},
+            #{item.documentId},
+            #{item.isEmpty},
+            #{item.downloadLink},
+            #{item.uploadLink}
+        </foreach>
+        )
+    </insert>
+
+</mapper>

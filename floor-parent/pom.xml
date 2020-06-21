@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <modules>
-        <module>../floor-repository</module>
+        <module>../gray-light-owner</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -21,6 +21,7 @@
     <properties>
         <java.version>11</java.version>
         <perishing.constraint.version>1.0-SNAPSHOT</perishing.constraint.version>
+        <mybatis.spring.boot.version>2.1.2</mybatis.spring.boot.version>
     </properties>
 
     <dependencyManagement>
@@ -41,6 +42,18 @@
                 <groupId>org.excellent-cancer</groupId>
                 <artifactId>perishing-constraint-io</artifactId>
                 <version>${perishing.constraint.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>perishing-constraint-jdbc</artifactId>
+                <version>${perishing.constraint.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis.spring.boot.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
