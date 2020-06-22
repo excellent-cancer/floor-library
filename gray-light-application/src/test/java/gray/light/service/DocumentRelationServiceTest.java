@@ -4,6 +4,7 @@ import gray.light.component.SuperOwnerRandomService;
 import gray.light.document.entity.Document;
 import gray.light.document.entity.DocumentCatalog;
 import gray.light.document.entity.DocumentStatus;
+import gray.light.document.service.DocumentRelationService;
 import gray.light.owner.entity.OwnerProject;
 import lombok.extern.apachecommons.CommonsLog;
 import org.junit.jupiter.api.Assertions;

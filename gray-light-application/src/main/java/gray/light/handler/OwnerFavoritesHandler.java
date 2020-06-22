@@ -5,12 +5,12 @@ import gray.light.document.entity.DocumentCatalog;
 import gray.light.document.entity.DocumentChapter;
 import gray.light.document.builder.DocumentBuilder;
 import gray.light.owner.entity.OwnerProject;
-import gray.light.service.DocumentRelationService;
+import gray.light.document.service.DocumentRelationService;
 import gray.light.service.SuperOwnerService;
-import gray.light.shared.CatalogsTreeWalker;
-import gray.light.shared.entities.ContainsCatalogCatalogSE;
+import gray.light.business.CatalogsTreeWalker;
+import gray.light.business.ContainsCatalogCatalogBo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -33,18 +33,12 @@ import static gray.light.web.UnsatisfiedBodyExtractors.*;
  */
 @CommonsLog
 @Component
+@RequiredArgsConstructor
 public class OwnerFavoritesHandler {
 
     private final SuperOwnerService superOwnerService;
 
     private final DocumentRelationService documentRelationService;
-
-    @Autowired
-    public OwnerFavoritesHandler(SuperOwnerService superOwnerService, DocumentRelationService documentRelationService) {
-        this.superOwnerService = superOwnerService;
-        this.documentRelationService = documentRelationService;
-    }
-
 
     /**
      * 为超级所属者添加一个项目
@@ -140,7 +134,7 @@ public class OwnerFavoritesHandler {
         }
 
         Tuple2<List<DocumentCatalog>, List<DocumentChapter>> queryResult = documentRelationService.documentRepositoryCatalogAndChapter(documentId);
-        ContainsCatalogCatalogSE rootSE = CatalogsTreeWalker.walk(queryResult.getT1(), queryResult.getT2());
+        ContainsCatalogCatalogBo rootSE = CatalogsTreeWalker.walk(queryResult.getT1(), queryResult.getT2());
 
         return allRightFromValue(rootSE.getCatalogs());
     }

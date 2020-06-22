@@ -1,21 +1,18 @@
 package gray.light.step;
 
-import excellent.cancer.floor.repository.LocalRepositoryDatabase;
-import excellent.cancer.floor.repository.RepositoryDatabase;
 import gray.light.component.SuperOwnerRandomService;
 import gray.light.document.entity.Document;
 import gray.light.document.entity.DocumentStatus;
+import gray.light.document.service.DocumentRepositoryCacheService;
+import gray.light.document.service.DocumentSourceService;
 import gray.light.owner.entity.OwnerProject;
-import gray.light.service.DocumentRelationService;
+import gray.light.document.service.DocumentRelationService;
 import gray.light.service.RepositoryService;
 import lombok.extern.apachecommons.CommonsLog;
-import org.csource.fastdfs.TrackerClient;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import perishing.constraint.treasure.chest.converter.Converters;
 
-import java.io.IOException;
 import java.sql.Time;
 import java.util.Collections;
 import java.util.Date;
@@ -34,17 +31,20 @@ public class BatchUpdateDocumentRepositoriesStepTest {
     @Autowired
     private RepositoryService repositoryService;
 
-    private static RepositoryDatabase<Long, Long> database;
 
     @Autowired
-    private TrackerClient trackerClient;
+    private DocumentRepositoryCacheService documentRepositoryCacheService;
 
-    @BeforeAll
-    static void setupRepositoryDatabase() throws IOException {
-        LocalRepositoryDatabase<Long> localDatabase = LocalRepositoryDatabase.ofWithTemp(Converters.LONG_STRING);
-        log.info("Repository Location: " + localDatabase.getLocation());
-        database = localDatabase;
-    }
+
+    @Autowired
+    private DocumentSourceService documentSourceService;
+
+//    @BeforeAll
+//    static void setupRepositoryDatabase() throws IOException {
+//        LocalRepositoryDatabase<Long> localDatabase = LocalRepositoryDatabase.ofWithTemp(Converters.LONG_STRING);
+//        log.info("Repository Location: " + localDatabase.getLocation());
+//        database = localDatabase;
+//    }
 
     @Test
     @DisplayName("遍历更新文档、目录、文章")
@@ -71,11 +71,11 @@ public class BatchUpdateDocumentRepositoriesStepTest {
 
         Assertions.assertNotNull(document.getId());
 
-        List<Document> documents = new BatchCloneRemoteRepositoryStep(database).execute(Collections.singletonList(document)).getSuccess();
+        List<Document> documents = new BatchCloneRemoteRepositoryStep(documentRepositoryCacheService).execute(Collections.singletonList(document)).getSuccess();
 
         Assertions.assertEquals(1, documents.size());
 
-        VisitDocumentRepositoryStep step = new VisitDocumentRepositoryStep(database);
+        VisitDocumentRepositoryStep step = new VisitDocumentRepositoryStep(documentRepositoryCacheService);
         VisitDocumentRepositoryStep.Result result = step.execute(documents);
 
         BatchUpdateDocumentRepositoriesStep updateDocumentRepositoriesStep = new BatchUpdateDocumentRepositoriesStep(documentRelationService);
@@ -101,14 +101,14 @@ public class BatchUpdateDocumentRepositoriesStepTest {
 
         Assertions.assertNotNull(document.getId());
 
-        List<Document> documents = new BatchCloneRemoteRepositoryStep(database).execute(Collections.singletonList(document)).getSuccess();
+        List<Document> documents = new BatchCloneRemoteRepositoryStep(documentRepositoryCacheService).execute(Collections.singletonList(document)).getSuccess();
 
         Assertions.assertEquals(1, documents.size());
 
-        VisitDocumentRepositoryStep step = new VisitDocumentRepositoryStep(database);
+        VisitDocumentRepositoryStep step = new VisitDocumentRepositoryStep(documentRepositoryCacheService);
         VisitDocumentRepositoryStep.Result result = step.execute(documents);
 
-        UploadDocumentStep uploadDocumentStep = new UploadDocumentStep(trackerClient);
+        UploadDocumentStep uploadDocumentStep = new UploadDocumentStep(documentSourceService);
 
         UploadDocumentStep.Result uploadResult = uploadDocumentStep.execute(result.getVisitors());
 

@@ -1,17 +1,17 @@
 package gray.light.job;
 
-import excellent.cancer.floor.repository.RepositoryDatabase;
-import gray.light.DocumentRepositoryVisitor;
+import gray.light.document.DocumentRepositoryVisitor;
 import gray.light.document.entity.Document;
 import gray.light.document.entity.DocumentStatus;
-import gray.light.service.DocumentRelationService;
+import gray.light.document.service.DocumentRelationService;
+import gray.light.document.service.DocumentRepositoryCacheService;
+import gray.light.document.service.DocumentSourceService;
 import gray.light.step.BatchCloneRemoteRepositoryStep;
 import gray.light.step.BatchUpdateDocumentRepositoriesStep;
 import gray.light.step.UploadDocumentStep;
 import gray.light.step.VisitDocumentRepositoryStep;
 import lombok.Setter;
 import lombok.extern.apachecommons.CommonsLog;
-import org.csource.fastdfs.TrackerClient;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
@@ -29,10 +29,10 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
     private DocumentRelationService documentService;
 
     @Setter
-    private TrackerClient trackerClient;
+    private DocumentSourceService documentSourceService;
 
     @Setter
-    private RepositoryDatabase<Long, Long> repositoryDatabase;
+    private DocumentRepositoryCacheService documentRepositoryCacheService;
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
@@ -62,7 +62,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
      * @param emptyDocument 状态为空的文档
      */
     private BatchCloneRemoteRepositoryStep.Result batchCloneRemoteRepository(List<Document> emptyDocument) {
-        BatchCloneRemoteRepositoryStep batchCloneRemoteRepository = new BatchCloneRemoteRepositoryStep(repositoryDatabase);
+        BatchCloneRemoteRepositoryStep batchCloneRemoteRepository = new BatchCloneRemoteRepositoryStep(documentRepositoryCacheService);
 
         return batchCloneRemoteRepository.execute(emptyDocument);
     }
@@ -76,7 +76,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
      * @return 文档仓库遍历的结果
      */
     private VisitDocumentRepositoryStep.Result batchWalkGitTree(List<Document> emptyDocument) {
-        VisitDocumentRepositoryStep batchWalkGitTree = new VisitDocumentRepositoryStep(repositoryDatabase);
+        VisitDocumentRepositoryStep batchWalkGitTree = new VisitDocumentRepositoryStep(documentRepositoryCacheService);
 
         return batchWalkGitTree.execute(emptyDocument);
     }
@@ -88,7 +88,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
      * @return 文档上传的结果
      */
     private UploadDocumentStep.Result batchUploadDocument(List<DocumentRepositoryVisitor> visitors) {
-        UploadDocumentStep batchUploadDocument = new UploadDocumentStep(trackerClient);
+        UploadDocumentStep batchUploadDocument = new UploadDocumentStep(documentSourceService);
 
         return batchUploadDocument.execute(visitors);
     }

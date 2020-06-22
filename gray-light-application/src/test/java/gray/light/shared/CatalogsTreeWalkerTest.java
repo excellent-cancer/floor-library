@@ -1,13 +1,10 @@
 package gray.light.shared;
 
-import gray.light.DocumentRepositoryVisitor;
+import gray.light.document.DocumentRepositoryVisitor;
+import gray.light.business.*;
 import gray.light.document.entity.Document;
 import gray.light.document.entity.DocumentCatalog;
 import gray.light.document.entity.DocumentChapter;
-import gray.light.shared.entities.CatalogSE;
-import gray.light.shared.entities.ChapterSE;
-import gray.light.shared.entities.ContainsCatalogCatalogSE;
-import gray.light.shared.entities.ContainsChapterCatalogSE;
 import lombok.extern.apachecommons.CommonsLog;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +42,7 @@ public class CatalogsTreeWalkerTest {
         List<DocumentCatalog> catalogs = visitor.getCatalogs();
         List<DocumentChapter> chapters = visitor.getChapters().stream().map(Tuple2::getT1).collect(Collectors.toList());
 
-        ContainsCatalogCatalogSE se = CatalogsTreeWalker.walk(catalogs, chapters);
+        ContainsCatalogCatalogBo se = CatalogsTreeWalker.walk(catalogs, chapters);
 
         Assertions.assertEquals(DOCUMENT_TITLE, se.getData().getTitle());
         Assertions.assertEquals(DocumentCatalog.ROOT, se.getData().getParentUid());
@@ -77,31 +74,31 @@ public class CatalogsTreeWalkerTest {
         return visitor;
     }
 
-    private void assertionLevel(int level, CatalogSE[] se) {
+    private void assertionLevel(int level, CatalogBo[] se) {
         Set<String> titleSet = new HashSet<>(se.length);
         for (int i = 0; i < se.length; i++) {
             titleSet.add(name(level, i));
         }
 
-        for (CatalogSE catalogSE : se) {
-            Assertions.assertTrue(titleSet.remove(catalogSE.getData().getTitle()));
+        for (CatalogBo catalogBo : se) {
+            Assertions.assertTrue(titleSet.remove(catalogBo.getData().getTitle()));
             if (level == DEPTH - 1) {
-                assertionLevel(level + 1, ((ContainsChapterCatalogSE) catalogSE).getChapters());
+                assertionLevel(level + 1, ((ContainsChapterCatalogBo) catalogBo).getChapters());
             } else {
-                assertionLevel(level + 1, ((ContainsCatalogCatalogSE) catalogSE).getCatalogs());
+                assertionLevel(level + 1, ((ContainsCatalogCatalogBo) catalogBo).getCatalogs());
             }
         }
 
     }
 
-    private void assertionLevel(int level, ChapterSE[] se) {
+    private void assertionLevel(int level, ChapterBo[] se) {
         Set<String> titleSet = new HashSet<>(se.length);
         for (int i = 0; i < se.length; i++) {
             titleSet.add(name(level, i));
         }
 
-        for (ChapterSE chapterSE : se) {
-            Assertions.assertTrue(titleSet.remove(chapterSE.getData().getTitle()));
+        for (ChapterBo chapterBo : se) {
+            Assertions.assertTrue(titleSet.remove(chapterBo.getData().getTitle()));
         }
     }
 

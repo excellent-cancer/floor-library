@@ -23,6 +23,13 @@ excellent:
       enabled: false
       document-repositories: /Users/yanjiaxun/document
 
+floor:
+  file:
+    storage:
+      enabled: false
+      details:
+        config-location: fastdfs.properties
+
 logging:
   level:
 #    web: DEBUG
@@ -31,6 +38,7 @@ logging:
         jdbc:
           core:
             JdbcTemplate: DEBUG
+
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: gray.light.document.entity,gray.light.owner.entity

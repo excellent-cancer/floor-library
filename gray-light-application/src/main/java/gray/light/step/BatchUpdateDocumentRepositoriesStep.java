@@ -1,10 +1,10 @@
 package gray.light.step;
 
-import gray.light.DocumentRepositoryVisitor;
+import gray.light.document.DocumentRepositoryVisitor;
 import gray.light.document.entity.Document;
 import gray.light.document.entity.DocumentCatalog;
 import gray.light.document.entity.DocumentChapter;
-import gray.light.service.DocumentRelationService;
+import gray.light.document.service.DocumentRelationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import reactor.util.function.Tuple2;

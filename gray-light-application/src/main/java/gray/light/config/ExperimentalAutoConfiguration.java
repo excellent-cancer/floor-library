@@ -1,19 +1,15 @@
 package gray.light.config;
 
-import excellent.cancer.floor.repository.LocalRepositoryDatabase;
-import excellent.cancer.floor.repository.RepositoryDatabase;
-import org.mybatis.spring.annotation.MapperScan;
+import floor.file.storage.annotation.FloorFileStorage;
+import floor.repository.annotation.FloorRepository;
+import gray.light.component.ReppsitoryServiceTable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
-import perishing.constraint.treasure.chest.converter.Converters;
-
-import java.io.IOException;
 
 /**
  * 默认自动配置
@@ -21,7 +17,9 @@ import java.io.IOException;
  * @author XyParaCrim
  */
 @Configuration
-@ComponentScan("gray.light.document")
+@FloorFileStorage
+@FloorRepository
+@ComponentScan({"gray.light.document"})
 public class ExperimentalAutoConfiguration {
 
     @Bean
@@ -46,10 +44,8 @@ public class ExperimentalAutoConfiguration {
     }
 
     @Bean
-    public RepositoryDatabase<Long, Long> documentRepositoryDatabase(ExcellentCancerProperties excellentCancerProperties) throws IOException {
-        String documentRepositoriesLocation = excellentCancerProperties.getRunning().getDocumentRepositories();
-
-        return LocalRepositoryDatabase.of(documentRepositoriesLocation, Converters.LONG_STRING);
+    public ReppsitoryServiceTable reppsitoryServiceTable() {
+        return new ReppsitoryServiceTable();
     }
 
 }

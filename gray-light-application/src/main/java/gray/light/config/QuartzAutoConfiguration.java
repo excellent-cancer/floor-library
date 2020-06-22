@@ -1,11 +1,11 @@
 package gray.light.config;
 
-import excellent.cancer.floor.repository.RepositoryDatabase;
+import gray.light.document.service.DocumentRelationService;
+import gray.light.document.service.DocumentRepositoryCacheService;
+import gray.light.document.service.DocumentSourceService;
 import gray.light.job.CheckDocumentRepositoryJob;
 import gray.light.job.UploadDocumentRepositoryJob;
-import gray.light.service.DocumentRelationService;
 import lombok.extern.apachecommons.CommonsLog;
-import org.csource.fastdfs.TrackerClient;
 import org.quartz.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -24,11 +24,12 @@ public class QuartzAutoConfiguration {
     public static class CheckDocumentRepositoryConfiguration {
 
         @Bean("checkRepositoryDataMap")
-        public JobDataMap jobData(DocumentRelationService documentRelationService, RepositoryDatabase<Long, Long> documentRepositoryDatabase) {
+        public JobDataMap jobData(DocumentRelationService documentRelationService,
+                                  DocumentRepositoryCacheService documentRepositoryCacheService) {
             JobDataMap jobDataMap = new JobDataMap();
 
             jobDataMap.put("documentService", documentRelationService);
-            jobDataMap.put("repositoryDatabase", documentRepositoryDatabase);
+            jobDataMap.put("documentRepositoryCacheService", documentRepositoryCacheService);
 
             return jobDataMap;
         }
@@ -64,13 +65,13 @@ public class QuartzAutoConfiguration {
 
         @Bean("updateRepositoryDataMap")
         public JobDataMap jobData(DocumentRelationService documentService,
-                                  TrackerClient trackerClient,
-                                  RepositoryDatabase<Long, Long> repositoryDatabase) {
+                                  DocumentSourceService documentSourceService,
+                                  DocumentRepositoryCacheService documentRepositoryCacheService) {
             JobDataMap jobDataMap = new JobDataMap();
 
             jobDataMap.put("documentService", documentService);
-            jobDataMap.put("repositoryDatabase", repositoryDatabase);
-            jobDataMap.put("trackerClient", trackerClient);
+            jobDataMap.put("documentSourceService", documentSourceService);
+            jobDataMap.put("documentRepositoryCacheService", documentRepositoryCacheService);
 
             return jobDataMap;
         }

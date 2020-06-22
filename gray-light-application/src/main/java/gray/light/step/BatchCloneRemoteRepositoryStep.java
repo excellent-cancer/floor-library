@@ -1,8 +1,8 @@
 package gray.light.step;
 
-import excellent.cancer.floor.repository.RepositoryDatabase;
 import gray.light.document.entity.Document;
 import gray.light.document.entity.DocumentStatus;
+import gray.light.document.service.DocumentRepositoryCacheService;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 /**
- * 批量将克隆远程仓库到{@link RepositoryDatabase}中，默认使用{@link java.util.concurrent.ForkJoinPool}进行
+ * 批量将克隆远程仓库到仓库缓存中，默认使用{@link java.util.concurrent.ForkJoinPool}进行
  * 异步更新，但是该步骤会阻塞直至所有克隆任务全部完成
  *
  * @author XyParaCrim
@@ -39,12 +39,11 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
 
     }
 
-
     @NonNull
-    private final RepositoryDatabase<Long, Long> repositoryDatabase;
+    private final DocumentRepositoryCacheService documentRepositoryCacheService;
 
     /**
-     * 根据一组文档实体，克隆其文档仓库至{@link RepositoryDatabase}
+     * 根据一组文档实体，克隆其文档仓库至缓存中
      *
      * @param docs 文档
      * @return 执行结果
@@ -141,7 +140,7 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
         @Override
         public Document get() {
             try {
-                repositoryDatabase.addRepositoryOptions(document.getId(), document.getRepoUrl());
+                documentRepositoryCacheService.forceCacheRepository(document);
                 success(document);
             } catch (Exception e) {
                 failed(document, e);

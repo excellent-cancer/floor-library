@@ -1,19 +1,16 @@
 package gray.light.step;
 
-import gray.light.DocumentRepositoryVisitor;
+import gray.light.document.DocumentRepositoryVisitor;
 import gray.light.document.entity.Document;
 import gray.light.document.entity.DocumentChapter;
 import gray.light.document.entity.DocumentStatus;
-import gray.light.utils.FastdfsClient;
+import gray.light.document.service.DocumentSourceService;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.csource.common.MyException;
-import org.csource.fastdfs.TrackerClient;
 import reactor.util.function.Tuple2;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +38,7 @@ public class UploadDocumentStep {
     }
 
     @NonNull
-    private final TrackerClient trackerClient;
+    private final DocumentSourceService documentSourceService;
 
     /**
      * 上传文档章节到服务器。执行上传使用了{@link ForkJoinTask}的迭代任务，其中
@@ -54,19 +51,13 @@ public class UploadDocumentStep {
 
         final ConcurrentLinkedQueue<DocumentRepositoryVisitor> resultVisitors = new ConcurrentLinkedQueue<>();
 
-        try (FastdfsClient client = new FastdfsClient(trackerClient)) {
+        ForkJoinTask.invokeAll(
+                visitors.
+                        stream().
+                        map(visitor -> new UploadedDocumentTask(documentSourceService, visitor, resultVisitors)).
+                        toArray(UploadedDocumentTask[]::new)
+        );
 
-            ForkJoinTask.invokeAll(
-                    visitors.
-                            stream().
-                            map(visitor -> new UploadedDocumentTask(client, visitor, resultVisitors)).
-                            toArray(UploadedDocumentTask[]::new)
-            );
-        } catch (MyException | IOException e) {
-
-            log.error("Failed to connect file server due to failed to upload document chapter", e);
-
-        }
 
         return new Result(new ArrayList<>(resultVisitors));
     }
@@ -77,7 +68,7 @@ public class UploadDocumentStep {
     @RequiredArgsConstructor
     private static class UploadedDocumentTask extends RecursiveAction {
 
-        private final FastdfsClient client;
+        private final DocumentSourceService documentSourceService;
 
         private final DocumentRepositoryVisitor visitor;
 
@@ -119,7 +110,7 @@ public class UploadDocumentStep {
             if (!task.failed.get()) {
                 DocumentChapter chapter = chapterPair.getT1();
                 try {
-                    String url = task.client.uploadMarkdown(chapterPair.getT2());
+                    String url = task.documentSourceService.updateChapter(chapterPair.getT2());
 
                     log.info("Successfully uploaded a chapter file: { name: {}, downloadLink: {} }", chapter.getTitle(), url);
 

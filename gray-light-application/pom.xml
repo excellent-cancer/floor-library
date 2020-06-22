@@ -19,24 +19,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <eclipse.git.version>5.1.3.201810200350-r</eclipse.git.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.csource</groupId>
-                <artifactId>fastdfs-client-java-dev</artifactId>
-                <version>${fastdfs.client.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>slf4j-log4j12</artifactId>
-                        <groupId>org.slf4j</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
 
@@ -85,12 +68,6 @@
         <!-- 文件拉去 -->
 
         <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit</artifactId>
-            <version>${eclipse.git.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
@@ -112,6 +89,18 @@
         <dependency>
             <groupId>org.excellent-cancer</groupId>
             <artifactId>gray-light-owner</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>floor-storage-file</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>gray-light-support</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -155,17 +144,6 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.csource</groupId>
-                    <artifactId>fastdfs-client-java-dev</artifactId>
-                    <version>${fastdfs.client.dev.version}</version>
-                    <exclusions>
-                        <exclusion>
-                            <artifactId>slf4j-log4j12</artifactId>
-                            <groupId>org.slf4j</groupId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-                <dependency>
                     <groupId>org.bgee.log4jdbc-log4j2</groupId>
                     <artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
                     <version>${log4jdbc.version}</version>
@@ -177,24 +155,12 @@
             <properties>
                 <profiles.activation>test</profiles.activation>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.csource</groupId>
-                    <artifactId>fastdfs-client-java</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
                 <profiles.activation>prod</profiles.activation>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.csource</groupId>
-                    <artifactId>fastdfs-client-java</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 
