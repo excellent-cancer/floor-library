@@ -1,4 +1,4 @@
-package gray.light.service;
+package gray.light.component;
 
 import lombok.NonNull;
 

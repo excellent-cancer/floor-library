@@ -3,10 +3,13 @@ package gray.light.handler;
 import gray.light.document.entity.Document;
 import gray.light.document.entity.DocumentCatalog;
 import gray.light.document.entity.DocumentChapter;
-import gray.light.document.builder.DocumentBuilder;
+import gray.light.document.customizer.DocumentCustomizer;
+import gray.light.owner.customizer.OwnerProjectCustomizer;
+import gray.light.owner.entity.Owner;
 import gray.light.owner.entity.OwnerProject;
 import gray.light.document.service.DocumentRelationService;
-import gray.light.service.SuperOwnerService;
+import gray.light.owner.service.OverallOwnerService;
+import gray.light.owner.service.SuperOwnerService;
 import gray.light.business.CatalogsTreeWalker;
 import gray.light.business.ContainsCatalogCatalogBo;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static gray.light.web.ResponseToClient.*;
+import static gray.light.web.ResponseToClient.allRightFromValue;
 import static gray.light.web.UnsatisfiedBodyExtractors.*;
 
 /**
@@ -37,6 +41,8 @@ import static gray.light.web.UnsatisfiedBodyExtractors.*;
 public class OwnerFavoritesHandler {
 
     private final SuperOwnerService superOwnerService;
+
+    private final OverallOwnerService overallOwnerService;
 
     private final DocumentRelationService documentRelationService;
 
@@ -54,12 +60,9 @@ public class OwnerFavoritesHandler {
                                 chain("name", EXTRACT_NAME).
                                 chain("description", EXTRACT_DEFAULT).
                                 extractOrOther(body, () -> {
-                                    OwnerProject ownerProject = OwnerProject.builder()
-                                            .name((String) body.get("name"))
-                                            .description((String) body.get("description"))
-                                            .build();
+                                    OwnerProject ownerProject = OwnerProjectCustomizer.uncheck(body.get("name"), body.get("description"));
 
-                                    return Mono.fromFuture(CompletableFuture.supplyAsync(() -> superOwnerService.addProject(ownerProject)))
+                                    return Mono.fromFuture(CompletableFuture.supplyAsync(() -> overallOwnerService.addProject(superOwnerService.superOwner(), ownerProject)))
                                             .flatMap(isAdded -> isAdded ?
                                                     allRightFromValue(ownerProject) :
                                                     failWithMessage("Failed to add favorite project."));
@@ -83,9 +86,7 @@ public class OwnerFavoritesHandler {
                                 chain("projectId", EXTRACT_LONG).
                                 chain("repoUrl", EXTRACT_GIT).
                                 extractOrOther(body, () -> {
-                                    Document document = DocumentBuilder.
-                                            buildNecessaryProperties(body).
-                                            build();
+                                    Document document = DocumentCustomizer.necessary(body);
 
                                     return Mono.fromFuture(CompletableFuture.supplyAsync(() -> documentRelationService.createDocumentForProject(document)))
                                             .flatMap(success -> success ?
@@ -105,11 +106,10 @@ public class OwnerFavoritesHandler {
     public Mono<ServerResponse> queryFavoriteDocument(ServerRequest request) {
         Optional<String> pages = request.queryParam("pages");
         Optional<String> count = request.queryParam("count");
+        Owner superOwner = superOwnerService.superOwner();
+        Page page = pages.isPresent() && count.isPresent() ? Page.newPage(pages.get(), count.get()) : Page.unlimited();
 
-
-        return pages.isPresent() && count.isPresent() ?
-                allRightFromValue(superOwnerService.documents(Page.newPage(pages.get(), count.get()))) :
-                allRightFromValue(superOwnerService.documents());
+        return allRightFromValue(overallOwnerService.documentProjects(superOwner, page));
     }
 
     /**

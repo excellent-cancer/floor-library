@@ -23,21 +23,20 @@ public class OwnerProject {
 
     private Long ownerId;
 
-    private String name;
-
-    private String description;
+    // 时间信息
 
     private Date createdDate;
 
     private Date updatedDate;
 
-    /**
-     * 返回一个只包含Id的项目
-     *
-     * @param id 项目ID
-     * @return 只包含Id的项目
-     */
-    public static OwnerProject justIdProject(Long id) {
-        return builder().id(id).build();
-    }
+    // 下面提供一些基础信息
+
+    private String name;
+
+    private String description;
+
+    private String scope;
+
+    private String homePage;
+
 }

@@ -5,6 +5,7 @@ import gray.light.config.ExcellentCancerProperties;
 import gray.light.config.OwnerProperties;
 import gray.light.owner.entity.Owner;
 import gray.light.owner.entity.OwnerProject;
+import gray.light.owner.service.SuperOwnerService;
 import lombok.extern.apachecommons.CommonsLog;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

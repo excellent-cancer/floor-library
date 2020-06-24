@@ -1,6 +1,5 @@
 package gray.light.document.entity;
 
-import gray.light.document.entity.DocumentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +14,8 @@ import java.util.Date;
  */
 @Data
 @Alias("Document")
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class Document {
 
     private Long id;

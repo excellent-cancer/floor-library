@@ -1,4 +1,4 @@
-package gray.light.error;
+package gray.light.owner.error;
 
 import gray.light.owner.entity.Owner;
 import lombok.NonNull;

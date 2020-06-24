@@ -15,6 +15,8 @@ public interface OwnerRepository {
 
     List<Owner> findAll();
 
+    List<Owner> findBySuperPrivilege();
+
     boolean existsById(long id);
 
     boolean save(Owner owner);

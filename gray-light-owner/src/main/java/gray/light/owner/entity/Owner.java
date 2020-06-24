@@ -20,4 +20,6 @@ public class Owner {
 
     private String organization;
 
+    private Privilege superPrivilege;
+
 }

@@ -1,7 +1,7 @@
 package gray.light.component;
 
 import gray.light.owner.entity.OwnerProject;
-import gray.light.service.SuperOwnerService;
+import gray.light.owner.service.SuperOwnerService;
 import lombok.extern.apachecommons.CommonsLog;
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;

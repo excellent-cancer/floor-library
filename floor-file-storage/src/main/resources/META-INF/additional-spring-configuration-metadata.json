@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "floor.file.storage.enabled",
+      "type": "java.lang.String",
+      "description": "Description for floor.file.storage.enabled."
+  }
+] }

@@ -3,6 +3,7 @@ package gray.light.owner.repository;
 import gray.light.owner.entity.OwnerProject;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import perishing.constraint.jdbc.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,7 @@ public interface OwnerProjectRepository {
      * @param ownerId 项目所属者Id
      * @return 通过OwnerId获取owner的所有project
      */
-    List<OwnerProject> findByOwnerId(@Param("ownerId") Long ownerId);
+    List<OwnerProject> findByOwnerId(@Param("ownerId") Long ownerId, @Param("page") Page page);
 
     /**
      * 通过所属者Id和项目Id查询出是否此项目

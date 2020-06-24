@@ -1,13 +1,6 @@
 package gray.light.handler;
 
-import gray.light.service.SuperOwnerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.ServerRequest;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
-
-import static gray.light.web.ResponseToClient.allRightFromValue;
 
 /**
  * @author XyParaCrim
@@ -15,7 +8,7 @@ import static gray.light.web.ResponseToClient.allRightFromValue;
 @Component
 public class DetailsHandler {
 
-    private final SuperOwnerService superOwnerService;
+/*    private final SuperOwnerService superOwnerService;
 
     @Autowired
     public DetailsHandler(SuperOwnerService superOwnerService) {
@@ -27,6 +20,6 @@ public class DetailsHandler {
     @SuppressWarnings("unused")
     public Mono<ServerResponse> ownerDetails(ServerRequest request) {
         return allRightFromValue(superOwnerService.superOwner());
-    }
+    }*/
 
 }
