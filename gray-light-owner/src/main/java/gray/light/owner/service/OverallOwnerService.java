@@ -48,6 +48,16 @@ public class OverallOwnerService {
     }
 
     /**
+     * 是否存在该项目
+     *
+     * @param projectId 项目ID
+     * @return 是否存在该项目
+     */
+    public boolean existsProject(Long projectId) {
+        return projectRepository.existsById(projectId);
+    }
+
+    /**
      * 返回指定所属者的所有项目
      *
      * @param ownerId 指定所属者id
@@ -79,38 +89,5 @@ public class OverallOwnerService {
     public boolean addProject(OwnerProject project) {
         return projectRepository.save(project);
     }
-
-/*    *//**
-     * 查询指定所属者项目中是否有ID匹配的项目
-     *
-     * @param findOwner 指定所属者
-     * @param project 请求项目
-     * @return 返回指定所属者项目中ID匹配的项目
-     *//*
-    public Optional<OwnerProject> project(Owner findOwner, OwnerProject project) {
-        return projectRepository.findByOwnerIdAndId(findOwner.getId(), project.getId());
-    }
-
-    *//**
-     * 查询指定所属者项目中是否有ID匹配的项目
-     *
-     * @param findOwner 指定所属者
-     * @param projectId project 请求项目ID
-     * @return 返回指定所属者项目中是否有ID匹配的项目
-     *//*
-    public boolean existsProject(Owner findOwner, Long projectId) {
-        return projectRepository.existsByIdAndOwnerId(projectId, findOwner.getId());
-    }
-
-    public boolean addProject(OwnerProject project) {
-        // project.setOwnerId(findOwner.getId());
-        return projectRepository.save(project);
-    }
-
-    public boolean removeProject(Owner findOwner, OwnerProject project) {
-        project.setOwnerId(findOwner.getId());
-        return projectRepository.delete(project);
-    }*/
-
 
 }

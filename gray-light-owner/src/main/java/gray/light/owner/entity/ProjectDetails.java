@@ -2,6 +2,7 @@ package gray.light.owner.entity;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
 
@@ -14,10 +15,11 @@ import java.util.Date;
  */
 @Data
 @Alias("ProjectDetails")
+@Builder
 @AllArgsConstructor
 public class ProjectDetails {
 
-    private long originId;
+    private Long originId;
 
     private String type;
 
@@ -29,8 +31,10 @@ public class ProjectDetails {
 
     private Date updatedDate;
 
-    private ProjectStatus status;
+    @Builder.Default
+    private ProjectStatus status = ProjectStatus.INIT;
 
-    private ProjectStructure structure;
+    @Builder.Default
+    private ProjectStructure structure = ProjectStructure.UNKNOWN;
 
 }

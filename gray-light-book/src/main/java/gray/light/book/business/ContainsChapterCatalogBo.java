@@ -1,6 +1,6 @@
-package gray.light.business;
+package gray.light.book.business;
 
-import gray.light.document.entity.DocumentCatalog;
+import gray.light.book.entity.BookCatalog;
 import lombok.Getter;
 
 public class ContainsChapterCatalogBo extends CatalogBo {
@@ -8,7 +8,7 @@ public class ContainsChapterCatalogBo extends CatalogBo {
     @Getter
     private final ChapterBo[] chapters;
 
-    public ContainsChapterCatalogBo(DocumentCatalog catalog, ChapterBo[] chapters) {
+    public ContainsChapterCatalogBo(BookCatalog catalog, ChapterBo[] chapters) {
         super(catalog);
         this.chapters = chapters;
     }

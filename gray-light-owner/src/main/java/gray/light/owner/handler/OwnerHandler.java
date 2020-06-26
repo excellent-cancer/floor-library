@@ -10,7 +10,6 @@ import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import perishing.constraint.jdbc.Page;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
@@ -60,7 +59,7 @@ public class OwnerHandler {
                 ownerProjectHandler.queryOwnerProject(ownerId, RequestSupport.extract(request)));
     }
 
-    Mono<ServerResponse> extractOwnerId(ServerRequest request, Function<Long, Mono<ServerResponse>> then) {
+    public Mono<ServerResponse> extractOwnerId(ServerRequest request, Function<Long, Mono<ServerResponse>> then) {
         Long ownerId;
         try {
             ownerId = RequestParamExtractors.extractLong(request, "ownerId");
@@ -72,4 +71,16 @@ public class OwnerHandler {
         return then.apply(ownerId);
     }
 
+
+    public Mono<ServerResponse> extractId(ServerRequest request, Function<Long, Mono<ServerResponse>> then) {
+        Long id;
+        try {
+            id = RequestParamExtractors.extractLong(request, "id");
+        } catch (ExtractRequestParamException e) {
+            log.error(e.getMessage());
+            return failWithMessage(e.getMessage());
+        }
+
+        return then.apply(id);
+    }
 }

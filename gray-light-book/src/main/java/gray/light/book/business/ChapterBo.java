@@ -1,6 +1,6 @@
-package gray.light.business;
+package gray.light.book.business;
 
-import gray.light.document.entity.DocumentChapter;
+import gray.light.book.entity.BookChapter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +11,6 @@ import lombok.RequiredArgsConstructor;
 public class ChapterBo {
 
     @Getter
-    private final DocumentChapter data;
+    private final BookChapter data;
 
 }

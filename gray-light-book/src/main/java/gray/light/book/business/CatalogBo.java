@@ -1,6 +1,6 @@
-package gray.light.business;
+package gray.light.book.business;
 
-import gray.light.document.entity.DocumentCatalog;
+import gray.light.book.entity.BookCatalog;
 import lombok.Getter;
 
 /**
@@ -9,9 +9,9 @@ import lombok.Getter;
 public class CatalogBo {
 
     @Getter
-    private final DocumentCatalog data;
+    private final BookCatalog data;
 
-    public CatalogBo(DocumentCatalog data) {
+    public CatalogBo(BookCatalog data) {
         this.data = data;
     }
 

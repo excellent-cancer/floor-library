@@ -15,7 +15,11 @@ import perishing.constraint.treasure.chest.StringTreasureChest;
 @Configuration
 @ConditionalOnClass({RepositoryDatabase.class, FileStorage.class})
 @MapperScan(DocumentConfiguration.REPOSITORY_PACKAGE)
-@ComponentScan(DocumentConfiguration.SERVICE_PACKAGE)
+@ComponentScan({
+        DocumentConfiguration.SERVICE_PACKAGE,
+        "gray.light.document.handler",
+        "gray.light.document.router"
+})
 public class DocumentConfiguration {
 
     public static final String REPOSITORY_PACKAGE = "gray.light.document.repository";

@@ -2,10 +2,10 @@ package gray.light.owner.business;
 
 import gray.light.support.error.NormalizingFormException;
 import lombok.Data;
+import perishing.constraint.treasure.chest.ResourceTreasureChest;
 import perishing.constraint.treasure.chest.StringTreasureChest;
 
 import static org.springframework.util.StringUtils.*;
-import static org.springframework.util.StringUtils.trimAllWhitespace;
 
 /**
  * 创建owner-project的请求表单
@@ -37,7 +37,7 @@ public class OwnerProjectFo {
             NormalizingFormException.emptyProperty("name");
         }
 
-        if (isEmpty(homePage)) {
+        if (isEmpty(homePage) && !ResourceTreasureChest.isUrl(homePage)) {
             NormalizingFormException.emptyProperty("homePage");
         }
 

@@ -1,7 +1,8 @@
-package gray.light.business;
+package gray.light.book.business;
 
-import gray.light.document.entity.DocumentCatalog;
-import gray.light.document.entity.DocumentChapter;
+import gray.light.book.customizer.BookCatalogCustomizer;
+import gray.light.book.entity.BookCatalog;
+import gray.light.book.entity.BookChapter;
 import perishing.constraint.treasure.chest.CollectionsTreasureChest;
 
 import java.util.Collections;
@@ -16,18 +17,18 @@ import java.util.Map;
  */
 public class CatalogsTreeWalker {
 
-    private final Map<String, List<DocumentCatalog>> catalogTable;
+    private final Map<String, List<BookCatalog>> catalogTable;
 
-    private final Map<String, List<DocumentChapter>> chapterTable;
+    private final Map<String, List<BookChapter>> chapterTable;
 
-    public CatalogsTreeWalker(List<DocumentCatalog> catalogs, List<DocumentChapter> chapters) {
-        this.catalogTable = CollectionsTreasureChest.asFlatMapByList(catalogs, DocumentCatalog::getParentUid);
-        this.chapterTable = CollectionsTreasureChest.asFlatMapByList(chapters, DocumentChapter::getCatalogUid);
+    public CatalogsTreeWalker(List<BookCatalog> catalogs, List<BookChapter> chapters) {
+        this.catalogTable = CollectionsTreasureChest.asFlatMapByList(catalogs, BookCatalog::getParentUid);
+        this.chapterTable = CollectionsTreasureChest.asFlatMapByList(chapters, BookChapter::getCatalogUid);
     }
 
     public ContainsCatalogCatalogBo walk() {
-        if (catalogTable.containsKey(DocumentCatalog.ROOT)) {
-            DocumentCatalog rootCatalog = catalogTable.get(DocumentCatalog.ROOT).get(0);
+        if (catalogTable.containsKey(BookCatalogCustomizer.ROOT)) {
+            BookCatalog rootCatalog = catalogTable.get(BookCatalogCustomizer.ROOT).get(0);
             CatalogBo[] catalogs = walkCatalogs(rootCatalog.getUid());
 
             return new ContainsCatalogCatalogBo(rootCatalog, catalogs);
@@ -38,8 +39,8 @@ public class CatalogsTreeWalker {
 
     private CatalogBo[] walkCatalogs(String parentUid) {
         List<CatalogBo> seList = new LinkedList<>();
-        List<DocumentCatalog> catalogs = catalogTable.getOrDefault(parentUid, Collections.emptyList());
-        for (DocumentCatalog c : catalogs) {
+        List<BookCatalog> catalogs = catalogTable.getOrDefault(parentUid, Collections.emptyList());
+        for (BookCatalog c : catalogs) {
             switch (c.getFolder()) {
                 case CATALOG:
                     seList.add(new ContainsCatalogCatalogBo(c, walkCatalogs(c.getUid())));
@@ -62,7 +63,7 @@ public class CatalogsTreeWalker {
                 toArray(ChapterBo[]::new);
     }
 
-    public static ContainsCatalogCatalogBo walk(List<DocumentCatalog> catalogs, List<DocumentChapter> chapters) {
+    public static ContainsCatalogCatalogBo walk(List<BookCatalog> catalogs, List<BookChapter> chapters) {
         return new CatalogsTreeWalker(catalogs, chapters).walk();
     }
 }
