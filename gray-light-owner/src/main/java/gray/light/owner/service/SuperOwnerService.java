@@ -1,14 +1,18 @@
 package gray.light.owner.service;
 
-import gray.light.component.GlobalFinalVariables;
+import gray.light.owner.entity.Privilege;
+import gray.light.support.component.GlobalFinalVariables;
 import gray.light.owner.entity.Owner;
 import gray.light.owner.error.UniqueOwnerException;
 import gray.light.owner.repository.OwnerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.stereotype.Service;
+import perishing.constraint.jdbc.Page;
 
 import javax.annotation.PostConstruct;
+
+import java.util.List;
 
 import static perishing.constraint.treasure.chest.CollectionsTreasureChest.asList;
 
@@ -32,7 +36,8 @@ public final class SuperOwnerService {
     @PostConstruct
     public void validateSuperOwner() {
         // 初始化唯一超级所属者
-        Owner owner = UniqueOwnerException.extractOwnerRequireUniqueOwner(asList(ownerRepository.findBySuperPrivilege()));
+        List<Owner> superOwners = asList(ownerRepository.findBySuperPrivilege(Privilege.Y, Page.unlimited().nullable()));
+        Owner owner = UniqueOwnerException.extractOwnerRequireUniqueOwner(superOwners);
         GlobalFinalVariables.set(Owner.class, owner);
     }
 

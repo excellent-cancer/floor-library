@@ -8,34 +8,81 @@ import perishing.constraint.jdbc.Page;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 表owner_project的映射器
+ *
+ * @author XyParaCrim
+ */
 @Mapper
 public interface OwnerProjectRepository {
+
+    // 单查询
+
+    /**
+     *  根据指定Id查询所属者项目
+     *
+     * @param id 所属者ID
+     * @return 所属者项目
+     */
+    Optional<OwnerProject> findById(@Param("id") Long id);
+
+    // 多查询
+
+    /**
+     * 查询所有属所属者项目
+     *
+     * @param page 分页
+     * @return 查询所有属所属者项目
+     */
+    List<OwnerProject> findAll(@Param("page") Page page);
 
     /**
      * 通过OwnerId获取owner的所有project
      *
      * @param ownerId 项目所属者Id
+     * @param scope 范围
+     * @param page 分页
      * @return 通过OwnerId获取owner的所有project
      */
-    List<OwnerProject> findByOwnerId(@Param("ownerId") Long ownerId, @Param("page") Page page);
+    List<OwnerProject> findByOwnerIdAndScope(@Param("ownerId") Long ownerId, @Param("scope") String scope, @Param("page") Page page);
+
+    // 检测
 
     /**
-     * 通过所属者Id和项目Id查询出是否此项目
+     * 是否存在该Id的所属者项目
      *
-     * @param ownerId 项目所属者ID
-     * @param id      项目ID
-     * @return 所属者Id和项目Id查询出是否此项目
+     * @param id 所属者项目id
+     * @return 是否存在该Id的所属者项目
      */
-    Optional<OwnerProject> findByOwnerIdAndId(@Param("ownerId") Long ownerId, @Param("id") Long id);
+    boolean existsById(@Param("id") Long id);
 
-    Iterable<OwnerProject> findAll();
+    /**
+     * 是否存在该Id的所属者项目且属于此所属者
+     *
+     * @param id 所属者项目id
+     * @param ownerId 所属者id
+     * @return 是否存在该Id的所属者项目
+     */
+    boolean existsByIdAndOwnerId(@Param("ownerId") Long ownerId, @Param("id") Long id);
 
-    boolean existsById(@Param("id") long id);
+    // 保存
 
-    boolean existsByIdAndOwnerId(@Param("id") long id, @Param("ownerId") long ownerId);
-
+    /**
+     * 保存一个所属者项目
+     *
+     * @param project 所属者项目
+     * @return 是否保存成功
+     */
     boolean save(OwnerProject project);
 
-    boolean delete(OwnerProject project);
+    // 删除
+
+    /**
+     * 删除一个所属者项目
+     *
+     * @param id 所属者项目id
+     * @return 是否保存成功
+     */
+    boolean delete(@Param("id") Long id);
 
 }

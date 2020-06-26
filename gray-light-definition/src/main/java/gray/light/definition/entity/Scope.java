@@ -16,7 +16,7 @@ public class Scope {
 
     private String description;
 
-    public final static Scope CODING = new Scope("coding", "");
+    public final static Scope WORKS = new Scope("works", "");
 
     public final static Scope DOCUMENT = new Scope("document", "");
 

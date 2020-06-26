@@ -65,30 +65,11 @@
             <artifactId>perishing-constraint-jdbc</artifactId>
         </dependency>
 
-        <!-- 文件拉去 -->
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-quartz</artifactId>
-        </dependency>
+        <!-- 组成模块 -->
 
         <dependency>
             <groupId>org.excellent-cancer</groupId>
             <artifactId>floor-repository</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.excellent-cancer</groupId>
-            <artifactId>gray-light-document</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.excellent-cancer</groupId>
-            <artifactId>gray-light-owner</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
@@ -104,6 +85,26 @@
             <artifactId>gray-light-support</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+
+<!--        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>gray-light-document</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>gray-light-owner</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- 文件拉去 -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
 
     </dependencies>

@@ -1,4 +1,4 @@
-package gray.light.document.entity;
+package gray.light.book.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +15,8 @@ import java.util.Date;
 @Data
 @Builder
 @AllArgsConstructor
-@Alias("DocumentChapter")
-public class DocumentChapter {
+@Alias("BookChapter")
+public class BookChapter {
 
     /**
      * 文档ID
@@ -48,16 +48,8 @@ public class DocumentChapter {
      */
     private Long ownerProjectId;
 
-    /**
-     * 一组对于具体资源的属性
-     */
-/*    @Builder.Default
-    private boolean isEmpty = true;*/
 
     @Builder.Default
     private String downloadLink = "";
-
-/*    @Builder.Default
-    private String uploadLink = "";*/
 
 }

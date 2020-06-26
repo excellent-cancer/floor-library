@@ -4,6 +4,7 @@ import gray.light.document.entity.*;
 import gray.light.document.repository.DocumentCatalogsRepository;
 import gray.light.document.repository.DocumentChapterRepository;
 import gray.light.document.repository.DocumentRepository;
+import gray.light.owner.entity.OwnerProject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.stereotype.Service;
@@ -32,12 +33,15 @@ public class DocumentRelationService {
     /**
      * 为项目添加新文档
      *
-     * @param document 添加的新文档
+     * @param documentOwnerProject 添加的新文档项目
+     * @param projectId 要添加的项目Id
      * @return 是否创建并保存成功
      */
     @Transactional(rollbackFor = RuntimeException.class)
-    public boolean createDocumentForProject(Document document) {
-        return documentRepository.saveIfMatchedProject(document);
+    public boolean createDocumentForProject(OwnerProject documentOwnerProject, Long projectId) {
+        // TODO
+        throw new UnsupportedOperationException();
+        // return documentRepository.saveIfMatchedProject(document);
     }
 
     /**

@@ -28,7 +28,7 @@ public class UniqueOwnerException extends RuntimeException {
     public static Owner extractOwnerRequireUniqueOwner(@NonNull List<Owner> owners) {
         if (owners.size() != 1) {
             if (!owners.isEmpty()) {
-                log.error("Obtained owner's data：");
+                log.error("Obtained findOwner's data：");
                 owners.forEach(log::error);
             }
 

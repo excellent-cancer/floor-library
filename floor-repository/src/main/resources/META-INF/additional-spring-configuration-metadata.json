@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "floor.repository.details.database-location",
+      "type": "java.lang.String",
+      "description": "Description for floor.repository.details.database-location."
+    },
+    {
+      "name": "floor.repository.enabled",
+      "type": "java.lang.String",
+      "description": "Description for floor.repository.enabled."
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-package gray.light.web;
+package gray.light.support.web;
 
 import lombok.NonNull;
 import org.springframework.web.reactive.function.server.ServerResponse;

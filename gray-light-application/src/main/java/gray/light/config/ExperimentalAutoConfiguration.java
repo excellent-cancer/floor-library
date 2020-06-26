@@ -2,7 +2,8 @@ package gray.light.config;
 
 import floor.file.storage.annotation.FloorFileStorage;
 import floor.repository.annotation.FloorRepository;
-import gray.light.component.ReppsitoryServiceTable;
+import gray.light.owner.annotation.OwnerDomain;
+import gray.light.support.component.ReppsitoryServiceTable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,14 +20,9 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 @Configuration
 @FloorFileStorage
 @FloorRepository
-@ComponentScan({"gray.light.document"})
+@OwnerDomain
+@ComponentScan({"gray.light.owner"})
 public class ExperimentalAutoConfiguration {
-
-    @Bean
-    public ExcellentCancerProperties excellentCancerProperties() {
-        return new ExcellentCancerProperties();
-    }
-
 
     @Configuration
     @EnableWebFlux

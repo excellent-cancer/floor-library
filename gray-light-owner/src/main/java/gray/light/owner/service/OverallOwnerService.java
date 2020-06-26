@@ -4,6 +4,7 @@ import gray.light.definition.entity.Scope;
 import gray.light.owner.entity.Owner;
 import gray.light.owner.entity.OwnerProject;
 import gray.light.owner.repository.OwnerProjectRepository;
+import gray.light.owner.repository.OwnerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,89 +23,94 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OverallOwnerService {
 
-    private final OwnerProjectRepository ownerProjectRepository;
+    private final OwnerRepository ownerRepository;
+
+    private final OwnerProjectRepository projectRepository;
+
+    /**
+     *  查询指定id的所属者
+     *
+     * @param ownerId 指定所属者id
+     * @return 返回查询结果
+     */
+    public Optional<Owner> findOwner(Long ownerId) {
+        return ownerRepository.findById(ownerId);
+    }
+
+    /**
+     * 查询指定id的所属者项目
+     *
+     * @param projectId 指定id的所属者项目
+     * @return 返回查询结果
+     */
+    public Optional<OwnerProject> findProject(Long projectId) {
+        return projectRepository.findById(projectId);
+    }
 
     /**
      * 返回指定所属者的所有项目
      *
-     * @param owner 指定所属者
+     * @param ownerId 指定所属者id
      * @param page 分页
      * @return 返回指定所属者的所有项目
      */
-    public List<OwnerProject> projects(Owner owner, Page page) {
-        return ownerProjectRepository.findByOwnerId(owner.getId(), page);
+    public List<OwnerProject> projects(Long ownerId, Page page) {
+        return projectRepository.findByOwnerIdAndScope(ownerId, null, page.nullable());
     }
 
     /**
-     * 返回指定所属者的程序项目
+     * 返回指定所属者的范围项目
      *
-     * @param owner 指定所属者
+     * @param ownerId 指定所属者id
+     * @param scope 范围
      * @param page 分页
-     * @return 返回指定所属者的程序项目
+     * @return 返回指定所属者的所有项目
      */
-    public List<OwnerProject> programmingProjects(Owner owner, Page page) {
-        return projects(owner, Scope.CODING, page);
+    public List<OwnerProject> projects(Long ownerId, Scope scope, Page page) {
+        return projectRepository.findByOwnerIdAndScope(ownerId, scope.getName(), page.nullable());
     }
 
     /**
-     * 返回指定所属者的文档项目
+     * 添加指定所属者项目
      *
-     * @param owner 指定所属者
-     * @param page 分页
-     * @return 返回指定所属者的文档项目
+     * @param project 指定所属者项目
+     * @return 是否添加成功
      */
-    public List<OwnerProject> documentProjects(Owner owner, Page page) {
-        return projects(owner, Scope.DOCUMENT, page);
+    public boolean addProject(OwnerProject project) {
+        return projectRepository.save(project);
     }
 
-    /**
-     * 返回指定所属者的笔记项目
-     *
-     * @param owner 指定所属者
-     * @param page 分页
-     * @return 返回指定所属者的笔记项目
-     */
-    public List<OwnerProject> noteProjects(Owner owner, Page page) {
-        return projects(owner, Scope.NOTE, page);
-    }
-
-    /**
+/*    *//**
      * 查询指定所属者项目中是否有ID匹配的项目
      *
-     * @param owner 指定所属者
+     * @param findOwner 指定所属者
      * @param project 请求项目
      * @return 返回指定所属者项目中ID匹配的项目
-     */
-    public Optional<OwnerProject> project(Owner owner, OwnerProject project) {
-        return ownerProjectRepository.findByOwnerIdAndId(owner.getId(), project.getId());
+     *//*
+    public Optional<OwnerProject> project(Owner findOwner, OwnerProject project) {
+        return projectRepository.findByOwnerIdAndId(findOwner.getId(), project.getId());
     }
 
-    /**
+    *//**
      * 查询指定所属者项目中是否有ID匹配的项目
      *
-     * @param owner 指定所属者
+     * @param findOwner 指定所属者
      * @param projectId project 请求项目ID
      * @return 返回指定所属者项目中是否有ID匹配的项目
-     */
-    public boolean existsProject(Owner owner, Long projectId) {
-        return ownerProjectRepository.existsByIdAndOwnerId(projectId, owner.getId());
+     *//*
+    public boolean existsProject(Owner findOwner, Long projectId) {
+        return projectRepository.existsByIdAndOwnerId(projectId, findOwner.getId());
     }
 
-    public boolean addProject(Owner owner, OwnerProject project) {
-        project.setOwnerId(owner.getId());
-        return ownerProjectRepository.save(project);
+    public boolean addProject(OwnerProject project) {
+        // project.setOwnerId(findOwner.getId());
+        return projectRepository.save(project);
     }
 
-    public boolean removeProject(Owner owner, OwnerProject project) {
-        project.setOwnerId(owner.getId());
-        return ownerProjectRepository.delete(project);
-    }
+    public boolean removeProject(Owner findOwner, OwnerProject project) {
+        project.setOwnerId(findOwner.getId());
+        return projectRepository.delete(project);
+    }*/
 
-    // TODO
-
-    private List<OwnerProject> projects(Owner owner, Scope scope, Page page) {
-        // TODO
-        throw new RuntimeException();
-    }
 
 }

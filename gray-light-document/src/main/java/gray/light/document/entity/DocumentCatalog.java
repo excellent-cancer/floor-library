@@ -18,11 +18,6 @@ import java.util.Date;
 @Alias("DocumentCatalog")
 public class DocumentCatalog {
 
-    /**
-     * 目录ID
-     */
-    private Long id;
-
     private String uid;
 
     /**

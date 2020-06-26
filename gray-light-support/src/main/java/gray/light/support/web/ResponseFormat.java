@@ -1,4 +1,4 @@
-package gray.light.web;
+package gray.light.support.web;
 
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package gray.light.config;
 
-import gray.light.document.service.DocumentRelationService;
+/*import gray.light.document.service.DocumentRelationService;
 import gray.light.document.service.DocumentRepositoryCacheService;
 import gray.light.document.service.DocumentSourceService;
 import gray.light.job.CheckDocumentRepositoryJob;
@@ -9,17 +9,17 @@ import lombok.extern.apachecommons.CommonsLog;
 import org.quartz.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Configuration;*/
 
 /**
  * @author XyParaCrim
  */
-@CommonsLog
+/*@CommonsLog
 @Configuration
-@ConditionalOnProperty("excellent.cancer.running.enabled")
+@ConditionalOnProperty("excellent.cancer.running.enabled")*/
 public class QuartzAutoConfiguration {
 
-    @Configuration
+/*    @Configuration
     @ConditionalOnProperty("excellent.cancer.running.enabled")
     public static class CheckDocumentRepositoryConfiguration {
 
@@ -99,6 +99,6 @@ public class QuartzAutoConfiguration {
                     withSchedule(scheduleBuilder).
                     build();
         }
-    }
+    }*/
 
 }

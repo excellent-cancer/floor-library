@@ -1,4 +1,4 @@
-package gray.light.component;
+package gray.light.support.component;
 
 import lombok.NonNull;
 

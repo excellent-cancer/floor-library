@@ -75,7 +75,7 @@ create table if not exists document_chapter
     upload_link   varchar(128) default ''                not null
 );
 
-create table if not exists owner
+create table if not exists findOwner
 (
     id           bigint unsigned auto_increment
         primary key,

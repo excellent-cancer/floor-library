@@ -1,4 +1,4 @@
-package gray.light.web;
+package gray.light.support.web;
 
 import org.springframework.web.reactive.function.server.ServerResponse;
 import perishing.constraint.treasure.chest.functions.UnsatisfiedPropertyExtractor;

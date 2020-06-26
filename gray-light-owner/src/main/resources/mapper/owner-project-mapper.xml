@@ -2,25 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="gray.light.owner.repository.OwnerProjectRepository">
 
-    <select id="findAll"
-            resultType="OwnerProject">
-        select *
-        from owner_project
-    </select>
+    <sql id="pageable">
+        <if test="page != null">
+            limit #{page.from}, #{page.count}
+        </if>
+    </sql>
 
-    <select id="findByOwnerIdAndId"
+    <select id="findById"
             resultType="OwnerProject">
         select *
         from owner_project
         where id = #{id}
-          and owner_id = #{ownerId}
+        limit 1
     </select>
 
-    <select id="findByOwnerId"
+    <select id="findAll"
+            resultType="OwnerProject">
+        select *
+        from owner_project
+        <include refid="pageable"/>
+    </select>
+
+    <select id="findByOwnerIdAndScope"
             resultType="OwnerProject">
         select *
         from owner_project
         where owner_id = #{ownerId}
+        <if test="scope != null">
+            and scope = #{scope}
+        </if>
+        <include refid="pageable"/>
     </select>
 
     <select id="existsById"
@@ -43,8 +54,8 @@
     <insert id="save"
             useGeneratedKeys="true"
             keyProperty="id">
-        insert into owner_project (name, description, owner_id, created_date, updated_date)
-        values (#{name}, #{description}, #{ownerId}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        insert into owner_project (name, description, owner_id, scope, home_page)
+        values (#{name}, #{description}, #{ownerId}, #{scope}, #{homePage})
     </insert>
 
     <delete id="delete"

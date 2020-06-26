@@ -11,4 +11,25 @@
 
     <artifactId>gray-light-support</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>perishing-constraint-treasure-chest</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>perishing-constraint-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>perishing-constraint-jdbc</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

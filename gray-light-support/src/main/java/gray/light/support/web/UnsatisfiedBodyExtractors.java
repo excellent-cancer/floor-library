@@ -1,13 +1,13 @@
-package gray.light.web;
+package gray.light.support.web;
 
 import lombok.extern.apachecommons.CommonsLog;
+import perishing.constraint.treasure.chest.ResourceTreasureChest;
 
 import java.util.Optional;
 
-import static gray.light.web.ResponseToClient.failWithMessage;
+import static gray.light.support.web.ResponseToClient.failWithMessage;
 import static org.springframework.util.StringUtils.isEmpty;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
-import static perishing.constraint.treasure.chest.ResourceTreasureChest.isGitUrl;
 
 /**
  * 定义常用的提取器
@@ -57,8 +57,9 @@ public final class UnsatisfiedBodyExtractors {
 
     public static final UnsatisfiedBodyExtractor EXTRACT_GIT = (
             (key, properties) ->
-                    isGitUrl((String) properties.get(key)) ?
+                    ResourceTreasureChest.isGitUrl((String) properties.get(key)) ?
                             Optional.empty() :
                             Optional.of(failWithMessage("The property's value of " + key + " is not a git url"))
     );
+
 }
