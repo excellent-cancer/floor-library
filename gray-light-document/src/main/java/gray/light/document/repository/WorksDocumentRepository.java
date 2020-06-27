@@ -21,5 +21,4 @@ public interface WorksDocumentRepository {
 
     List<ProjectDetails> findProjectDetailsByStatus(@Param("status") ProjectStatus status, @Param("page") Page page);
 
-    boolean batchUpdateProjectDetailsStatus(@Param("docs") List<ProjectDetails> docs);
 }

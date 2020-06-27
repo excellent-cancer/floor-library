@@ -2,11 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="gray.light.owner.repository.ProjectDetailsRepository">
 
+    <sql id="pageable">
+        <if test="page != null">
+            limit #{page.from}, #{page.count}
+        </if>
+    </sql>
+
     <insert id="save"
             parameterType="ProjectDetails"
             keyProperty="originId,type">
         insert into project_details (origin_id, type, http, status, structure)
         values (#{originId}, #{type}, #{http}, #{status}, #{structure})
     </insert>
+
+    <update id="batchUpdateProjectDetailsStatus"
+            parameterType="java.util.List">
+        # noinspection SqlWithoutWhere
+        update project_details d
+        join (<foreach collection="docs" index="index" item="doc" separator=" UNION ">select #{doc.originId} as
+        origin_id, #{doc.type} as type, #{doc.status} as status</foreach>) b
+        using (origin_id, type)
+        set d.status = b.status
+    </update>
+
+    <select id="findByStatusAndScopeAndType"
+            resultType="ProjectDetails">
+        select p.origin_id, p.type,p.http, p.created_date, p.updated_date, p.status, p.structure
+        from project_details p
+        inner join owner_project op
+        on p.origin_id = op.id and p.type = #{type} and p.status = #{status} and op.scope = #{scope}
+        <include refid="pageable"/>
+    </select>
 
 </mapper>

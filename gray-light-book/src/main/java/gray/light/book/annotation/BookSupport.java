@@ -1,6 +1,6 @@
 package gray.light.book.annotation;
 
-import gray.light.book.BookAutoConfiguration;
+import gray.light.book.config.BookAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

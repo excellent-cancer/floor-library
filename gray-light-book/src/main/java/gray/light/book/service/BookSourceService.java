@@ -1,9 +1,8 @@
-package gray.light.document.service;
+package gray.light.book.service;
 
 import floor.file.storage.FileStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
-import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 
@@ -14,7 +13,7 @@ import java.nio.file.Path;
  */
 @CommonsLog
 @RequiredArgsConstructor
-public class DocumentSourceService {
+public class BookSourceService {
 
     private static final String CHAPTER_EXTENSION = "md";
 

@@ -22,11 +22,16 @@ floor:
 
 gray:
   light:
-    job:
+    document:
       check-update:
         enabled: false
       upload-pending:
-        enabled: true
+        enabled: false
+    note:
+      check-update:
+        enabled: false
+      upload-pending:
+        enabled: false
 
 logging:
   level:

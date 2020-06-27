@@ -1,22 +1,22 @@
-package gray.light.document.job;
+package gray.light.book.job;
 
 import gray.light.book.DocumentRepositoryVisitor;
-import gray.light.document.job.step.BatchCloneRemoteRepositoryStep;
-import gray.light.document.job.step.BatchUpdateDocumentRepositoriesStep;
-import gray.light.document.job.step.UploadDocumentStep;
-import gray.light.document.job.step.VisitDocumentRepositoryStep;
-import gray.light.document.service.DocumentRelationService;
-import gray.light.document.service.DocumentRepositoryCacheService;
-import gray.light.document.service.DocumentSourceService;
+import gray.light.book.job.step.BatchCloneRemoteRepositoryStep;
+import gray.light.book.job.step.BatchUpdateDocumentRepositoriesStep;
+import gray.light.book.job.step.UploadDocumentStep;
+import gray.light.book.job.step.VisitDocumentRepositoryStep;
+import gray.light.book.service.BookRepositoryCacheService;
+import gray.light.book.service.BookService;
+import gray.light.book.service.BookSourceService;
 import gray.light.owner.entity.ProjectDetails;
 import gray.light.owner.entity.ProjectStatus;
 import lombok.Setter;
 import lombok.extern.apachecommons.CommonsLog;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import perishing.constraint.jdbc.Page;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * 从远程仓库克隆文档仓库，并且将其上传到文件服务器，最后更新数据库
@@ -27,18 +27,21 @@ import java.util.List;
 public class UploadDocumentRepositoryJob extends QuartzJobBean {
 
     @Setter
-    private DocumentRelationService documentService;
+    private Supplier<List<ProjectDetails>> initStatusProjectDetails;
 
     @Setter
-    private DocumentSourceService documentSourceService;
+    private BookService bookService;
 
     @Setter
-    private DocumentRepositoryCacheService documentRepositoryCacheService;
+    private BookSourceService bookSourceService;
+
+    @Setter
+    private BookRepositoryCacheService bookRepositoryCacheService;
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
 
-        List<ProjectDetails> emptyDocument = documentService.findProjectDetailsByStatus(ProjectStatus.INIT, Page.unlimited());
+        List<ProjectDetails> emptyDocument = initStatusProjectDetails.get();
 
         // 克隆远程仓库到本地
         BatchCloneRemoteRepositoryStep.Result cloneResult = batchCloneRemoteRepository(emptyDocument);
@@ -61,7 +64,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
      * @param emptyDocument 状态为空的文档
      */
     private BatchCloneRemoteRepositoryStep.Result batchCloneRemoteRepository(List<ProjectDetails> emptyDocument) {
-        BatchCloneRemoteRepositoryStep batchCloneRemoteRepository = new BatchCloneRemoteRepositoryStep(documentRepositoryCacheService);
+        BatchCloneRemoteRepositoryStep batchCloneRemoteRepository = new BatchCloneRemoteRepositoryStep(bookRepositoryCacheService);
 
         return batchCloneRemoteRepository.execute(emptyDocument);
     }
@@ -75,7 +78,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
      * @return 文档仓库遍历的结果
      */
     private VisitDocumentRepositoryStep.Result batchWalkGitTree(List<ProjectDetails> emptyDocument) {
-        VisitDocumentRepositoryStep batchWalkGitTree = new VisitDocumentRepositoryStep(documentRepositoryCacheService);
+        VisitDocumentRepositoryStep batchWalkGitTree = new VisitDocumentRepositoryStep(bookRepositoryCacheService);
 
         return batchWalkGitTree.execute(emptyDocument);
     }
@@ -87,7 +90,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
      * @return 文档上传的结果
      */
     private UploadDocumentStep.Result batchUploadDocument(List<DocumentRepositoryVisitor> visitors) {
-        UploadDocumentStep batchUploadDocument = new UploadDocumentStep(documentSourceService);
+        UploadDocumentStep batchUploadDocument = new UploadDocumentStep(bookSourceService);
 
         return batchUploadDocument.execute(visitors);
     }
@@ -99,7 +102,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
      * @param emptyDocument 文档
      */
     private void updateRepositories(List<DocumentRepositoryVisitor> visitors, List<ProjectDetails> emptyDocument) {
-        BatchUpdateDocumentRepositoriesStep updateRepositories = new BatchUpdateDocumentRepositoriesStep(documentService);
+        BatchUpdateDocumentRepositoriesStep updateRepositories = new BatchUpdateDocumentRepositoriesStep(bookService);
 
         updateRepositories.execute(visitors, emptyDocument);
     }

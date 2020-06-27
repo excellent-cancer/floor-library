@@ -4,9 +4,6 @@ import floor.file.storage.annotation.FloorFileStorage;
 import floor.repository.annotation.FloorRepository;
 import gray.light.document.annotation.DocumentDomain;
 import gray.light.owner.annotation.OwnerDomain;
-import gray.light.support.component.ReppsitoryServiceTable;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.config.CorsRegistry;
@@ -23,7 +20,6 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 @FloorRepository
 @OwnerDomain
 @DocumentDomain
-@ComponentScan({"gray.light.owner"})
 public class ExperimentalAutoConfiguration {
 
     @Configuration
@@ -39,11 +35,6 @@ public class ExperimentalAutoConfiguration {
                     .allowedMethods("*")
                     .exposedHeaders(HttpHeaders.SET_COOKIE);
         }
-    }
-
-    @Bean
-    public ReppsitoryServiceTable reppsitoryServiceTable() {
-        return new ReppsitoryServiceTable();
     }
 
 }

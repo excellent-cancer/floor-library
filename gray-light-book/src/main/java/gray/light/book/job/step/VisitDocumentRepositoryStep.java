@@ -1,7 +1,8 @@
-package gray.light.document.job.step;
+package gray.light.book.job.step;
 
 import gray.light.book.DocumentRepositoryVisitor;
-import gray.light.document.service.DocumentRepositoryCacheService;
+import gray.light.book.job.step.AbstractExecuteStep;
+import gray.light.book.service.BookRepositoryCacheService;
 import gray.light.owner.entity.ProjectDetails;
 import gray.light.owner.entity.ProjectStatus;
 import lombok.Getter;
@@ -38,7 +39,7 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<ProjectDeta
     }
 
     @NonNull
-    private final DocumentRepositoryCacheService documentRepositoryCacheService;
+    private final BookRepositoryCacheService bookRepositoryCacheService;
 
     /**
      * 根据一组文档实体，遍历仓库文件
@@ -133,7 +134,7 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<ProjectDeta
         @Override
         public DocumentRepositoryVisitor get() {
             try {
-                return documentRepositoryCacheService.visitRepository(document);
+                return bookRepositoryCacheService.visitRepository(document);
             } catch (InterruptedException e) {
                 // 执行线程若中断，则立即退出
                 return DocumentRepositoryVisitor.failedVisitor(document, e);

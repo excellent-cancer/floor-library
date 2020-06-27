@@ -1,18 +1,17 @@
-package gray.light.document.job;
+package gray.light.book.job;
 
-import gray.light.document.service.DocumentRelationService;
-import gray.light.document.service.DocumentRepositoryCacheService;
+import gray.light.book.service.BookRepositoryCacheService;
 import gray.light.owner.entity.ProjectDetails;
-import gray.light.owner.entity.ProjectStatus;
+import gray.light.owner.service.ProjectDetailsService;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.apachecommons.CommonsLog;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-import perishing.constraint.jdbc.Page;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Supplier;
 
 /**
  * 检查文档仓库是否更新，自动拉取最新版本，并存储到数据库
@@ -23,21 +22,24 @@ import java.util.ListIterator;
 public class CheckDocumentRepositoryJob extends QuartzJobBean {
 
     @Setter
-    private DocumentRelationService documentService;
+    private ProjectDetailsService projectDetailsService;
 
     @Setter
-    DocumentRepositoryCacheService documentRepositoryCacheService;
+    private BookRepositoryCacheService bookRepositoryCacheService;
+
+    @Setter
+    private Supplier<List<ProjectDetails>> syncStatusProjectDetails;
 
     @Override
     @SneakyThrows
     protected void executeInternal(JobExecutionContext context) {
-        List<ProjectDetails> syncDocument = documentService.findProjectDetailsByStatus(ProjectStatus.SYNC, Page.unlimited());
+        List<ProjectDetails> syncDocument = syncStatusProjectDetails.get();
         ListIterator<ProjectDetails> iterator = syncDocument.listIterator();
 
         while (iterator.hasNext()) {
             ProjectDetails document = iterator.next();
 
-            documentRepositoryCacheService.updateRepository(document);
+            bookRepositoryCacheService.updateRepository(document);
 
             switch (document.getStatus()) {
                 case SYNC:
@@ -52,7 +54,7 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
         }
 
         if (syncDocument.size() > 0) {
-            documentService.batchUpdateDocumentStatus(syncDocument);
+            projectDetailsService.batchUpdateStatus(syncDocument);
         }
     }
 

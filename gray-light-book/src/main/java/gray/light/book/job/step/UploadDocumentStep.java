@@ -1,8 +1,8 @@
-package gray.light.document.job.step;
+package gray.light.book.job.step;
 
 import gray.light.book.DocumentRepositoryVisitor;
 import gray.light.book.entity.BookChapter;
-import gray.light.document.service.DocumentSourceService;
+import gray.light.book.service.BookSourceService;
 import gray.light.owner.entity.ProjectDetails;
 import gray.light.owner.entity.ProjectStatus;
 import lombok.Getter;
@@ -38,7 +38,7 @@ public class UploadDocumentStep {
     }
 
     @NonNull
-    private final DocumentSourceService documentSourceService;
+    private final BookSourceService bookSourceService;
 
     /**
      * 上传文档章节到服务器。执行上传使用了{@link ForkJoinTask}的迭代任务，其中
@@ -54,7 +54,7 @@ public class UploadDocumentStep {
         ForkJoinTask.invokeAll(
                 visitors.
                         stream().
-                        map(visitor -> new UploadedDocumentTask(documentSourceService, visitor, resultVisitors)).
+                        map(visitor -> new UploadedDocumentTask(bookSourceService, visitor, resultVisitors)).
                         toArray(UploadedDocumentTask[]::new)
         );
 
@@ -68,7 +68,7 @@ public class UploadDocumentStep {
     @RequiredArgsConstructor
     private static class UploadedDocumentTask extends RecursiveAction {
 
-        private final DocumentSourceService documentSourceService;
+        private final BookSourceService bookSourceService;
 
         private final DocumentRepositoryVisitor visitor;
 
@@ -110,7 +110,7 @@ public class UploadDocumentStep {
             if (!task.failed.get()) {
                 BookChapter chapter = chapterPair.getT1();
                 try {
-                    String url = task.documentSourceService.updateChapter(chapterPair.getT2());
+                    String url = task.bookSourceService.updateChapter(chapterPair.getT2());
 
                     log.info("Successfully uploaded a chapter file: { name: {}, downloadLink: {} }", chapter.getTitle(), url);
 

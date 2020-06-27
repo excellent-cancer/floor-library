@@ -33,14 +33,4 @@
         <include refid="pageable"/>
     </select>
 
-    <update id="batchUpdateProjectDetailsStatus"
-            parameterType="java.util.List">
-        # noinspection SqlWithoutWhere
-        update project_details d
-        join (<foreach collection="docs" index="index" item="doc" separator=" UNION ">select #{doc.originId} as
-        origin_id, #{doc.type} as type, #{doc.status} as status</foreach>) b
-        using (origin_id, type)
-        set d.status = b.status
-    </update>
-
 </mapper>

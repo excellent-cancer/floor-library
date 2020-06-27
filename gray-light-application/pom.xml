@@ -43,28 +43,6 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
-        <!-- 依据风格 -->
-
-        <dependency>
-            <groupId>org.excellent-cancer</groupId>
-            <artifactId>perishing-constraint-treasure-chest</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.excellent-cancer</groupId>
-            <artifactId>perishing-constraint-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.excellent-cancer</groupId>
-            <artifactId>perishing-constraint-io</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.excellent-cancer</groupId>
-            <artifactId>perishing-constraint-jdbc</artifactId>
-        </dependency>
-
         <!-- 组成模块 -->
 
         <dependency>
@@ -78,13 +56,6 @@
             <groupId>org.excellent-cancer</groupId>
             <artifactId>floor-storage-file</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.excellent-cancer</groupId>
-            <artifactId>gray-light-support</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>

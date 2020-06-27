@@ -1,4 +1,4 @@
-package gray.light.document.service;
+package gray.light.book.service;
 
 import floor.repository.RepositoryDatabase;
 import floor.repository.RepositoryOptions;
@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 @CommonsLog
 @RequiredArgsConstructor
-public class DocumentRepositoryCacheService {
+public class BookRepositoryCacheService {
 
     private final RepositoryDatabase<Long, Long> repositoryDatabase;
 

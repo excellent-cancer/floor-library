@@ -6,7 +6,9 @@ import gray.light.document.business.DocumentBo;
 import gray.light.document.business.DocumentFo;
 import gray.light.document.service.DocumentRelationService;
 import gray.light.owner.customizer.OwnerProjectCustomizer;
+import gray.light.owner.customizer.ProjectDetailsCustomizer;
 import gray.light.owner.entity.OwnerProject;
+import gray.light.owner.entity.ProjectDetails;
 import gray.light.owner.handler.OwnerHandler;
 import gray.light.owner.service.OverallOwnerService;
 import gray.light.support.error.NormalizingFormException;
@@ -75,7 +77,6 @@ public class DocumentHandler {
      */
     public Mono<ServerResponse> queryDocumentRepositoryTree(ServerRequest request) {
         // TODO 验证
-
         return bookHandler.queryBookTree(request);
     }
 
@@ -89,13 +90,15 @@ public class DocumentHandler {
             return failWithMessage(e.getMessage());
         }
 
+        Long worksId = documentFo.getWorksId();
         OwnerProject documentProject = OwnerProjectCustomizer.fromForm(documentFo.getDocument(), Scope.DOCUMENT);
+        ProjectDetails uncommited = ProjectDetailsCustomizer.uncommitProjectDetails(documentFo.getSource());
 
-        return addWorksDocument(documentProject, documentFo.getWorksId(), documentFo);
+        return addWorksDocument(worksId, documentProject, uncommited);
     }
 
-    private Mono<ServerResponse> addWorksDocument(OwnerProject documentProject, Long worksId, DocumentFo documentFo) {
-        CompletableFuture<Boolean> addProcessing = addWorksDocumentProcessing(documentProject, worksId, documentFo);
+    private Mono<ServerResponse> addWorksDocument(Long worksId, OwnerProject documentProject, ProjectDetails uncommited) {
+        CompletableFuture<Boolean> addProcessing = addWorksDocumentProcessing(worksId, documentProject, uncommited);
 
         return Mono.fromFuture(addProcessing).
                 flatMap(
@@ -113,8 +116,8 @@ public class DocumentHandler {
                 );
     }
 
-    private CompletableFuture<Boolean> addWorksDocumentProcessing(OwnerProject documentProject, Long worksId, DocumentFo documentFo) {
-        return CompletableFuture.supplyAsync(() -> documentRelationService.addDocumentToWorks(documentProject, worksId, documentFo));
+    private CompletableFuture<Boolean> addWorksDocumentProcessing(Long worksId, OwnerProject documentProject, ProjectDetails uncommited) {
+        return CompletableFuture.supplyAsync(() -> documentRelationService.addDocumentToWorks(worksId, documentProject, uncommited));
     }
 
 }

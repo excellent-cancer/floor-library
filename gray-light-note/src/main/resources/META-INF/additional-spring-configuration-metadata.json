@@ -1,13 +1,13 @@
 {
   "properties": [
     {
-      "name": "gray.light.document.upload-pending.enabled",
+      "name": "gray.light.note.upload-pending.enabled",
       "type": "java.lang.Boolean",
       "defaultValue": true,
       "description": "Description for gray.light.job.upload-pending.enabled."
     },
     {
-      "name": "gray.light.document.check-update.enabled",
+      "name": "gray.light.note.check-update.enabled",
       "type": "java.lang.Boolean",
       "defaultValue": true,
       "description": "Description for gray.light.job.check-update.enabled."
