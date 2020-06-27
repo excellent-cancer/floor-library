@@ -16,4 +16,17 @@
         <include refid="pageable"/>
     </select>
 
+    <insert id="batchSave" parameterType="list" keyProperty="uid">
+        insert into book_chapter (uid, title, catalog_uid, owner_project_id, download_link)
+        values (
+        <foreach collection="chapters" index="index" item="item" separator="),(">
+            #{item.uid},
+            #{item.title},
+            #{item.catalogUid},
+            #{item.ownerProjectId},
+            #{item.downloadLink}
+        </foreach>
+        )
+    </insert>
+
 </mapper>

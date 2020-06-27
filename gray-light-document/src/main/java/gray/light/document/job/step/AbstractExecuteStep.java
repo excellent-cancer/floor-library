@@ -1,4 +1,4 @@
-package gray.light.step;
+package gray.light.document.job.step;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

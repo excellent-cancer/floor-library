@@ -1,19 +1,20 @@
-package gray.light.job;
+package gray.light.document.job;
 
-import gray.light.document.DocumentRepositoryVisitor;
-import gray.light.document.entity.Document;
-import gray.light.document.entity.DocumentStatus;
+import gray.light.book.DocumentRepositoryVisitor;
+import gray.light.document.job.step.BatchCloneRemoteRepositoryStep;
+import gray.light.document.job.step.BatchUpdateDocumentRepositoriesStep;
+import gray.light.document.job.step.UploadDocumentStep;
+import gray.light.document.job.step.VisitDocumentRepositoryStep;
 import gray.light.document.service.DocumentRelationService;
 import gray.light.document.service.DocumentRepositoryCacheService;
 import gray.light.document.service.DocumentSourceService;
-import gray.light.step.BatchCloneRemoteRepositoryStep;
-import gray.light.step.BatchUpdateDocumentRepositoriesStep;
-import gray.light.step.UploadDocumentStep;
-import gray.light.step.VisitDocumentRepositoryStep;
+import gray.light.owner.entity.ProjectDetails;
+import gray.light.owner.entity.ProjectStatus;
 import lombok.Setter;
 import lombok.extern.apachecommons.CommonsLog;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import perishing.constraint.jdbc.Page;
 
 import java.util.List;
 
@@ -37,9 +38,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
     @Override
     protected void executeInternal(JobExecutionContext context) {
 
-        log.error("更新任务");
-
-        List<Document> emptyDocument = documentService.allEmptyDocument();
+        List<ProjectDetails> emptyDocument = documentService.findProjectDetailsByStatus(ProjectStatus.INIT, Page.unlimited());
 
         // 克隆远程仓库到本地
         BatchCloneRemoteRepositoryStep.Result cloneResult = batchCloneRemoteRepository(emptyDocument);
@@ -56,12 +55,12 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
 
     /**
      * 根据状态为空文档的仓库地址，克隆文档仓库到本地，如果其中有文档在克隆期间发生
-     * 异常，则将文档状态设置为{@link DocumentStatus#INVALID}无效状态，并将其
+     * 异常，则将文档状态设置为{@link ProjectStatus#INVALID}无效状态，并将其
      * 从文档迭代器中移除
      *
      * @param emptyDocument 状态为空的文档
      */
-    private BatchCloneRemoteRepositoryStep.Result batchCloneRemoteRepository(List<Document> emptyDocument) {
+    private BatchCloneRemoteRepositoryStep.Result batchCloneRemoteRepository(List<ProjectDetails> emptyDocument) {
         BatchCloneRemoteRepositoryStep batchCloneRemoteRepository = new BatchCloneRemoteRepositoryStep(documentRepositoryCacheService);
 
         return batchCloneRemoteRepository.execute(emptyDocument);
@@ -69,13 +68,13 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
 
     /**
      * 遍历本地文档仓库，获取目录、章节等信息，并将其储存在{@link DocumentRepositoryVisitor}里返回。
-     * 如果其中有遍历期间发生异常，则将文档状态设置为{@link DocumentStatus#INVALID}无效状态，并将其
+     * 如果其中有遍历期间发生异常，则将文档状态设置为{@link ProjectStatus#INVALID}无效状态，并将其
      * 从文档迭代器中移除
      *
      * @param emptyDocument 状态为空的文档
      * @return 文档仓库遍历的结果
      */
-    private VisitDocumentRepositoryStep.Result batchWalkGitTree(List<Document> emptyDocument) {
+    private VisitDocumentRepositoryStep.Result batchWalkGitTree(List<ProjectDetails> emptyDocument) {
         VisitDocumentRepositoryStep batchWalkGitTree = new VisitDocumentRepositoryStep(documentRepositoryCacheService);
 
         return batchWalkGitTree.execute(emptyDocument);
@@ -99,7 +98,7 @@ public class UploadDocumentRepositoryJob extends QuartzJobBean {
      * @param visitors      文件遍历器
      * @param emptyDocument 文档
      */
-    private void updateRepositories(List<DocumentRepositoryVisitor> visitors, List<Document> emptyDocument) {
+    private void updateRepositories(List<DocumentRepositoryVisitor> visitors, List<ProjectDetails> emptyDocument) {
         BatchUpdateDocumentRepositoriesStep updateRepositories = new BatchUpdateDocumentRepositoriesStep(documentService);
 
         updateRepositories.execute(visitors, emptyDocument);

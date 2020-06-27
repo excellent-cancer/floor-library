@@ -12,7 +12,6 @@ import java.nio.file.Path;
  *
  * @author XyParaCrim
  */
-@Service
 @CommonsLog
 @RequiredArgsConstructor
 public class DocumentSourceService {

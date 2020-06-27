@@ -2,6 +2,7 @@ package gray.light.config;
 
 import floor.file.storage.annotation.FloorFileStorage;
 import floor.repository.annotation.FloorRepository;
+import gray.light.document.annotation.DocumentDomain;
 import gray.light.owner.annotation.OwnerDomain;
 import gray.light.support.component.ReppsitoryServiceTable;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 @FloorFileStorage
 @FloorRepository
 @OwnerDomain
+@DocumentDomain
 @ComponentScan({"gray.light.owner"})
 public class ExperimentalAutoConfiguration {
 

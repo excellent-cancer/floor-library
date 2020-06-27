@@ -5,8 +5,8 @@
     <insert id="save"
             parameterType="ProjectDetails"
             keyProperty="originId,type">
-        insert into project_details (origin_id, type, http, version, status)
-        values (#{originId}, #{type}, #{http}, #{version}, #{status})
+        insert into project_details (origin_id, type, http, status, structure)
+        values (#{originId}, #{type}, #{http}, #{status}, #{structure})
     </insert>
 
 </mapper>

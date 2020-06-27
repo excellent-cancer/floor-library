@@ -15,4 +15,20 @@
         where owner_project_id = #{ownerProjectId}
         <include refid="pageable"/>
     </select>
+
+    <insert id="batchSave"
+            parameterType="list"
+            keyProperty="uid">
+        insert into book_catalog (uid, owner_project_id, parent_uid, title, folder)
+        values (
+        <foreach collection="catalogs" index="index" item="item" separator="),(">
+            #{item.uid},
+            #{item.ownerProjectId},
+            #{item.parentUid},
+            #{item.title},
+            #{item.folder}
+        </foreach>
+        )
+
+    </insert>
 </mapper>

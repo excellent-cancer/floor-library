@@ -2,14 +2,13 @@ package gray.light.document.service;
 
 import floor.repository.RepositoryDatabase;
 import floor.repository.RepositoryOptions;
-import gray.light.document.DocumentRepositoryVisitor;
-import gray.light.document.entity.Document;
-import gray.light.document.entity.DocumentStatus;
+import gray.light.book.DocumentRepositoryVisitor;
+import gray.light.owner.entity.ProjectDetails;
+import gray.light.owner.entity.ProjectStatus;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,7 +19,6 @@ import java.util.Optional;
  *
  * @author XyParaCrim
  */
-@Service
 @CommonsLog
 @RequiredArgsConstructor
 public class DocumentRepositoryCacheService {
@@ -34,8 +32,8 @@ public class DocumentRepositoryCacheService {
      * @param document 指定文档
      * @throws InterruptedException 当获取操作许可时，发生中断
      */
-    public void updateRepository(@NonNull Document document) throws InterruptedException {
-        RepositoryOptions<Long, Long> options = repositoryDatabase.repositoryOptions(document.getId());
+    public void updateRepository(@NonNull ProjectDetails document) throws InterruptedException {
+        RepositoryOptions<Long, Long> options = repositoryDatabase.repositoryOptions(document.getOriginId());
 
         Optional<Long> writeStamp = options.writePermission();
         if (writeStamp.isPresent()) {
@@ -44,12 +42,12 @@ public class DocumentRepositoryCacheService {
 
                 if (options.hasUpdate()) {
                     options.updateLocal();
-                    document.setDocumentStatus(DocumentStatus.NEW);
+                    document.setStatus(ProjectStatus.PENDING);
                 }
             } catch (GitAPIException | IOException e) {
-                document.setDocumentStatus(DocumentStatus.INVALID);
+                document.setStatus(ProjectStatus.INVALID);
 
-                log.error("Cannot update the repository: " + document.getId(), e);
+                log.error("Cannot update the repository: " + document.getOriginId(), e);
             } finally {
                 options.cancelWritePermission(writeStamp.get());
             }
@@ -64,8 +62,8 @@ public class DocumentRepositoryCacheService {
      *
      * @param document 指定文档
      */
-    public void forceCacheRepository(@NonNull Document document) {
-        repositoryDatabase.addRepositoryOptions(document.getId(), document.getRepoUrl());
+    public void forceCacheRepository(@NonNull ProjectDetails document) {
+        repositoryDatabase.addRepositoryOptions(document.getOriginId(), document.getHttp());
     }
 
     /**
@@ -75,9 +73,9 @@ public class DocumentRepositoryCacheService {
      * @return 浏览结果
      * @throws InterruptedException 当获取读权限时
      */
-    public DocumentRepositoryVisitor visitRepository(Document document) throws InterruptedException {
+    public DocumentRepositoryVisitor visitRepository(ProjectDetails document) throws InterruptedException {
         // 获取文档仓库的使用权限
-        RepositoryOptions<Long, Long> options = repositoryDatabase.repositoryOptions(document.getId());
+        RepositoryOptions<Long, Long> options = repositoryDatabase.repositoryOptions(document.getOriginId());
         Optional<Long> stamp = options.readPermission();
 
         if (stamp.isEmpty()) {
@@ -100,9 +98,9 @@ public class DocumentRepositoryCacheService {
         }
     }
 
-    public boolean availableRepository(Document document) {
+    public boolean availableRepository(ProjectDetails document) {
         RepositoryOptions<Long, Long> options;
-        return (options = repositoryDatabase.repositoryOptions(document.getId())) != null &&
+        return (options = repositoryDatabase.repositoryOptions(document.getOriginId())) != null &&
                 Files.isDirectory(options.getLocation().toPath());
     }
 

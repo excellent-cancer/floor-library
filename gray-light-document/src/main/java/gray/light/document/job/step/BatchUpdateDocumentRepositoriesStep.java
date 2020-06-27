@@ -1,10 +1,10 @@
-package gray.light.step;
+package gray.light.document.job.step;
 
-import gray.light.document.DocumentRepositoryVisitor;
-import gray.light.document.entity.Document;
-import gray.light.document.entity.DocumentCatalog;
-import gray.light.document.entity.DocumentChapter;
+import gray.light.book.DocumentRepositoryVisitor;
+import gray.light.book.entity.BookCatalog;
+import gray.light.book.entity.BookChapter;
 import gray.light.document.service.DocumentRelationService;
+import gray.light.owner.entity.ProjectDetails;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import reactor.util.function.Tuple2;
@@ -24,22 +24,22 @@ public class BatchUpdateDocumentRepositoriesStep {
     @NonNull
     private final DocumentRelationService documentService;
 
-    public void execute(@NonNull List<DocumentRepositoryVisitor> visitors, @NonNull List<Document> emptyDocument) {
-        List<DocumentCatalog> catalogs = catalogs(visitors);
-        List<DocumentChapter> chapters = chapters(visitors);
+    public void execute(@NonNull List<DocumentRepositoryVisitor> visitors, @NonNull List<ProjectDetails> emptyDocument) {
+        List<BookCatalog> catalogs = catalogs(visitors);
+        List<BookChapter> chapters = chapters(visitors);
 
         // 更新文档状态
-        documentService.batchUpdateDocumentRepositories(emptyDocument, catalogs, chapters);
+        documentService.batchSyncDocumentFromPending(emptyDocument, catalogs, chapters);
     }
 
-    private List<DocumentCatalog> catalogs(List<DocumentRepositoryVisitor> visitors) {
+    private List<BookCatalog> catalogs(List<DocumentRepositoryVisitor> visitors) {
         return visitors.
                 stream().
                 flatMap(visitor -> visitor.getCatalogs().stream()).
                 collect(Collectors.toList());
     }
 
-    private List<DocumentChapter> chapters(List<DocumentRepositoryVisitor> visitors) {
+    private List<BookChapter> chapters(List<DocumentRepositoryVisitor> visitors) {
         return visitors.
                 stream().
                 flatMap(visitor -> visitor.getChapters().stream().map(Tuple2::getT1)).

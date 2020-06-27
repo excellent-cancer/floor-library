@@ -12,4 +12,5 @@ public interface BookChapterRepository {
 
     List<BookChapter> findByOwnerProjectId(@Param("ownerProjectId") Long ownerProjectId, @Param("page") Page page);
 
+    boolean batchSave(@Param("chapters") List<BookChapter> chapters);
 }

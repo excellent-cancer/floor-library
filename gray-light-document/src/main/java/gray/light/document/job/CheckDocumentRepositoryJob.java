@@ -1,13 +1,15 @@
-package gray.light.job;
+package gray.light.document.job;
 
-import gray.light.document.entity.Document;
 import gray.light.document.service.DocumentRelationService;
 import gray.light.document.service.DocumentRepositoryCacheService;
+import gray.light.owner.entity.ProjectDetails;
+import gray.light.owner.entity.ProjectStatus;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.apachecommons.CommonsLog;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import perishing.constraint.jdbc.Page;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -29,23 +31,23 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
     @Override
     @SneakyThrows
     protected void executeInternal(JobExecutionContext context) {
-        List<Document> syncDocument = documentService.allSyncDocument();
-        ListIterator<Document> iterator = syncDocument.listIterator();
+        List<ProjectDetails> syncDocument = documentService.findProjectDetailsByStatus(ProjectStatus.SYNC, Page.unlimited());
+        ListIterator<ProjectDetails> iterator = syncDocument.listIterator();
 
         while (iterator.hasNext()) {
-            Document document = iterator.next();
+            ProjectDetails document = iterator.next();
 
             documentRepositoryCacheService.updateRepository(document);
 
-            switch (document.getDocumentStatus()) {
+            switch (document.getStatus()) {
                 case SYNC:
                 case INVALID:
                     iterator.remove();
                     break;
-                case NEW:
+                case PENDING:
                     break;
                 default:
-                    throw new IllegalStateException("Unrecognized document status: " + document.getDocumentStatus());
+                    throw new IllegalStateException("Unrecognized document status: " + document.getStatus());
             }
         }
 

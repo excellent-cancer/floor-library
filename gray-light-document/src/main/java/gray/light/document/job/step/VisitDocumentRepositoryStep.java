@@ -1,9 +1,9 @@
-package gray.light.step;
+package gray.light.document.job.step;
 
-import gray.light.document.DocumentRepositoryVisitor;
-import gray.light.document.entity.Document;
-import gray.light.document.entity.DocumentStatus;
+import gray.light.book.DocumentRepositoryVisitor;
 import gray.light.document.service.DocumentRepositoryCacheService;
+import gray.light.owner.entity.ProjectDetails;
+import gray.light.owner.entity.ProjectStatus;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +17,13 @@ import java.util.function.Supplier;
 
 /**
  * 遍历本地文档仓库，获取目录、章节等信息，并将其储存在{@link DocumentRepositoryVisitor}里返回。
- * 如果其中有遍历期间发生异常，则将文档状态设置为{@link DocumentStatus#INVALID}无效状态
+ * 如果其中有遍历期间发生异常，则将文档状态设置为{@link ProjectStatus#INVALID}无效状态
  *
  * @author XyParaCrim
  */
 @CommonsLog
 @RequiredArgsConstructor
-public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
+public class VisitDocumentRepositoryStep extends AbstractExecuteStep<ProjectDetails> {
 
     /**
      * 遍历本地文档仓库，获取目录、章节执行结果
@@ -46,7 +46,7 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
      * @param docs 文档
      * @return 执行结果
      */
-    public Result execute(@NonNull List<Document> docs) {
+    public Result execute(@NonNull List<ProjectDetails> docs) {
 
         CompletableFuture<?>[] asyncTasks = docs.
                 stream().
@@ -69,7 +69,7 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
      * @param e        未检测异常
      * @return 文档仓库浏览器
      */
-    private DocumentRepositoryVisitor completeProcessUnknownException(Document document, DocumentRepositoryVisitor visitor, Throwable e) {
+    private DocumentRepositoryVisitor completeProcessUnknownException(ProjectDetails document, DocumentRepositoryVisitor visitor, Throwable e) {
         return e != null ?
                 DocumentRepositoryVisitor.failedVisitor(document, e) :
                 visitor;
@@ -77,7 +77,7 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
 
     /**
      * 通过所有异步任务构造步骤执行结果。这里会阻塞直至所有的异步任务完成，
-     * 特别地，每个异步任务会返回其所要处理的文档，文档的{@link DocumentStatus}
+     * 特别地，每个异步任务会返回其所要处理的文档，文档的{@link ProjectStatus}
      * 表明了该文档的执行是否是真正成功，但是，若请求的文档本身的状态为无效
      * 的，则同样会将其加入到失败结果中
      *
@@ -85,7 +85,7 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
      * @param docs       文档
      * @return 执行结果
      */
-    private Result result(CompletableFuture<?>[] asyncTasks, List<Document> docs) {
+    private Result result(CompletableFuture<?>[] asyncTasks, List<ProjectDetails> docs) {
         Result result = new Result();
 
         try {
@@ -93,13 +93,13 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
         } catch (InterruptedException e) {
             log.error("The thread waiting for the cloning task to complete receives the interrupt signal", e);
 
-            docs.forEach(document -> document.setDocumentStatus(DocumentStatus.INVALID));
+            docs.forEach(document -> document.setStatus(ProjectStatus.INVALID));
 
             return result;
         } catch (ExecutionException e) {
             log.error("Failed to walk document repository in local", e);
 
-            docs.forEach(document -> document.setDocumentStatus(DocumentStatus.INVALID));
+            docs.forEach(document -> document.setStatus(ProjectStatus.INVALID));
 
             return result;
         }
@@ -128,7 +128,7 @@ public class VisitDocumentRepositoryStep extends AbstractExecuteStep<Document> {
     @RequiredArgsConstructor
     private class AsyncVisitTask implements Supplier<DocumentRepositoryVisitor> {
 
-        final Document document;
+        final ProjectDetails document;
 
         @Override
         public DocumentRepositoryVisitor get() {

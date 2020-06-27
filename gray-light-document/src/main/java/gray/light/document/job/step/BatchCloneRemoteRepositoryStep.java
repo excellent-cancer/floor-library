@@ -1,8 +1,8 @@
-package gray.light.step;
+package gray.light.document.job.step;
 
-import gray.light.document.entity.Document;
-import gray.light.document.entity.DocumentStatus;
 import gray.light.document.service.DocumentRepositoryCacheService;
+import gray.light.owner.entity.ProjectDetails;
+import gray.light.owner.entity.ProjectStatus;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  */
 @CommonsLog
 @RequiredArgsConstructor
-public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document> {
+public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<ProjectDetails> {
 
     /**
      * 批量克隆步骤执行结果，包括成功与失败的文档
@@ -32,10 +32,10 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
     public static class Result {
 
         @Getter
-        private final List<Document> success = new LinkedList<>();
+        private final List<ProjectDetails> success = new LinkedList<>();
 
         @Getter
-        private final List<Document> failed = new LinkedList<>();
+        private final List<ProjectDetails> failed = new LinkedList<>();
 
     }
 
@@ -48,7 +48,7 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
      * @param docs 文档
      * @return 执行结果
      */
-    public Result execute(@NonNull List<Document> docs) {
+    public Result execute(@NonNull List<ProjectDetails> docs) {
         CompletableFuture<?>[] asyncTasks = docs.
                 stream().
                 map(document ->
@@ -62,7 +62,7 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
 
     /**
      * 通过所有异步任务构造步骤执行结果。这里会阻塞直至所有的异步任务完成，
-     * 特别地，每个异步任务会返回其所要处理的文档，文档的{@link DocumentStatus}
+     * 特别地，每个异步任务会返回其所要处理的文档，文档的{@link ProjectDetails}
      * 表明了该文档的执行是否是真正成功，但是，若请求的文档本身的状态为无效
      * 的，则同样会将其加入到失败结果中
      *
@@ -70,14 +70,14 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
      * @param docs             请求文档
      * @return 步骤执行结果
      */
-    protected Result result(CompletableFuture<?>[] completedFutures, List<Document> docs) {
+    protected Result result(CompletableFuture<?>[] completedFutures, List<ProjectDetails> docs) {
         Result result = new Result();
         try {
             CompletableFuture.allOf(completedFutures).get();
         } catch (InterruptedException e) {
             log.error("The thread waiting for the cloning task to complete receives the interrupt signal", e);
             docs.forEach(document -> {
-                document.setDocumentStatus(DocumentStatus.INVALID);
+                document.setStatus(ProjectStatus.INVALID);
                 result.failed.add(document);
             });
 
@@ -85,7 +85,7 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
         } catch (ExecutionException e) {
             log.error("Failed to clone document repository", e);
             docs.forEach(document -> {
-                document.setDocumentStatus(DocumentStatus.INVALID);
+                document.setStatus(ProjectStatus.INVALID);
                 result.failed.add(document);
             });
 
@@ -94,17 +94,17 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
 
 
         for (CompletableFuture<?> future : completedFutures) {
-            Document document = null;
+            ProjectDetails document = null;
 
             // 因为上一步全部克隆任务都已经完成，理论上，这一步不可能发生异常
             // 因此忽略这个地方的失败
             try {
-                document = (Document) future.get();
+                document = (ProjectDetails) future.get();
             } catch (InterruptedException | ExecutionException e) {
                 assert false;
             }
 
-            if (document.getDocumentStatus() == DocumentStatus.INVALID) {
+            if (document.getStatus() == ProjectStatus.INVALID) {
                 result.failed.add(document);
             } else {
                 result.success.add(document);
@@ -117,13 +117,13 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
     // 帮助方法
 
     @Override
-    protected void failed(Document document, Throwable t) {
+    protected void failed(ProjectDetails document, Throwable t) {
         super.failed(document, t);
-        document.setDocumentStatus(DocumentStatus.INVALID);
+        document.setStatus(ProjectStatus.INVALID);
     }
 
     @Override
-    protected void complete(Document document, Throwable t) {
+    protected void complete(ProjectDetails document, Throwable t) {
         if (t != null) {
             failed(document, t);
         }
@@ -133,12 +133,12 @@ public class BatchCloneRemoteRepositoryStep extends AbstractExecuteStep<Document
      * 异步克隆任务简单封装
      */
     @RequiredArgsConstructor
-    private class AsyncCloneRemoteTask implements Supplier<Document> {
+    private class AsyncCloneRemoteTask implements Supplier<ProjectDetails> {
 
-        private final Document document;
+        private final ProjectDetails document;
 
         @Override
-        public Document get() {
+        public ProjectDetails get() {
             try {
                 documentRepositoryCacheService.forceCacheRepository(document);
                 success(document);

@@ -15,6 +15,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @Alias("BookCatalog")
+@Builder
 public class BookCatalog {
 
     /**

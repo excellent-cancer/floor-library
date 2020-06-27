@@ -1,10 +1,10 @@
-package gray.light.step;
+package gray.light.document.job.step;
 
-import gray.light.document.DocumentRepositoryVisitor;
-import gray.light.document.entity.Document;
-import gray.light.document.entity.DocumentChapter;
-import gray.light.document.entity.DocumentStatus;
+import gray.light.book.DocumentRepositoryVisitor;
+import gray.light.book.entity.BookChapter;
 import gray.light.document.service.DocumentSourceService;
+import gray.light.owner.entity.ProjectDetails;
+import gray.light.owner.entity.ProjectStatus;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -85,11 +85,11 @@ public class UploadDocumentStep {
                             toArray(UploadedChaptersTask[]::new)
             );
             if (failed.get()) {
-                Document uploadFailedDoc = visitor.getDocument();
-                uploadFailedDoc.setDocumentStatus(DocumentStatus.INVALID);
+                ProjectDetails uploadFailedDoc = visitor.getDocument();
+                uploadFailedDoc.setStatus(ProjectStatus.INVALID);
                 log.error("Failed to upload document repository: {}", uploadFailedDoc);
             } else {
-                visitor.getDocument().setDocumentStatus(DocumentStatus.SYNC);
+                visitor.getDocument().setStatus(ProjectStatus.SYNC);
                 visitors.add(visitor);
             }
         }
@@ -103,18 +103,17 @@ public class UploadDocumentStep {
 
         private final UploadedDocumentTask task;
 
-        private final Tuple2<DocumentChapter, Path> chapterPair;
+        private final Tuple2<BookChapter, Path> chapterPair;
 
         @Override
         protected void compute() {
             if (!task.failed.get()) {
-                DocumentChapter chapter = chapterPair.getT1();
+                BookChapter chapter = chapterPair.getT1();
                 try {
                     String url = task.documentSourceService.updateChapter(chapterPair.getT2());
 
                     log.info("Successfully uploaded a chapter file: { name: {}, downloadLink: {} }", chapter.getTitle(), url);
 
-                    chapter.setEmpty(false);
                     chapter.setDownloadLink(url);
                 } catch (Exception e) {
                     // 出现其中一个章节上传文件失败，需要将之前成功上传的事件加入失败队列

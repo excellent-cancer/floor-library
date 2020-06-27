@@ -2,6 +2,7 @@ package gray.light.document.handler;
 
 import gray.light.book.handler.BookHandler;
 import gray.light.definition.entity.Scope;
+import gray.light.document.business.DocumentBo;
 import gray.light.document.business.DocumentFo;
 import gray.light.document.service.DocumentRelationService;
 import gray.light.owner.customizer.OwnerProjectCustomizer;
@@ -18,10 +19,11 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import perishing.constraint.jdbc.Page;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static gray.light.support.web.ResponseToClient.*;
 import static gray.light.support.web.ResponseToClient.allRightFromValue;
-import static gray.light.support.web.ResponseToClient.failWithMessage;
 
 /**
  * @author XyParaCrim
@@ -89,24 +91,30 @@ public class DocumentHandler {
 
         OwnerProject documentProject = OwnerProjectCustomizer.fromForm(documentFo.getDocument(), Scope.DOCUMENT);
 
-        return addWorksDocument(documentProject, documentFo.getWorksId());
+        return addWorksDocument(documentProject, documentFo.getWorksId(), documentFo);
     }
 
-    private Mono<ServerResponse> addWorksDocument(OwnerProject documentProject, Long worksId) {
-        CompletableFuture<Boolean> addProcessing = addWorksDocumentProcessing(documentProject, worksId);
+    private Mono<ServerResponse> addWorksDocument(OwnerProject documentProject, Long worksId, DocumentFo documentFo) {
+        CompletableFuture<Boolean> addProcessing = addWorksDocumentProcessing(documentProject, worksId, documentFo);
 
         return Mono.fromFuture(addProcessing).
                 flatMap(
-                        success ->
-                                success ?
-                                        allRightFromValue(documentProject) :
-                                        failWithMessage("Failed to add works document")
+                        success -> {
+                            if (success) {
+                                Optional<OwnerProject> savedProject = overallOwnerService.findProject(documentProject.getId());
+                                if (savedProject.isPresent()) {
+                                    return allRightFromValue(DocumentBo.of(savedProject.get(), worksId));
+                                }
+                            }
+
+                            return failWithMessage("Failed to add works document");
+                        }
+
                 );
     }
 
-    private CompletableFuture<Boolean> addWorksDocumentProcessing(OwnerProject documentProject, Long worksId) {
-        return CompletableFuture.supplyAsync(() -> documentRelationService.addDocumentToWorks(documentProject, worksId));
+    private CompletableFuture<Boolean> addWorksDocumentProcessing(OwnerProject documentProject, Long worksId, DocumentFo documentFo) {
+        return CompletableFuture.supplyAsync(() -> documentRelationService.addDocumentToWorks(documentProject, worksId, documentFo));
     }
-
 
 }

@@ -28,6 +28,10 @@ public final class ResponseToClient {
         return assemblyResponse(ServerResponse.ok(), error(message));
     }
 
+    public static Mono<ServerResponse> allRight() {
+        return assemblyResponse(ServerResponse.ok(), success());
+    }
+
     private static Mono<ServerResponse> assemblyResponse(ServerResponse.BodyBuilder body, ResponseFormat response) {
         return body.body(BodyInserters.fromValue(response));
     }

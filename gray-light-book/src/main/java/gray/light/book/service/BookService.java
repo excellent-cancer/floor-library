@@ -44,4 +44,14 @@ public class BookService {
 
         return Tuples.of(catalogs, chapters);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchSaveBookCatalogs(List<BookCatalog> catalogs) {
+        return bookCatalogRepository.batchSave(catalogs);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchSaveBookChapters(List<BookChapter> chapters) {
+        return bookChapterRepository.batchSave(chapters);
+    }
 }

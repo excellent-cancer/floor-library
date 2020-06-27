@@ -7,6 +7,7 @@ import perishing.constraint.io.FileSupport;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +44,9 @@ class LocalRepositoryOptions<K> implements RepositoryOptions<K, Long> {
 
     void resetRemote(String remote) throws IOException, GitAPIException {
         // 首先清除本地旧的仓库，然后再克隆
-        FileSupport.deleteFile(location, true);
+        if (Files.exists(location.toPath())) {
+            FileSupport.deleteFile(location, true);
+        }
         this.git = GitSupport.cloneRemote(location.toPath(), remote);
     }
 

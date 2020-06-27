@@ -1,9 +1,10 @@
-package gray.light.document;
+package gray.light.book;
 
-import gray.light.document.entity.Document;
-import gray.light.document.entity.DocumentCatalog;
-import gray.light.document.entity.DocumentCatalogFolder;
-import gray.light.document.entity.DocumentChapter;
+import gray.light.book.customizer.BookCatalogCustomizer;
+import gray.light.book.entity.BookCatalog;
+import gray.light.book.entity.BookCatalogFolder;
+import gray.light.book.entity.BookChapter;
+import gray.light.owner.entity.ProjectDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
@@ -27,18 +28,18 @@ import java.util.*;
 public class DocumentRepositoryVisitor implements FileVisitor<Path> {
 
     @Getter
-    private final Document document;
+    private final ProjectDetails document;
 
     @Getter
-    private final List<DocumentCatalog> catalogs = new LinkedList<>();
+    private final List<BookCatalog> catalogs = new LinkedList<>();
 
     @Getter
-    private final List<Tuple2<DocumentChapter, Path>> chapters = new LinkedList<>();
+    private final List<Tuple2<BookChapter, Path>> chapters = new LinkedList<>();
 
     @Getter
     private Throwable failed = null;
 
-    private final Map<Path, DocumentCatalog> catalogTable = new HashMap<>();
+    private final Map<Path, BookCatalog> catalogTable = new HashMap<>();
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
@@ -47,14 +48,13 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
             return FileVisitResult.SKIP_SUBTREE;
         }
 
-        String parentUid = parentUid(dir, DocumentCatalogFolder.CATALOG);
-        String title = parentUid.equals(DocumentCatalog.ROOT) ? document.getTitle() : name;
+        String parentUid = parentUid(dir, BookCatalogFolder.CATALOG);
+        String title = parentUid.equals(BookCatalogCustomizer.ROOT) ? document.getType() + "#" + document.getOriginId(): name;
 
-        DocumentCatalog catalog = DocumentCatalog.builder().
+        BookCatalog catalog = BookCatalog.builder().
                 title(title).
-                folder(DocumentCatalogFolder.EMPTY).
-                documentId(document.getId()).
-                projectId(document.getProjectId()).
+                folder(BookCatalogFolder.EMPTY).
+                ownerProjectId(document.getOriginId()).
                 parentUid(parentUid).
                 uid(UUID.randomUUID().toString()).
                 build();
@@ -72,10 +72,11 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
             return FileVisitResult.SKIP_SUBTREE;
         }
 
-        DocumentChapter chapter = DocumentChapter.builder().
-                catalogUid(parentUid(file, DocumentCatalogFolder.CHAPTER)).
-                documentId(document.getId()).
+        BookChapter chapter = BookChapter.builder().
+                catalogUid(parentUid(file, BookCatalogFolder.CHAPTER)).
+                ownerProjectId(document.getOriginId()).
                 title(trimSuffix(name)).
+                uid(UUID.randomUUID().toString()).
                 build();
 
         chapters.add(Tuples.of(chapter, file));
@@ -99,13 +100,13 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    private String parentUid(Path path, DocumentCatalogFolder folder) {
+    private String parentUid(Path path, BookCatalogFolder folder) {
         if (catalogTable.containsKey(path.getParent())) {
-            DocumentCatalog catalog = catalogTable.get((path.getParent()));
+            BookCatalog catalog = catalogTable.get((path.getParent()));
             catalog.setFolder(folder);
             return catalog.getUid();
         } else {
-            return DocumentCatalog.ROOT;
+            return BookCatalogCustomizer.ROOT;
         }
     }
 
@@ -128,7 +129,7 @@ public class DocumentRepositoryVisitor implements FileVisitor<Path> {
         return filename.substring(0, filename.lastIndexOf("."));
     }
 
-    public static DocumentRepositoryVisitor failedVisitor(Document document, Throwable e) {
+    public static DocumentRepositoryVisitor failedVisitor(ProjectDetails document, Throwable e) {
         DocumentRepositoryVisitor visitor = new DocumentRepositoryVisitor(document);
         visitor.failed = e;
         return visitor;

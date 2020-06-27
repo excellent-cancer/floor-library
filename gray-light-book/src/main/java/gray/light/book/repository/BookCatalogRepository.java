@@ -12,4 +12,5 @@ public interface BookCatalogRepository {
 
     List<BookCatalog> findByOwnerProjectId(@Param("ownerProjectId") Long ownerProjectId, @Param("page") Page page);
 
+    boolean batchSave(@Param("catalogs") List<BookCatalog> catalogs);
 }
