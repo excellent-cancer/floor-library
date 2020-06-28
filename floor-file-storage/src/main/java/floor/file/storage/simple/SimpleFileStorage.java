@@ -41,6 +41,17 @@ public class SimpleFileStorage implements FileStorage {
     }
 
     @Override
+    public String upload(byte[] bytes, String suffix) throws UploadFileException {
+        try {
+            return storageClient.upload_file1(bytes, suffix, null);
+        } catch (MyException myException) {
+            throw new UploadFileException("Failed to upload file", myException);
+        } catch (IOException ioException) {
+            throw new UploadFileException("Failed to access upload file", ioException);
+        }
+    }
+
+    @Override
     public void close() throws Exception {
         storageClient.close();
     }
