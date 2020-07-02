@@ -28,7 +28,8 @@
 
     <select id="findByBlogId"
             resultType="Tag">
-
+        select t.*
+        from tag t inner join blog_tag bt on t.name = bt.tag and bt.blog_id = #{blogId}
         <include refid="pageable"/>
     </select>
 

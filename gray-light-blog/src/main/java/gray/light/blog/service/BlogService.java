@@ -32,6 +32,8 @@ public class BlogService {
 
     private final BlogSourceService blogSourceService;
 
+    private final TagService tagService;
+
     /**
      * 查找某个所有者的所有博客
      *
@@ -99,6 +101,17 @@ public class BlogService {
         }
 
         return new PageChunk<>(pageChunk.getPages(), pageChunk.getCount(), pageChunk.getTotal(), new ArrayList<>(blogMap.values()));
+    }
+
+    public Optional<BlogBo> findBlogDetails(Long blogId) {
+        Optional<Blog> blog = findBlog(blogId);
+        if (blog.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<Tag> tags = tagService.allBlogTags(blogId, Page.unlimited());
+
+        return Optional.of(new BlogBo(blog.get(), tags));
     }
 
 }
