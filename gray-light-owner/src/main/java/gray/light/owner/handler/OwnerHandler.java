@@ -3,17 +3,14 @@ package gray.light.owner.handler;
 import gray.light.owner.business.OwnerDetailsBo;
 import gray.light.owner.entity.Owner;
 import gray.light.owner.service.OverallOwnerService;
-import gray.light.support.error.ExtractRequestParamException;
 import gray.light.support.web.RequestSupport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 import static gray.light.support.web.ResponseToClient.allRightFromValue;
 import static gray.light.support.web.ResponseToClient.failWithMessage;
@@ -24,7 +21,6 @@ import static gray.light.support.web.ResponseToClient.failWithMessage;
  * @author XyParaCrim
  */
 @CommonsLog
-@Component
 @RequiredArgsConstructor
 public class OwnerHandler {
 
@@ -39,7 +35,7 @@ public class OwnerHandler {
      * @return 回复
      */
     public Mono<ServerResponse> ownerDetails(ServerRequest request) {
-        return extractOwnerId(request, ownerId -> {
+        return RequestSupport.extractOwnerId(request, ownerId -> {
             Optional<Owner> queryResult = overallOwnerService.findOwner(ownerId);
 
             return queryResult.isEmpty() ?
@@ -55,32 +51,9 @@ public class OwnerHandler {
      * @return 回复
      */
     public Mono<ServerResponse> queryOwnerProject(ServerRequest request) {
-        return extractOwnerId(request, ownerId ->
-                ownerProjectHandler.queryOwnerProject(ownerId, RequestSupport.extract(request)));
-    }
-
-    public Mono<ServerResponse> extractOwnerId(ServerRequest request, Function<Long, Mono<ServerResponse>> then) {
-        Long ownerId;
-        try {
-            ownerId = RequestParamExtractors.extractLong(request, "ownerId");
-        } catch (ExtractRequestParamException e) {
-            log.error(e.getMessage());
-            return failWithMessage(e.getMessage());
-        }
-
-        return then.apply(ownerId);
+        return RequestSupport.extractOwnerId(request, ownerId ->
+                ownerProjectHandler.queryOwnerProject(ownerId, RequestSupport.extractPage(request)));
     }
 
 
-    public Mono<ServerResponse> extractId(ServerRequest request, Function<Long, Mono<ServerResponse>> then) {
-        Long id;
-        try {
-            id = RequestParamExtractors.extractLong(request, "id");
-        } catch (ExtractRequestParamException e) {
-            log.error(e.getMessage());
-            return failWithMessage(e.getMessage());
-        }
-
-        return then.apply(id);
-    }
 }

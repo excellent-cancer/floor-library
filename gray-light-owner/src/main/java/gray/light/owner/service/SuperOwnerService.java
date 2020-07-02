@@ -21,7 +21,6 @@ import static perishing.constraint.treasure.chest.CollectionsTreasureChest.asLis
  *
  * @author XyParaCrim
  */
-@Service
 @CommonsLog
 @RequiredArgsConstructor
 public final class SuperOwnerService {

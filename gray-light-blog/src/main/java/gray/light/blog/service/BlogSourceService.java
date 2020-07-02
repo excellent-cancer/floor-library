@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
  *
  * @author XyParaCrim
  */
-@Service
 @RequiredArgsConstructor
 public class BlogSourceService {
 

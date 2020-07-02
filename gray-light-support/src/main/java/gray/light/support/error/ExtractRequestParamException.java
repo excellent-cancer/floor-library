@@ -9,4 +9,8 @@ public class ExtractRequestParamException extends Exception {
     public ExtractRequestParamException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public ExtractRequestParamException(Throwable cause) {
+        super(cause);
+    }
 }

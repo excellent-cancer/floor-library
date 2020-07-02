@@ -11,7 +11,6 @@ import org.springframework.web.reactive.function.server.*;
  *
  * @author XyParaCrim
  */
-@Configuration
 public class PersonalPageRouter {
 
     /**

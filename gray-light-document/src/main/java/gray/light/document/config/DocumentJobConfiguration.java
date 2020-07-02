@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 import org.quartz.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -81,7 +82,7 @@ public class DocumentJobConfiguration {
     @Configuration
     @ConditionalOnProperty(value = "gray.light.document.upload-pending.enabled", matchIfMissing = true)
     @RequiredArgsConstructor
-    @ConditionalOnBean({BookSourceService.class, BookRepositoryCacheService.class})
+    @ConditionalOnClass({BookSourceService.class, BookRepositoryCacheService.class})
     public static class UploadDocumentRepositoryConfiguration {
 
         final DocumentRelationService documentService;

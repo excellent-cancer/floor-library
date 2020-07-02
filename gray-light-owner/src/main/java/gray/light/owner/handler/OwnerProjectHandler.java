@@ -28,9 +28,8 @@ import static gray.light.support.web.ResponseToClient.failWithMessage;
  * @author XyParaCrim
  */
 @CommonsLog
-@Component
 @RequiredArgsConstructor
-class OwnerProjectHandler {
+public class OwnerProjectHandler {
 
     private final OverallOwnerService overallOwnerService;
 

@@ -33,4 +33,13 @@
         <include refid="pageable"/>
     </select>
 
+    <select id="findOwnerProjectByWorksId"
+            resultType="OwnerProject">
+        select
+        op.*
+        from works_document wd
+                 inner join owner_project op on wd.works_id = #{worksId} and op.id = wd.document_id
+        <include refid="pageable"/>
+    </select>
+
 </mapper>

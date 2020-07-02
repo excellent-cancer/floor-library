@@ -71,6 +71,14 @@
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.excellent-cancer</groupId>
+            <artifactId>gray-light-note</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.excellent-cancer</groupId>
             <artifactId>gray-light-blog</artifactId>

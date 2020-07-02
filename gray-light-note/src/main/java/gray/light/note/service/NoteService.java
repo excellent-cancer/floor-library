@@ -17,7 +17,6 @@ import java.util.List;
  *
  * @author XyParaCrim
  */
-@Service
 @RequiredArgsConstructor
 public class NoteService {
 

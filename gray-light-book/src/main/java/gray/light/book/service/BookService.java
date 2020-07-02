@@ -16,7 +16,6 @@ import reactor.util.function.Tuples;
 
 import java.util.List;
 
-@Service
 @CommonsLog
 @RequiredArgsConstructor
 public class BookService {

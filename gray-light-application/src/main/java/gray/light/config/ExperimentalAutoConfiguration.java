@@ -2,9 +2,6 @@ package gray.light.config;
 
 import floor.file.storage.annotation.FloorFileStorage;
 import floor.repository.annotation.FloorRepository;
-import gray.light.blog.annotation.BlogDomain;
-import gray.light.document.annotation.DocumentDomain;
-import gray.light.owner.annotation.OwnerDomain;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.config.CorsRegistry;
@@ -19,9 +16,6 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
 @Configuration
 @FloorFileStorage
 @FloorRepository
-@OwnerDomain
-@DocumentDomain
-@BlogDomain
 public class ExperimentalAutoConfiguration {
 
     @Configuration
@@ -31,7 +25,7 @@ public class ExperimentalAutoConfiguration {
         @Override
         public void addCorsMappings(CorsRegistry registry) {
             registry.addMapping("/**")
-                    .allowCredentials(true)
+                    .allowCredentials(false)
                     .allowedOrigins("*")
                     .allowedHeaders("*")
                     .allowedMethods("*")

@@ -9,13 +9,11 @@ import gray.light.owner.customizer.OwnerProjectCustomizer;
 import gray.light.owner.customizer.ProjectDetailsCustomizer;
 import gray.light.owner.entity.OwnerProject;
 import gray.light.owner.entity.ProjectDetails;
-import gray.light.owner.handler.OwnerHandler;
 import gray.light.owner.service.OverallOwnerService;
 import gray.light.support.error.NormalizingFormException;
 import gray.light.support.web.RequestSupport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import perishing.constraint.jdbc.Page;
@@ -30,11 +28,8 @@ import static gray.light.support.web.ResponseToClient.failWithMessage;
  * @author XyParaCrim
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class NoteHandler {
-
-    private final OwnerHandler ownerHandler;
 
     private final NoteService noteService;
 
@@ -49,8 +44,8 @@ public class NoteHandler {
      * @return 回复
      */
     public Mono<ServerResponse> queryNote(ServerRequest request) {
-        return ownerHandler.extractOwnerId(request, ownerId -> {
-            Page page = RequestSupport.extract(request);
+        return RequestSupport.extractOwnerId(request, ownerId -> {
+            Page page = RequestSupport.extractPage(request);
             return allRightFromValue(noteService.noteProject(ownerId, page));
         });
     }

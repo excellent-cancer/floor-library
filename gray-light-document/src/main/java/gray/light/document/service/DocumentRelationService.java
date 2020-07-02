@@ -8,9 +8,7 @@ import gray.light.owner.entity.OwnerProject;
 import gray.light.owner.entity.ProjectDetails;
 import gray.light.owner.entity.ProjectStatus;
 import gray.light.owner.service.ProjectDetailsService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import perishing.constraint.jdbc.Page;
 
@@ -21,14 +19,18 @@ import java.util.List;
  *
  * @author XyParaCrim
  */
-@Service
+//@Service
 @CommonsLog
-@RequiredArgsConstructor
 public class DocumentRelationService {
 
     private final WorksDocumentRepository worksDocumentRepository;
 
     private final ProjectDetailsService projectDetailsService;
+
+    public DocumentRelationService(WorksDocumentRepository worksDocumentRepository, ProjectDetailsService projectDetailsService) {
+        this.worksDocumentRepository = worksDocumentRepository;
+        this.projectDetailsService = projectDetailsService;
+    }
 
 
     /**
@@ -63,6 +65,17 @@ public class DocumentRelationService {
     @Transactional(readOnly = true)
     public List<ProjectDetails> findProjectDetailsByStatus(ProjectStatus status, Page page) {
         return worksDocumentRepository.findProjectDetailsByStatus(status, page.nullable());
+    }
+
+    /**
+     * 查询works的所有文档
+     *
+     * @param worksId works-id
+     * @param page 分页
+     * @return 文档项目
+     */
+    public List<OwnerProject> findDocumentByWorks(Long worksId, Page page) {
+        return worksDocumentRepository.findOwnerProjectByWorksId(worksId, page.nullable());
     }
 
 }

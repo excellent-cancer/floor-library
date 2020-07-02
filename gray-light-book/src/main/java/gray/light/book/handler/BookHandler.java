@@ -6,9 +6,9 @@ import gray.light.book.entity.BookCatalog;
 import gray.light.book.entity.BookChapter;
 import gray.light.book.service.BookService;
 import gray.light.owner.handler.OwnerHandler;
+import gray.light.support.web.RequestSupport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -19,7 +19,6 @@ import java.util.List;
 import static gray.light.support.web.ResponseToClient.allRightFromValue;
 
 @Slf4j
-@Configuration
 @RequiredArgsConstructor
 public class BookHandler {
 
@@ -34,7 +33,7 @@ public class BookHandler {
      * @return Response of Publisher
      */
     public Mono<ServerResponse> queryBookTree(ServerRequest request) {
-        return OwnerHandler.extractId(request, projectId -> {
+        return RequestSupport.extractId(request, projectId -> {
             Tuple2<List<BookCatalog>, List<BookChapter>> queryResult = bookService.catalogAndChapter(projectId);
             ContainsCatalogCatalogBo rootBo = CatalogsTreeWalker.walk(queryResult.getT1(), queryResult.getT2());
 

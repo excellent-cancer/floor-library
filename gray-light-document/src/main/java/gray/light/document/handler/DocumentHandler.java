@@ -1,6 +1,5 @@
 package gray.light.document.handler;
 
-import gray.light.book.handler.BookHandler;
 import gray.light.definition.entity.Scope;
 import gray.light.document.business.DocumentBo;
 import gray.light.document.business.DocumentFo;
@@ -9,13 +8,11 @@ import gray.light.owner.customizer.OwnerProjectCustomizer;
 import gray.light.owner.customizer.ProjectDetailsCustomizer;
 import gray.light.owner.entity.OwnerProject;
 import gray.light.owner.entity.ProjectDetails;
-import gray.light.owner.handler.OwnerHandler;
 import gray.light.owner.service.OverallOwnerService;
 import gray.light.support.error.NormalizingFormException;
 import gray.light.support.web.RequestSupport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import perishing.constraint.jdbc.Page;
@@ -24,24 +21,19 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static gray.light.support.web.ResponseToClient.*;
 import static gray.light.support.web.ResponseToClient.allRightFromValue;
+import static gray.light.support.web.ResponseToClient.failWithMessage;
 
 /**
  * @author XyParaCrim
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class DocumentHandler {
 
     private final DocumentRelationService documentRelationService;
 
     private final OverallOwnerService overallOwnerService;
-
-    private final OwnerHandler ownerHandler;
-
-    private final BookHandler bookHandler;
 
     /**
      * 为所属者的项目添加一个文档
@@ -62,24 +54,26 @@ public class DocumentHandler {
      * @return 回复
      */
     public Mono<ServerResponse> queryWorksDocument(ServerRequest request) {
-        return ownerHandler.extractOwnerId(request, ownerId -> {
-            Page page = RequestSupport.extract(request);
+        return RequestSupport.extractOwnerId(request, ownerId -> {
+            Page page = RequestSupport.extractPage(request);
 
             return allRightFromValue(overallOwnerService.projects(ownerId, Scope.DOCUMENT, page));
         });
     }
 
     /**
-     * 查询文档仓库的结构树
+     * 查询指定works的document
      *
      * @param request 服务请求
-     * @return Response of Publisher
+     * @return 回复
      */
-    public Mono<ServerResponse> queryDocumentRepositoryTree(ServerRequest request) {
-        // TODO 验证
-        return bookHandler.queryBookTree(request);
-    }
+    public Mono<ServerResponse> queryWorksDocumentByWorks(ServerRequest request) {
+        return RequestSupport.extractLong("worksId", request, worksId -> {
+            Page page = RequestSupport.extractPage(request);
 
+            return allRightFromValue(documentRelationService.findDocumentByWorks(worksId, page));
+        });
+    }
 
 
     private Mono<ServerResponse> createWorksDocumentWithNormalize(DocumentFo documentFo) {

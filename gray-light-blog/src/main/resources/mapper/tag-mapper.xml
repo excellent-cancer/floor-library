@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="gray.light.blog.repository.TagRepository">
+
+    <sql id="pageable">
+        <if test="page != null">
+            limit #{page.from}, #{page.count}
+        </if>
+    </sql>
+
+    <resultMap id="tag" type="Tag"/>
+
+<!--    <resultMap id="total" type="integer">
+        <result column="total"/>
+    </resultMap>-->
+
+    <select id="findByOwnerId"
+            resultMap="tag,total">
+        {CALL findTagByOwnerId(#{ownerId}, #{page.from}, #{page.count})}
+<!--        select tag.*
+        from tag
+        inner join
+        (select blog_tag.tag from blog inner join blog_tag on blog.owner_id = #{ownerId} group by blog_tag.tag) as bbtt
+        on tag.name = bbtt.tag
+        order by tag.name
+        <include refid="pageable"/>-->
+    </select>
+
+    <select id="findByBlogId"
+            resultType="Tag">
+
+        <include refid="pageable"/>
+    </select>
+
+    <select id="findBlogsByUseTagsAndOwnerId" resultType="Blog">
+        select b.*
+        from blog b
+        inner join blog_tag bt on b.owner_id = #{ownerId} and b.id = bt.blog_id
+        <if test="tags.size() != 0">
+            and bt.tag in
+            <foreach collection="tags" item="tag" index="i" close=")" open="(" separator=",">#{tag.name}</foreach>
+        </if>
+        group by b.id
+        <include refid="pageable"/>
+    </select>
+
+    <insert id="save"
+            parameterType="Tag"
+            keyProperty="name">
+        insert into tag set name = #{tag.name}
+        <if test="tag.color != null">, color = #{tag.color}</if>
+    </insert>
+
+    <select id="findSpTagByOwnerId" resultType="TagWithBlogId">
+        select
+        t.*, tbi.blog_id
+        from tag t inner join (
+            select bt.tag, bt.blog_id
+            from blog inner join blog_tag bt on blog.id = bt.blog_id
+            where blog.owner_id = #{ownerId}
+        ) tbi on t.name = tbi.tag
+    </select>
+
+</mapper>

@@ -19,7 +19,6 @@ import java.util.Optional;
  * @author XyParaCrim
  */
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class OverallOwnerService {
 

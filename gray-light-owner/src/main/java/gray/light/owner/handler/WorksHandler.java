@@ -5,7 +5,6 @@ import gray.light.owner.business.OwnerProjectFo;
 import gray.light.support.web.RequestSupport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import perishing.constraint.jdbc.Page;
@@ -17,13 +16,10 @@ import reactor.core.publisher.Mono;
  * @author XyParaCrim
  */
 @CommonsLog
-@Component
 @RequiredArgsConstructor
 public class WorksHandler {
 
     private static final Scope SCOPE = Scope.WORKS;
-
-    private final OwnerHandler ownerHandler;
 
     private final OwnerProjectHandler ownerProjectHandler;
 
@@ -34,8 +30,8 @@ public class WorksHandler {
      * @return 回复
      */
     public Mono<ServerResponse> queryWorks(ServerRequest request) {
-        return ownerHandler.extractOwnerId(request, ownerId -> {
-            Page page = RequestSupport.extract(request);
+        return RequestSupport.extractOwnerId(request, ownerId -> {
+            Page page = RequestSupport.extractPage(request);
 
             return ownerProjectHandler.queryOwnerProject(ownerId, SCOPE, page);
         });

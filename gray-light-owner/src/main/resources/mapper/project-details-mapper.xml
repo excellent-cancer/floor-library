@@ -27,7 +27,7 @@
 
     <select id="findByStatusAndScopeAndType"
             resultType="ProjectDetails">
-        select p.origin_id, p.type,p.http, p.created_date, p.updated_date, p.status, p.structure
+        select p.*
         from project_details p
         inner join owner_project op
         on p.origin_id = op.id and p.type = #{type} and p.status = #{status} and op.scope = #{scope}
