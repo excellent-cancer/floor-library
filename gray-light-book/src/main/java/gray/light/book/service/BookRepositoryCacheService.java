@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,6 +44,9 @@ public class BookRepositoryCacheService {
                 if (options.hasUpdate()) {
                     options.updateLocal();
                     document.setStatus(ProjectStatus.PENDING);
+                } else if (StringUtils.hasLength(document.getVersion()) &&
+                        !options.equalsVersion(document.getVersion())) {
+                    document.setStatus(ProjectStatus.PENDING);
                 }
             } catch (GitAPIException | IOException e) {
                 document.setStatus(ProjectStatus.INVALID);
@@ -63,7 +67,8 @@ public class BookRepositoryCacheService {
      * @param document 指定文档
      */
     public void forceCacheRepository(@NonNull ProjectDetails document) {
-        repositoryDatabase.addRepositoryOptions(document.getOriginId(), document.getHttp());
+        RepositoryOptions<Long, Long> options = repositoryDatabase.addRepositoryOptions(document.getOriginId(), document.getHttp());
+        document.setVersion(options.version());
     }
 
     /**

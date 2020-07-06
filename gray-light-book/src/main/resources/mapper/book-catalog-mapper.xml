@@ -31,4 +31,9 @@
         )
 
     </insert>
+
+    <delete id="deleteByOwnerProjectId">
+        delete from book_catalog
+        where owner_project_id = #{ownerProjectId}
+    </delete>
 </mapper>

@@ -1,8 +1,10 @@
 package floor.file.storage.simple;
 
+import floor.file.storage.DeleteFileException;
 import floor.file.storage.FileStorage;
 import floor.file.storage.UploadFileException;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.csource.common.MyException;
 import org.csource.fastdfs.StorageClient1;
 import org.csource.fastdfs.StorageServer;
@@ -12,6 +14,7 @@ import org.csource.fastdfs.TrackerServer;
 import java.io.IOException;
 import java.nio.file.Path;
 
+@Slf4j
 public class SimpleFileStorage implements FileStorage {
 
     private final TrackerClient trackerClient;
@@ -48,6 +51,18 @@ public class SimpleFileStorage implements FileStorage {
             throw new UploadFileException("Failed to upload file", myException);
         } catch (IOException ioException) {
             throw new UploadFileException("Failed to access upload file", ioException);
+        }
+    }
+
+    @Override
+    public void delete(String link) {
+        try {
+            int i = storageClient.delete_file1(link);
+            if (i != 0) {
+                log.error("删除文件失败: {}", link);
+            }
+        } catch (IOException | MyException e) {
+            throw new DeleteFileException(e);
         }
     }
 

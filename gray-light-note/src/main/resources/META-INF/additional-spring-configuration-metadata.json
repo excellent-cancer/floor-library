@@ -11,5 +11,11 @@
       "type": "java.lang.Boolean",
       "defaultValue": true,
       "description": "Description for gray.light.job.check-update.enabled."
+    },
+    {
+      "name": "gray.light.note.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Description for gray.light.job.check-update.enabled."
     }
   ] }

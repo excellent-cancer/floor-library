@@ -18,6 +18,10 @@ public class RequestParamExtractors {
         return PAGE_EXTRACTOR.extract(request, key);
     }
 
+    public static String extract(ServerRequest request, String key) throws ExtractRequestParamException {
+        return STRING_EXTRACTOR.extract(request, key);
+    }
+
     private static final Map<Class<?>, RequestParamExtractor<?>> EXTRACTOR_MAP = new HashMap<>(){{
         put(Long.class, RequestParamExtractors::extractLong);
     }};
@@ -75,5 +79,15 @@ public class RequestParamExtractors {
         return page;
 
     };
+
+    private final static RequestParamExtractor<String> STRING_EXTRACTOR = ((request, key) -> {
+        Optional<String> param = request.queryParam(key);
+
+        if (param.isEmpty()) {
+            throw new ExtractRequestParamException("Missing value of parameter: " + key);
+        }
+
+        return param.get();
+    });
 
 }

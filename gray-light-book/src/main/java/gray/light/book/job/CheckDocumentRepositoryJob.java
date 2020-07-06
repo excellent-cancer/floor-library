@@ -1,13 +1,19 @@
 package gray.light.book.job;
 
+import gray.light.book.entity.BookCatalog;
+import gray.light.book.entity.BookChapter;
 import gray.light.book.service.BookRepositoryCacheService;
+import gray.light.book.service.BookService;
+import gray.light.book.service.BookSourceService;
 import gray.light.owner.entity.ProjectDetails;
+import gray.light.owner.entity.ProjectStatus;
 import gray.light.owner.service.ProjectDetailsService;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.apachecommons.CommonsLog;
 import org.quartz.JobExecutionContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import perishing.constraint.jdbc.Page;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -26,6 +32,12 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
 
     @Setter
     private BookRepositoryCacheService bookRepositoryCacheService;
+
+    @Setter
+    private BookService bookService;
+
+    @Setter
+    private BookSourceService bookSourceService;
 
     @Setter
     private Supplier<List<ProjectDetails>> syncStatusProjectDetails;
@@ -54,7 +66,18 @@ public class CheckDocumentRepositoryJob extends QuartzJobBean {
         }
 
         if (syncDocument.size() > 0) {
-            projectDetailsService.batchUpdateStatus(syncDocument);
+            for (ProjectDetails details : syncDocument) {
+                List<BookChapter> chapters = bookService.bookChapters(details.getOriginId(), Page.unlimited());
+                chapters.forEach(chapter -> bookSourceService.deleteChapter(chapter.getDownloadLink()));
+
+                bookService.deleleAllFromOwnerProject(details.getOriginId());
+                details.setVersion("");
+
+                // TODO 应该为Pending，为了触发Update，则暂时为INIT
+                details.setStatus(ProjectStatus.INIT);
+            }
+
+            projectDetailsService.batchUpdateStatusAndVersion(syncDocument);
         }
     }
 

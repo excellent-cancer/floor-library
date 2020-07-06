@@ -72,7 +72,7 @@ public class BookService {
             return true;
         }
 
-        if (!projectDetailsService.batchUpdateStatus(projectDetails)) {
+        if (!projectDetailsService.batchUpdateStatusAndVersion(projectDetails)) {
             return false;
         }
 
@@ -89,6 +89,17 @@ public class BookService {
         }
 
         return batchSaveBookChapters(chapters);
+    }
+
+    /**
+     * 删除指定project的所有目录和章节
+     *
+     * @param projectId 指定project
+     * @return 是否删除成功
+     */
+    public boolean deleleAllFromOwnerProject(Long projectId) {
+        return bookCatalogRepository.deleteByOwnerProjectId(projectId) &&
+                bookChapterRepository.deleteByOwnerProjectId(projectId);
     }
 
 }

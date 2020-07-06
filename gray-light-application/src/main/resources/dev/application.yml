@@ -24,6 +24,8 @@ floor:
 
 gray:
   light:
+    source:
+      enabled: true
     blog:
       enabled: true
     book:
@@ -33,15 +35,15 @@ gray:
     document:
       enabled: true
       check-update:
-        enabled: false
+        enabled: true
       upload-pending:
-        enabled: false
+        enabled: true
     note:
       enabled: true
       check-update:
-        enabled: false
+        enabled: true
       upload-pending:
-        enabled: false
+        enabled: true
 
 logging:
   level:

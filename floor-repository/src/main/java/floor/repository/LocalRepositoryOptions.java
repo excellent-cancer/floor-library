@@ -58,7 +58,7 @@ class LocalRepositoryOptions<K> implements RepositoryOptions<K, Long> {
 
     @Override
     public Optional<Long> writePermission() throws InterruptedException {
-        long stamp = stampedLock.tryReadLock(DEFAULT_TIMEOUT, DEFAULT_UNIT);
+        long stamp = stampedLock.tryWriteLock(DEFAULT_TIMEOUT, DEFAULT_UNIT);
         return stampToOptional(stamp);
     }
 
@@ -70,6 +70,16 @@ class LocalRepositoryOptions<K> implements RepositoryOptions<K, Long> {
     @Override
     public void cancelWritePermission(Long permission) {
         stampedLock.unlockWrite(permission);
+    }
+
+    @Override
+    public boolean equalsVersion(String version) throws IOException {
+        return GitSupport.compareVersion(git, version) == 0;
+    }
+
+    @Override
+    public String version() {
+        return GitSupport.version(git);
     }
 
     private static Optional<Long> stampToOptional(long stamp) {

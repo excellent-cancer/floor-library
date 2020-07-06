@@ -28,6 +28,10 @@ public interface RepositoryOptions<K, P> {
 
     File getLocation();
 
+    boolean equalsVersion(String version) throws IOException;
+
+    String version();
+
     /**
      * 比较origin/master和master是否存在版本差异
      *

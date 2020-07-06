@@ -29,4 +29,8 @@
         )
     </insert>
 
+    <delete id="deleteByOwnerProjectId">
+        delete from book_chapter where owner_project_id = #{ownerProjectId}
+    </delete>
+
 </mapper>

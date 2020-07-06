@@ -33,7 +33,7 @@ public class NoteAutoConfiguration {
     @ConditionalOnClass(BookRepositoryCacheService.class)
     @ConditionalOnProperty(value = "gray.light.note.check-update.enabled", matchIfMissing = true)
     @RequiredArgsConstructor
-    public static class CheckDocumentRepositoryConfiguration {
+    public static class CheckNoteRepositoryConfiguration {
 
         private final NoteService noteService;
 
@@ -41,7 +41,11 @@ public class NoteAutoConfiguration {
 
         private final ProjectDetailsService projectDetailsService;
 
-        @Bean("checkRepositoryDataMap")
+        private final BookService bookService;
+
+        private final BookSourceService bookSourceService;
+
+        @Bean("checkNoteRepositoryDataMap")
         public JobDataMap jobData() {
             JobDataMap jobDataMap = new JobDataMap();
 
@@ -50,29 +54,31 @@ public class NoteAutoConfiguration {
             jobDataMap.put("projectDetailsService", projectDetailsService);
             jobDataMap.put("bookRepositoryCacheService", bookRepositoryCacheService);
             jobDataMap.put("syncStatusProjectDetails", syncStatusProjectDetails);
+            jobDataMap.put("bookService", bookService);
+            jobDataMap.put("bookSourceService", bookSourceService);
 
             return jobDataMap;
         }
 
-        @Bean("checkDocumentRepositoryJobDetail")
-        public JobDetail checkDocumentRepositoryJobDetail(JobDataMap checkRepositoryDataMap) {
+        @Bean("checkNoteRepositoryJobDetail")
+        public JobDetail checkNoteRepositoryJobDetail(JobDataMap checkNoteRepositoryDataMap) {
             return JobBuilder.
                     newJob(CheckDocumentRepositoryJob.class).
-                    usingJobData(checkRepositoryDataMap).
+                    usingJobData(checkNoteRepositoryDataMap).
                     storeDurably().
                     build();
         }
 
         @Bean
-        public Trigger checkDocumentRepositoryTrigger(JobDetail checkDocumentRepositoryJobDetail) {
+        public Trigger checkNoteRepositoryTrigger(JobDetail checkNoteRepositoryJobDetail) {
             SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
                     simpleSchedule().
-                    withIntervalInMinutes(1).
+                    withIntervalInHours(1).
                     repeatForever();
 
             return TriggerBuilder.
                     newTrigger().
-                    forJob(checkDocumentRepositoryJobDetail).
+                    forJob(checkNoteRepositoryJobDetail).
                     withSchedule(scheduleBuilder).
                     build();
         }
@@ -83,7 +89,7 @@ public class NoteAutoConfiguration {
     @ConditionalOnProperty(value = "gray.light.note.upload-pending.enabled", matchIfMissing = true)
     @RequiredArgsConstructor
     @ConditionalOnClass({BookSourceService.class, BookRepositoryCacheService.class})
-    public static class UploadDocumentRepositoryConfiguration {
+    public static class UploadNoteRepositoryConfiguration {
 
         final NoteService noteService;
 
@@ -93,7 +99,7 @@ public class NoteAutoConfiguration {
 
         final BookRepositoryCacheService bookRepositoryCacheService;
 
-        @Bean("updateRepositoryDataMap")
+        @Bean("updateNoteRepositoryDataMap")
         public JobDataMap jobData() {
             JobDataMap jobDataMap = new JobDataMap();
 
@@ -108,25 +114,25 @@ public class NoteAutoConfiguration {
         }
 
 
-        @Bean("uploadDocumentRepositoryJobDetail")
-        public JobDetail uploadDocumentRepositoryJobDetail(JobDataMap updateRepositoryDataMap) {
+        @Bean("uploadNoteRepositoryJobDetail")
+        public JobDetail uploadNoteRepositoryJobDetail(JobDataMap updateNoteRepositoryDataMap) {
             return JobBuilder.
                     newJob(UploadDocumentRepositoryJob.class).
-                    usingJobData(updateRepositoryDataMap).
+                    usingJobData(updateNoteRepositoryDataMap).
                     storeDurably().
                     build();
         }
 
         @Bean
-        public Trigger uploadDocumentRepositoryTrigger(JobDetail uploadDocumentRepositoryJobDetail) {
+        public Trigger uploadNoteRepositoryTrigger(JobDetail uploadNoteRepositoryJobDetail) {
             SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
                     simpleSchedule().
-                    withIntervalInMinutes(1).
+                    withIntervalInHours(1).
                     repeatForever();
 
             return TriggerBuilder.
                     newTrigger().
-                    forJob(uploadDocumentRepositoryJobDetail).
+                    forJob(uploadNoteRepositoryJobDetail).
                     withSchedule(scheduleBuilder).
                     build();
         }

@@ -3,6 +3,7 @@ package floor.repository;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 
@@ -70,6 +71,25 @@ public final class GitSupport {
                 setURI(remote).
                 setDirectory(location.toFile()).
                 call();
+    }
+
+    public static int compareVersion(Git git, String version) throws IOException {
+        Repository repository = git.getRepository();
+        Ref local = repository.exactRef(LOCAL_REF);
+
+        return local.getObjectId().compareTo(ObjectId.fromString(version));
+    }
+
+    public static String version(Git git) {
+        Repository repository = git.getRepository();
+        Ref local;
+        try {
+            local = repository.exactRef(LOCAL_REF);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return local.getObjectId().name();
     }
 
 

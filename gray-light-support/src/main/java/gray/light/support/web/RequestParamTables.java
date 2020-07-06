@@ -18,6 +18,10 @@ public final class RequestParamTables {
         return new RequestParam<>(CollectionsTreasureChest.entry(name, extractor));
     }
 
+    public static RequestParam<String> paramTable(String name) {
+        return paramTable(name, RequestParamExtractors::extract);
+    }
+
     public static RequestParam<Long> ownerId() {
         return OWNER_ID;
     }

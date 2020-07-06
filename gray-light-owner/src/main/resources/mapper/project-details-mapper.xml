@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="gray.light.owner.repository.ProjectDetailsRepository">
-
     <sql id="pageable">
         <if test="page != null">
             limit #{page.from}, #{page.count}
@@ -18,20 +17,38 @@
     <update id="batchUpdateProjectDetailsStatus"
             parameterType="java.util.List">
         # noinspection SqlWithoutWhere
-        update project_details d
-        join (<foreach collection="docs" index="index" item="doc" separator=" UNION ">select #{doc.originId} as
-        origin_id, #{doc.type} as type, #{doc.status} as status</foreach>) b
-        using (origin_id, type)
-        set d.status = b.status
+                update project_details d
+                join (<foreach collection="docs" index="index" item="doc" separator=" UNION ">
+        select #{doc.originId} as
+                                  origin_id,
+               #{doc.type}     as type,
+               #{doc.status}   as status
+    </foreach>) b
+            using (origin_id, type)
+            set d.status = b.status
     </update>
 
     <select id="findByStatusAndScopeAndType"
             resultType="ProjectDetails">
         select p.*
         from project_details p
-        inner join owner_project op
-        on p.origin_id = op.id and p.type = #{type} and p.status = #{status} and op.scope = #{scope}
+                     inner join owner_project op
+                on p.origin_id = op.id and p.type = #{type} and p.status = #{status} and op.scope = #{scope}
         <include refid="pageable"/>
     </select>
 
+    <update id="batchUpdateProjectDetailsStatusAndVersion"
+            parameterType="java.util.List">
+        # noinspection SqlWithoutWhere
+                update project_details d
+                join (<foreach collection="docs" index="index" item="doc" separator=" UNION ">
+        select #{doc.originId} as
+                                  origin_id,
+               #{doc.type}     as type,
+               #{doc.status}   as status,
+               #{doc.version}  as version
+    </foreach>) b
+            using (origin_id, type)
+            set d.status = b.status, d.version = b.version
+    </update>
 </mapper>

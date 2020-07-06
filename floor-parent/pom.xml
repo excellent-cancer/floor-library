@@ -6,6 +6,8 @@
     <modules>
         <module>../gray-light-definition</module>
         <module>../gray-light-blog</module>
+        <module>../floor-task</module>
+        <module>../gray-light-source</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

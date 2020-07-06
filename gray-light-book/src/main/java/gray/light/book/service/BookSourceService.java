@@ -29,6 +29,10 @@ public class BookSourceService {
         return fileStorage.upload(path, CHAPTER_EXTENSION);
     }
 
+    public void deleteChapter(String link) {
+        fileStorage.delete(link);
+    }
+
     // TODO 更加visitor更新整个仓库文件，及其旧文件删除
 
 }

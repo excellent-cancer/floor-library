@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 public class DocumentJobConfiguration {
 
     @Configuration
-    @ConditionalOnBean({DocumentRelationService.class, BookRepositoryCacheService.class})
+    @ConditionalOnClass({DocumentRelationService.class, BookRepositoryCacheService.class})
     @ConditionalOnProperty(value = "gray.light.document.check-update.enabled", matchIfMissing = true)
     @RequiredArgsConstructor
     public static class CheckDocumentRepositoryConfiguration {
@@ -41,6 +41,10 @@ public class DocumentJobConfiguration {
 
         private final ProjectDetailsService projectDetailsService;
 
+        private final BookService bookService;
+
+        private final BookSourceService bookSourceService;
+
         @Bean("checkRepositoryDataMap")
         public JobDataMap jobData() {
             JobDataMap jobDataMap = new JobDataMap();
@@ -50,6 +54,8 @@ public class DocumentJobConfiguration {
             jobDataMap.put("projectDetailsService", projectDetailsService);
             jobDataMap.put("bookRepositoryCacheService", bookRepositoryCacheService);
             jobDataMap.put("syncStatusProjectDetails", syncStatusProjectDetails);
+            jobDataMap.put("bookService", bookService);
+            jobDataMap.put("bookSourceService", bookSourceService);
 
             return jobDataMap;
         }
@@ -67,7 +73,7 @@ public class DocumentJobConfiguration {
         public Trigger checkDocumentRepositoryTrigger(JobDetail checkDocumentRepositoryJobDetail) {
             SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
                     simpleSchedule().
-                    withIntervalInMinutes(1).
+                    withIntervalInHours(1).
                     repeatForever();
 
             return TriggerBuilder.
@@ -121,7 +127,7 @@ public class DocumentJobConfiguration {
         public Trigger uploadDocumentRepositoryTrigger(JobDetail uploadDocumentRepositoryJobDetail) {
             SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.
                     simpleSchedule().
-                    withIntervalInMinutes(1).
+                    withIntervalInHours(1).
                     repeatForever();
 
             return TriggerBuilder.

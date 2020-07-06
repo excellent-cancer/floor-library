@@ -32,7 +32,7 @@ public class ProjectDetailsService {
     }
 
     @Transactional(rollbackFor = RuntimeException.class)
-    public boolean addBookProjectDetailsSafely(OwnerProject project, Scope scope, ProjectDetails uncommited) {
+    public boolean  addBookProjectDetailsSafely(OwnerProject project, Scope scope, ProjectDetails uncommited) {
         if (!overallOwnerService.addProject(project)) {
             throw new RuntimeException("Failed to add owner-project of " + scope.getName() + ": " + project);
         }
@@ -54,6 +54,11 @@ public class ProjectDetailsService {
     @Transactional(rollbackFor = Exception.class)
     public boolean batchUpdateStatus(List<ProjectDetails> projectDetails) {
         return projectDetailsRepository.batchUpdateProjectDetailsStatus(projectDetails);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public boolean batchUpdateStatusAndVersion(List<ProjectDetails> projectDetails) {
+        return projectDetailsRepository.batchUpdateProjectDetailsStatusAndVersion(projectDetails);
     }
 
     /**

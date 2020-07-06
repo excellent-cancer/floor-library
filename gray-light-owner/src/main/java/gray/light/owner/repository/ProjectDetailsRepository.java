@@ -26,6 +26,8 @@ public interface ProjectDetailsRepository {
 
     boolean batchUpdateProjectDetailsStatus(@Param("docs") List<ProjectDetails> docs);
 
+    boolean batchUpdateProjectDetailsStatusAndVersion(@Param("docs") List<ProjectDetails> docs);
+
     List<ProjectDetails> findByStatusAndScopeAndType(@Param("status") ProjectStatus status,
                                                      @Param("scope") String scope,
                                                      @Param("type") String type,
