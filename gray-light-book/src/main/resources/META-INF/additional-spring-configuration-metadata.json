@@ -2,7 +2,7 @@
   "properties": [
     {
       "name": "gray.light.book.enabled",
-      "type": "java.lang.String",
+      "type": "java.lang.Boolean",
       "description": "Description for gray.light.book.enabled."
   }
 ] }

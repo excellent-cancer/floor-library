@@ -34,7 +34,6 @@ public class PersonalBlogRouter {
     public RouterFunction<ServerResponse> test2(FileStorage fileStorage) {
         return RouterFunctions.route(RequestPredicates.POST("/upload"), request -> {
 
-
             Optional<String> path = request.queryParam("path");
             Optional<String> suffix = request.queryParam("suffix");
 
