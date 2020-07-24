@@ -17,8 +17,6 @@ import java.io.IOException;
  * @author XyParaCrim
  */
 @RequiredArgsConstructor
-@Configuration
-@ConditionalOnProperty(name = "floor.repository.enabled", matchIfMissing = true)
 @EnableConfigurationProperties(FloorRepositoryProperties.class)
 public class FloorRepositoryAutoConfiguration {
 

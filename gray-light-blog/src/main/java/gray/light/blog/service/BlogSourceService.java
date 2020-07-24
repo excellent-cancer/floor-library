@@ -19,4 +19,8 @@ public class BlogSourceService {
     public String updateBlog(byte[] bytes) {
         return fileStorage.upload(bytes, BLOG_EXTENSION);
     }
+
+    public String download(String link) {
+        return fileStorage.download(link);
+    }
 }

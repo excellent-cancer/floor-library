@@ -9,6 +9,7 @@ import gray.light.blog.repository.TagRepository;
 import gray.light.support.web.PageChunk;
 import gray.light.support.web.PageSupport;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import perishing.constraint.jdbc.Page;
 import perishing.constraint.treasure.chest.CollectionsTreasureChest;
 
@@ -23,14 +24,13 @@ import java.util.stream.Collectors;
  *
  * @author XyParaCrim
  */
+@Slf4j
 @RequiredArgsConstructor
-public class BlogService {
+public class ReadableBlogService {
 
     private final BlogRepository blogRepository;
 
     private final TagRepository tagRepository;
-
-    private final BlogSourceService blogSourceService;
 
     private final TagService tagService;
 
@@ -42,7 +42,12 @@ public class BlogService {
      * @return 查找某个所有者的所有博客
      */
     public PageChunk<Blog> findBlogs(Long ownerId, Page page) {
-        return PageSupport.page(blogRepository.findByOwnerId(ownerId, page.nullable()), page);
+        if (page.isUnlimited() || page.getPage() * page.getPer() < 5000) {
+            return PageSupport.page(blogRepository.findByOwnerId(ownerId, page.nullable()), page);
+        } else {
+            return PageSupport.page(blogRepository.largeFindByOwnerId(ownerId, page), page);
+        }
+
     }
 
     /**
@@ -65,19 +70,6 @@ public class BlogService {
      */
     public Optional<Blog> findBlog(Long id) {
         return blogRepository.find(id);
-    }
-
-    /**
-     * 创建一个新博客，并且存储博客文件
-     *
-     * @param blog    博客
-     * @param content 博客内容
-     * @return 是否添加成功
-     */
-    public boolean addBlog(Blog blog, byte[] content) {
-        String downloadLink = blogSourceService.updateBlog(content);
-        blog.setDownloadLink(downloadLink);
-        return blogRepository.save(blog);
     }
 
     /**

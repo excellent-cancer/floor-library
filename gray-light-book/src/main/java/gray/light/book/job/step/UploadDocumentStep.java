@@ -8,7 +8,7 @@ import gray.light.owner.entity.ProjectStatus;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import reactor.util.function.Tuple2;
 
 import java.nio.file.Path;
@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author XyParaCrim
  */
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class UploadDocumentStep {
 

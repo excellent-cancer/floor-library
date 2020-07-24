@@ -1,18 +1,18 @@
-package gray.light.blog.annotation;
+package gray.light.owner.annotation;
 
-import gray.light.blog.config.BlogAutoConfiguration;
+import gray.light.owner.OwnerAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
 
 /**
- * 关于blog领域的自动配置
+ * 自动配置owner领域
  *
  * @author XyParaCrim
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(BlogAutoConfiguration.class)
-public @interface BlogDomain {
+@Import(OwnerAutoConfiguration.class)
+public @interface DomainOwner {
 }

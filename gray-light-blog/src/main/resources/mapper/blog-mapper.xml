@@ -29,12 +29,24 @@
     <select id="findByOwnerId"
             resultMap="blog,total">
         <include refid="findByOwnerId">
-            <property name="filed" value="b.*"/>
+            <property name="filed" value="b.id, b.owner_id, b.created_date, b.updated_date, b.download_link, b.title"/>
         </include>
         <include refid="pageable">
             <property name="template" value="findByOwnerId"/>
             <property name="filed" value="COUNT(*) as total"/>
         </include>
+    </select>
+
+    <select id="largeFindByOwnerId"
+            resultMap="blog,total">
+        select b.id, b.owner_id, b.created_date, b.updated_date, b.download_link, b.title
+        from blog b
+        where id > (select id from blog bb where bb.id = #{ownerId})
+        limit 0, #{page.count};
+
+        select count(*) as total
+        from blog b
+        where id = #{ownerId}
     </select>
 
     <sql id="findByTagsAndOwnerId">

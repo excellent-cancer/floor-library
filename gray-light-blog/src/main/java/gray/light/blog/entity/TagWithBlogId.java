@@ -1,6 +1,5 @@
 package gray.light.blog.entity;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.type.Alias;

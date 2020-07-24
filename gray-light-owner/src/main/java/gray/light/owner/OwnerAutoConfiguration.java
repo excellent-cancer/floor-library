@@ -17,9 +17,6 @@ import org.springframework.context.annotation.Import;
  *
  * @author XyParaCrim
  */
-@ConditionalOnProperty(value = "gray.light.owner.enabled", matchIfMissing = true)
-@Configuration
-@MapperScan("gray.light.owner.repository")
 @Import({PersonalPageRouter.class,
         WorksHandler.class,
         OwnerHandler.class,
@@ -27,5 +24,9 @@ import org.springframework.context.annotation.Import;
 //        SuperOwnerService.class,
         ProjectDetailsService.class,
         OverallOwnerService.class})
+@MapperScan(OwnerAutoConfiguration.MAPPER_PACKAGE)
 public class OwnerAutoConfiguration {
+
+    public static final String MAPPER_PACKAGE = "gray.light.owner.repository";
+
 }

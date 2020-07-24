@@ -20,7 +20,6 @@ import perishing.constraint.treasure.chest.StringTreasureChest;
  * @author XyParaCrim
  */
 @RequiredArgsConstructor
-@Configuration
 @ConditionalOnProperty(name = "floor.file.storage.enabled", matchIfMissing = true)
 @EnableConfigurationProperties(FloorFileStorageProperties.class)
 public class FloorFileStorageAutoConfiguration implements InitializingBean {

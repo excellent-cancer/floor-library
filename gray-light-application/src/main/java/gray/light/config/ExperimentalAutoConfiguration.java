@@ -1,12 +1,17 @@
 package gray.light.config;
 
-import floor.file.storage.annotation.FloorFileStorage;
-import floor.repository.annotation.FloorRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.session.data.redis.config.annotation.web.server.EnableRedisWebSession;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import org.springframework.web.server.WebSession;
+import reactor.core.publisher.Mono;
 
 /**
  * 默认自动配置
@@ -14,8 +19,7 @@ import org.springframework.web.reactive.config.WebFluxConfigurer;
  * @author XyParaCrim
  */
 @Configuration
-@FloorFileStorage
-@FloorRepository
+@EnableRedisWebSession
 public class ExperimentalAutoConfiguration {
 
     @Configuration
@@ -31,6 +35,19 @@ public class ExperimentalAutoConfiguration {
                     .allowedMethods("*")
                     .exposedHeaders(HttpHeaders.SET_COOKIE);
         }
+    }
+
+    @Component
+    public static class SessionFilter implements WebFilter {
+
+        @Override
+        public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+            return exchange.
+                    getSession().
+                    doOnSuccess(WebSession::start).
+                    then(chain.filter(exchange));
+        }
+
     }
 
 }

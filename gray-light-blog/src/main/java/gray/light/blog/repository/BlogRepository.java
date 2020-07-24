@@ -16,6 +16,8 @@ public interface BlogRepository {
 
     List<?> findByOwnerId(@Param("ownerId") Long ownerId, @Param("page") Page page);
 
+    List<?> largeFindByOwnerId(@Param("ownerId") Long ownerId, @Param("page") Page page);
+
     boolean save(Blog blog);
 
     Optional<Blog> find(@Param("id") Long id);

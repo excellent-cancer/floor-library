@@ -10,20 +10,20 @@
 
     <resultMap id="tag" type="Tag"/>
 
-<!--    <resultMap id="total" type="integer">
-        <result column="total"/>
-    </resultMap>-->
+    <!--    <resultMap id="total" type="integer">
+            <result column="total"/>
+        </resultMap>-->
 
     <select id="findByOwnerId"
             resultMap="tag,total">
         {CALL findTagByOwnerId(#{ownerId}, #{page.from}, #{page.count})}
-<!--        select tag.*
-        from tag
-        inner join
-        (select blog_tag.tag from blog inner join blog_tag on blog.owner_id = #{ownerId} group by blog_tag.tag) as bbtt
-        on tag.name = bbtt.tag
-        order by tag.name
-        <include refid="pageable"/>-->
+        <!--        select tag.*
+                from tag
+                inner join
+                (select blog_tag.tag from blog inner join blog_tag on blog.owner_id = #{ownerId} group by blog_tag.tag) as bbtt
+                on tag.name = bbtt.tag
+                order by tag.name
+                <include refid="pageable"/>-->
     </select>
 
     <select id="findByBlogId"
@@ -54,12 +54,13 @@
 
     <select id="findSpTagByOwnerId" resultType="TagWithBlogId">
         select
-        t.*, tbi.blog_id
-        from tag t inner join (
-            select bt.tag, bt.blog_id
-            from blog inner join blog_tag bt on blog.id = bt.blog_id
-            where blog.owner_id = #{ownerId}
-        ) tbi on t.name = tbi.tag
+               t.name,
+               t.color,
+               t.created_date,
+               t.updated_date,
+               b.blog_id
+        from blog_tag b inner join blog b2 on b.blog_id = b2.id left join tag t on b.tag = t.name
+        where b2.owner_id = #{ownerId};
     </select>
 
 </mapper>

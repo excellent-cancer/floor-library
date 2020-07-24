@@ -1,8 +1,6 @@
 package floor.file.storage.simple;
 
-import floor.file.storage.DeleteFileException;
-import floor.file.storage.FileStorage;
-import floor.file.storage.UploadFileException;
+import floor.file.storage.AbstractFileStorage;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.csource.common.MyException;
@@ -12,10 +10,14 @@ import org.csource.fastdfs.TrackerClient;
 import org.csource.fastdfs.TrackerServer;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
+/**
+ * 立即连接文件服务器，无法连接时报错
+ *
+ * @author XyParaCrim
+ */
 @Slf4j
-public class SimpleFileStorage implements FileStorage {
+public class SimpleFileStorage extends AbstractFileStorage {
 
     private final TrackerClient trackerClient;
 
@@ -33,41 +35,7 @@ public class SimpleFileStorage implements FileStorage {
     }
 
     @Override
-    public String upload(Path path, String suffix) throws UploadFileException {
-        try {
-            return storageClient.upload_file1(path.toString(), suffix, null);
-        } catch (MyException myException) {
-            throw new UploadFileException("Failed to upload file", myException);
-        } catch (IOException ioException) {
-            throw new UploadFileException("Failed to access upload file", ioException);
-        }
-    }
-
-    @Override
-    public String upload(byte[] bytes, String suffix) throws UploadFileException {
-        try {
-            return storageClient.upload_file1(bytes, suffix, null);
-        } catch (MyException myException) {
-            throw new UploadFileException("Failed to upload file", myException);
-        } catch (IOException ioException) {
-            throw new UploadFileException("Failed to access upload file", ioException);
-        }
-    }
-
-    @Override
-    public void delete(String link) {
-        try {
-            int i = storageClient.delete_file1(link);
-            if (i != 0) {
-                log.error("删除文件失败: {}", link);
-            }
-        } catch (IOException | MyException e) {
-            throw new DeleteFileException(e);
-        }
-    }
-
-    @Override
-    public void close() throws Exception {
-        storageClient.close();
+    protected StorageClient1 getStorageClient() {
+        return storageClient;
     }
 }
