@@ -51,5 +51,4 @@ public class BlogQueryHandler {
         return allRightFromValue(details.get());
     }
 
-
 }

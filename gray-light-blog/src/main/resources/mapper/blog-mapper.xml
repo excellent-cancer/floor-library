@@ -51,8 +51,8 @@
 
     <sql id="findByTagsAndOwnerId">
         select ${filed}
-        from blog b
-        inner join blog_tag bt on b.owner_id = #{ownerId} and b.id = bt.blog_id
+        from blog b inner join blog_tag bt on b.id = bt.blog_id
+        where b.owner_id = #{ownerId}
         <if test="tags.size() != 0">
             and bt.tag in
             <foreach collection="tags" item="tag" index="i" close=")" open="(" separator=",">
@@ -86,8 +86,15 @@
         values (#{ownerId}, #{downloadLink}, #{title})
     </insert>
 
+    <insert id="saveTags">
+        insert into blog_tag (tag, owner_id, blog_id)
+        values
+            <foreach collection="tags" separator="," item="tag" index="i">
+                (#{tag.name}, #{ownerId}, #{blogId})
+            </foreach>
+    </insert>
 
-    <resultMap id="blogPro" type="gray.light.blog.business.BlogBo">
+<!--    <resultMap id="blogPro" type="gray.light.blog.business.BlogBo">
         <association property="blog" resultMap="blog"/>
         <collection property="tags" ofType="Tag" resultMap="tag" columnPrefix="tag_"/>
     </resultMap>
@@ -104,5 +111,19 @@
                      inner join tag t on bt.tag = t.name on b.id = bt.blog_id
         where b.owner_id = #{ownerId}
         <include refid="pageablePrue"/>
+    </select>-->
+
+    <select id="findByIds"
+            resultType="blog">
+        select
+            b.id,
+            b.owner_id,
+            b.created_date,
+            b.updated_date,
+            b.download_link,
+            b.title
+        from blog b
+        where id in <foreach collection="ids" item="id" index="i" close=")" open="(" separator=",">#{id}</foreach>
     </select>
+
 </mapper>

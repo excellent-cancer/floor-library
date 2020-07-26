@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="gray.light.blog.repository.TagRepository">
-
     <sql id="pageable">
+        <if test="page != null">
+            limit #{page.from}, #{page.count};
+        </if>
+    </sql>
+
+    <sql id="pageable1">
         <if test="page != null">
             limit #{page.from}, #{page.count}
         </if>
@@ -16,14 +21,15 @@
 
     <select id="findByOwnerId"
             resultMap="tag,total">
-        {CALL findTagByOwnerId(#{ownerId}, #{page.from}, #{page.count})}
-        <!--        select tag.*
-                from tag
-                inner join
-                (select blog_tag.tag from blog inner join blog_tag on blog.owner_id = #{ownerId} group by blog_tag.tag) as bbtt
-                on tag.name = bbtt.tag
-                order by tag.name
-                <include refid="pageable"/>-->
+            select t.name,
+                   t.color,
+                   t.updated_date,
+                   t.created_date
+            from tag t right join ( select distinct bt.tag from blog_tag bt where bt.owner_id = #{ownerId} <include refid="pageable1"/> ) tt on tt.tag = t.name;
+
+            select count(distinct bt.tag) as total
+            from blog_tag bt
+            where bt.owner_id = #{ownerId}
     </select>
 
     <select id="findByBlogId"
@@ -33,13 +39,24 @@
         <include refid="pageable"/>
     </select>
 
+    <select id="findAll"
+            resultType="tag">
+        select t.name, t.color, t.created_date, t.updated_date
+        from tag t
+    </select>
+
     <select id="findBlogsByUseTagsAndOwnerId" resultType="Blog">
-        select b.*
-        from blog b
-        inner join blog_tag bt on b.owner_id = #{ownerId} and b.id = bt.blog_id
-        <if test="tags.size() != 0">
+        select b.id,
+               b.owner_id,
+               b.created_date,
+               b.updated_date,
+               b.download_link,
+               b.title
+        from blog b inner join blog_tag bt on b.id = bt.blog_id
+        where b.owner_id = #{ownerId}
+        <if test="tags.size() > 0">
             and bt.tag in
-            <foreach collection="tags" item="tag" index="i" close=")" open="(" separator=",">#{tag.name}</foreach>
+                <foreach collection="tags" item="tag" index="i" close=")" open="(" separator=",">#{tag.name}</foreach>
         </if>
         group by b.id
         <include refid="pageable"/>
@@ -49,18 +66,34 @@
             parameterType="Tag"
             keyProperty="name">
         insert into tag set name = #{tag.name}
-        <if test="tag.color != null">, color = #{tag.color}</if>
+        <if test="tag.color != null">
+            , color = #{tag.color}
+        </if>
     </insert>
 
-    <select id="findSpTagByOwnerId" resultType="TagWithBlogId">
-        select
-               t.name,
+    <select id="findSpTagByOwnerId"
+            resultType="TagWithBlogId">
+        select t.name,
                t.color,
                t.created_date,
                t.updated_date,
-               b.blog_id
-        from blog_tag b inner join blog b2 on b.blog_id = b2.id left join tag t on b.tag = t.name
-        where b2.owner_id = #{ownerId};
+               bt.blog_id
+        from blog_tag bt
+                     left join tag t on bt.tag = t.name
+        where bt.owner_id = #{ownerId}
     </select>
 
+    <select id="findByBlogIds"
+            resultType="TagWithBlogId">
+        select t.name,
+               t.color,
+               t.created_date,
+               t.updated_date,
+               bt.blog_id
+        from blog_tag bt left join tag t on bt.tag = t.name
+        where blog_id in
+        <foreach collection="blogIds" item="id" index="i" close=")" open="(" separator=",">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

@@ -6,8 +6,5 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 @Slf4j
 @RequiredArgsConstructor
-//@EnableElasticsearchRepositories("gray.light.search.repository")
 public class SearchConfiguration {
-
-
 }

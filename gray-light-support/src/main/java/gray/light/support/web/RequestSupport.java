@@ -57,6 +57,31 @@ public final class RequestSupport {
         return then.apply(CollectionsTreasureChest.finalVariables(paramValues));
     }
 
+    public static Mono<ServerResponse> extract(ServerRequest request, BiFunction<FinalVariables<String>, ServerRequest,
+            Mono<ServerResponse>> then, RequestParam<?> ...paramsTable) {
+        // TODO 解决重复代码！！！！
+        Map<String, Object> paramValues = new HashMap<>(paramsTable.length);
+
+
+        for (RequestParam<?> entry : paramsTable) {
+            Object t;
+            try {
+                String name = entry.getKey();
+                RequestParamExtractor<?> extractor = entry.getExtractor();
+
+                t = extractor.extract(request, name);
+            } catch (ExtractRequestParamException e) {
+                log.error(e.getMessage());
+                return failWithMessage(e.getMessage());
+            }
+
+            if (t != null) {
+                paramValues.put(entry.getKey(), t);
+            }
+        }
+
+        return then.apply(CollectionsTreasureChest.finalVariables(paramValues), request);
+    }
 
 
     public static Mono<ServerResponse> extractLong(String name, ServerRequest request, Function<Long, Mono<ServerResponse>> then) {

@@ -18,15 +18,15 @@ public class ModuleDependenciesConfiguration {
 
     @Configuration
     //@FloorRepository
-    //@FloorFileStorage
+    @FloorFileStorage
     public static class FloorComponentConfiguration {
 
     }
 
-    @DomainOwner
     @DomainBlog
-    @AutoConfigureAfter(FloorComponentConfiguration.class)
+    @DomainOwner
     @Configuration
+    @AutoConfigureAfter(FloorComponentConfiguration.class)
     @RequiredArgsConstructor
     public static class GrayLightDomainConfiguration {
 

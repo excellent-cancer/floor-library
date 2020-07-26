@@ -17,7 +17,7 @@ import java.util.List;
 @Document(useServerConfiguration = true, indexName = BlogIndex.INDEX_NAME)
 public class BlogIndex {
 
-    public static final String INDEX_NAME = "blog-index";
+    public static final String INDEX_NAME = "blog-index-1";
 
     @Id
     private Long id;

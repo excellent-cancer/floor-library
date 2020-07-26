@@ -22,32 +22,15 @@ import static gray.light.support.web.ResponseToClient.allRightFromValue;
 @RequiredArgsConstructor
 public class PersonalBlogRouter {
 
-    private final BlogQueryHandler blogQueryHandler;
-
     private final TagHandler tagHandler;
 
-/*
-    @Bean
-    public RouterFunction<ServerResponse> test2(FileStorage fileStorage) {
-        return RouterFunctions.route(RequestPredicates.POST("/upload"), request -> {
-
-            Optional<String> path = request.queryParam("path");
-            Optional<String> suffix = request.queryParam("suffix");
-
-            if (path.isEmpty() || suffix.isEmpty()) {
-                return ServerResponse.badRequest().build();
-            }
-
-            return allRightFromValue(fileStorage.upload(Path.of(path.get()), suffix.get()));
-        });
-    }
-*/
+    private final BlogQueryHandler blogQueryHandler;
 
     @Bean
     public RouterFunction<ServerResponse> test(ReadableBlogService readableBlogService) {
         return RouterFunctions.route(RequestPredicates.GET("/owner/blogs"), request -> RequestSupport.extract(
                 request,
-                variables -> allRightFromValue(readableBlogService.findBlogsPro(RequestParamTables.ownerId().get(variables), RequestParamTables.page().get(variables))),
+                variables -> allRightFromValue(readableBlogService.findBlogsIncludeTags(RequestParamTables.ownerId().get(variables), RequestParamTables.page().get(variables))),
                 RequestParamTables.page(),
                 RequestParamTables.ownerId()
         ));

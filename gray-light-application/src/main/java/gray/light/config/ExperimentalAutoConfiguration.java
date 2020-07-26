@@ -1,5 +1,6 @@
 package gray.light.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.session.data.redis.config.annotation.web.server.EnableRedisWebSession;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
  *
  * @author XyParaCrim
  */
+@Slf4j
 @Configuration
 @EnableRedisWebSession
 public class ExperimentalAutoConfiguration {

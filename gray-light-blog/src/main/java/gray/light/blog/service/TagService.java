@@ -2,6 +2,7 @@ package gray.light.blog.service;
 
 import gray.light.blog.entity.Blog;
 import gray.light.blog.entity.Tag;
+import gray.light.blog.entity.TagWithBlogId;
 import gray.light.blog.repository.TagRepository;
 import gray.light.support.web.PageChunk;
 import gray.light.support.web.PageSupport;
@@ -64,6 +65,21 @@ public class TagService {
      */
     public boolean createTag(Tag tag) {
         return tagRepository.save(tag);
+    }
+
+    /**
+     * 根据文章Id列表，查找它们所有标签
+     *
+     * @param blogIds 文章Id列表
+     * @return 根据文章Id列表，查找它们所有标签
+     */
+    public List<TagWithBlogId> findTagsByBlogIds(List<Long> blogIds) {
+        return tagRepository.findByBlogIds(blogIds);
+    }
+
+
+    public List<Tag> allTags() {
+        return tagRepository.findAll();
     }
 
 }

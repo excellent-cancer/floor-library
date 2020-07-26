@@ -79,21 +79,38 @@ public class ReadableBlogService {
      * @param page    分页
      * @return 查找某个所有者的所有博客及其使用到的标签
      */
-    public PageChunk<BlogBo> findBlogsPro(Long ownerId, Page page) {
+    public PageChunk<BlogBo> findBlogsIncludeTags(Long ownerId, Page page) {
         PageChunk<Blog> pageChunk = findBlogs(ownerId, page);
-        List<TagWithBlogId> tags = tagRepository.findSpTagByOwnerId(ownerId);
+        List<TagWithBlogId> tags = tagRepository.findByBlogIds(pageChunk.getItems().stream().map(Blog::getId).collect(Collectors.toList()));
+        List<BlogBo> blogBos = BlogUtils.assemblyBlogAndTag(pageChunk.getItems(), tags);
 
-
-        Map<Long, BlogBo> blogMap = pageChunk.getItems().stream().collect(Collectors.toMap(Blog::getId, e -> new BlogBo(e, new ArrayList<>())));
-
-        for (TagWithBlogId tag : tags) {
-            if (blogMap.containsKey(tag.getBlogId())) {
-                blogMap.get(tag.getBlogId()).getTags().add(tag);
-            }
-        }
-
-        return new PageChunk<>(pageChunk.getPages(), pageChunk.getCount(), pageChunk.getTotal(), new ArrayList<>(blogMap.values()));
+        return new PageChunk<>(pageChunk.getPages(), pageChunk.getCount(), pageChunk.getTotal(), blogBos);
     }
+
+    /**
+     * 根据博客Id列表，返回所有符合条件的博客及其标签
+     *
+     * @param ids 博客Id列表
+     * @return 返回所有符合条件的博客及其标签
+     */
+    public List<BlogBo> findBlogsBoByIds(List<Long> ids) {
+        List<Blog> blogs = findBlogsByIds(ids);
+        List<TagWithBlogId> tags = tagService.findTagsByBlogIds(ids);
+
+        return BlogUtils.assemblyBlogAndTag(blogs, tags);
+    }
+
+    /**
+     * 根据博客Id列表，返回所有符合条件的博客
+     *
+     * @param ids 博客Id列表
+     * @return 返回所有符合条件的博客
+     */
+    public List<Blog> findBlogsByIds(List<Long> ids) {
+        return blogRepository.findByIds(ids);
+    }
+
+
 
     public Optional<BlogBo> findBlogDetails(Long blogId) {
         Optional<Blog> blog = findBlog(blogId);
