@@ -41,7 +41,7 @@ public class PersonalBlogRouter {
      *
      * @return 路由方法
      */
-    @Bean
+/*    @Bean
     public RouterFunction<ServerResponse> addBlog() {
         RequestPredicate predicate = RequestPredicates.POST("/owner/blog");
         HandlerFunction<ServerResponse> handler = request -> RequestSupport.extract(
@@ -53,7 +53,7 @@ public class PersonalBlogRouter {
         );
 
         return RouterFunctions.route(predicate, handler);
-    }
+    }*/
 
     /**
      * 获取一篇博客

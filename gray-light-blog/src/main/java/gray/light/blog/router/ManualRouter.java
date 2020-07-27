@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.server.*;
-import perishing.constraint.jdbc.Page;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
@@ -38,8 +37,6 @@ public class ManualRouter {
     private final TagService tagService;
 
     private List<Tag> tags;
-
-    private ThreadLocal<Random> randomThreadLocal = ThreadLocal.withInitial(Random::new);
 
     @PostConstruct
     public void xx() {

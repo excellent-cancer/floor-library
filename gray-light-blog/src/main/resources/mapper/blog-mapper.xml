@@ -49,7 +49,10 @@
         where id = #{ownerId}
     </select>
 
-    <sql id="findByTagsAndOwnerId">
+<!--    <sql id="findByTagsAndOwnerId">
+
+
+
         select ${filed}
         from blog b inner join blog_tag bt on b.id = bt.blog_id
         where b.owner_id = #{ownerId}
@@ -59,16 +62,37 @@
                 #{tag.name}
             </foreach>
         </if>
-    </sql>
+    </sql>-->
 
     <select id="findByTagsAndOwnerId" resultMap="blog,total">
-        <include refid="findByTagsAndOwnerId">
-            <property name="filed" value="b.*"/>
-        </include>
-        <include refid="pageable">
-            <property name="template" value="findByTagsAndOwnerId"/>
-            <property name="filed" value="COUNT(*) as total"/>
-        </include>
+        select b.id,
+               b.owner_id,
+               b.created_date,
+               b.updated_date,
+               b.download_link,
+               b.title
+        from blog b inner join (
+            select distinct bt.blog_id
+            from blog_tag bt
+            where <if test="tags.size() != 0">
+                    bt.tag in
+                        <foreach collection="tags" item="tag" index="i" close=")" open="(" separator=",">
+                          #{tag.name}
+                        </foreach> and
+                  </if>
+                  bt.owner_id = #{ownerId}
+        ) bbi on bbi.blog_id = b.id
+        <include refid="pageablePrue"/>
+
+        select count(distinct bt.blog_id) as total
+            from blog_tag bt
+            where <if test="tags.size() != 0">
+                    bt.tag in
+                        <foreach collection="tags" item="tag" index="i" close=")" open="(" separator=",">
+                          #{tag.name}
+                        </foreach> and
+                  </if>
+                  bt.owner_id = #{ownerId}
     </select>
 
     <select id="find"
