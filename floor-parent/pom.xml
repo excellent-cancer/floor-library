@@ -10,6 +10,7 @@
         <module>../gray-light-source</module>
         <module>../gray-light-search</module>
         <module>../gray-light-search-cache</module>
+        <module>../floor-mybatis</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -112,7 +113,6 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>-->
-a
     </dependencies>
 
 </project>

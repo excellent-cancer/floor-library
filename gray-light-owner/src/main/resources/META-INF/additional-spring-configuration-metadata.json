@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "gray.light.owner.enabled",
-      "type": "java.lang.Boolean",
-      "description": "Description for gray.light.owner.enabled."
-  }
-] }

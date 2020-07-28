@@ -24,9 +24,9 @@ import perishing.constraint.treasure.chest.StringTreasureChest;
 @EnableConfigurationProperties(FloorFileStorageProperties.class)
 public class FloorFileStorageAutoConfiguration implements InitializingBean {
 
-    private final FloorFileStorageProperties properties;
-
     private final ResourceLoader resourceLoader;
+
+    private final FloorFileStorageProperties properties;
 
     @Override
     public void afterPropertiesSet() {

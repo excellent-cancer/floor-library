@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "excellent.cancer.owner.organizatio",
-      "type": "java.lang.String",
-      "description": "Define the organization of the unique owner."
-  }
-] }
