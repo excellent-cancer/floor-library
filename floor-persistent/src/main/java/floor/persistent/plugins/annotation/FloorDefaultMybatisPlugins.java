@@ -1,6 +1,6 @@
-package floor.mybatis.plugins.annotation;
+package floor.persistent.plugins.annotation;
 
-import floor.mybatis.plugins.ExecutionMonitorPlugin;
+import floor.persistent.plugins.ExecutionMonitorPlugin;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

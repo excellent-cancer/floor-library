@@ -4,13 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <modules>
-        <module>../gray-light-definition</module>
-        <module>../gray-light-blog</module>
         <module>../floor-task</module>
-        <module>../gray-light-source</module>
-        <module>../gray-light-search</module>
-        <module>../gray-light-search-cache</module>
-        <module>../floor-mybatis</module>
+        <module>../floor-search</module>
+        <module>../floor-cache</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -28,6 +24,7 @@
         <java.version>11</java.version>
         <perishing.constraint.version>1.0-SNAPSHOT</perishing.constraint.version>
         <mybatis.spring.boot.version>2.1.2</mybatis.spring.boot.version>
+        <spring-cloud.version>Hoxton.SR6</spring-cloud.version>
     </properties>
 
     <dependencyManagement>
@@ -60,6 +57,14 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.spring.boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -107,12 +112,6 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-<!--        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>-->
     </dependencies>
 
 </project>
