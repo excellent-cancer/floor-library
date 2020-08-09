@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>floor-parent</artifactId>
+        <groupId>org.excellent-cancer</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../floor-parent/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <artifactId>floor-library</artifactId>
+
+    <properties>
+        <floor.cache>1.0-SNAPSHOT</floor.cache>
+        <floor.config>1.0-SNAPSHOT</floor.config>
+        <floor.coordination>1.0-SNAPSHOT</floor.coordination>
+        <floor.storage.file>1.0-SNAPSHOT</floor.storage.file>
+        <floor.persistent>1.0-SNAPSHOT</floor.persistent>
+        <floor.repository>1.0-SNAPSHOT</floor.repository>
+        <floor.search>1.0-SNAPSHOT</floor.search>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-cache</artifactId>
+                <version>${floor.cache}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-config</artifactId>
+                <version>${floor.config}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-coordination</artifactId>
+                <version>${floor.coordination}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-storage-file</artifactId>
+                <version>${floor.storage.file}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-persistent</artifactId>
+                <version>${floor.persistent}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-repository</artifactId>
+                <version>${floor.repository}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-search</artifactId>
+                <version>${floor.search}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>
