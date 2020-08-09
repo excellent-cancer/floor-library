@@ -1,4 +1,4 @@
-package cache;
+package floor.cache;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
