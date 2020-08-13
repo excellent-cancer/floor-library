@@ -12,10 +12,10 @@
     </parent>
 
     <artifactId>floor-library</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0.0</version>
 
     <properties>
-        <floor.dependencies>1.0-SNAPSHOT</floor.dependencies>
+        <floor.dependencies>2.0.0</floor.dependencies>
     </properties>
 
     <modules>

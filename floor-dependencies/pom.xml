@@ -14,7 +14,7 @@
 
     <groupId>org.excellent-cancer</groupId>
     <artifactId>floor-dependencies</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0.0</version>
 
     <properties>
         <java.version>11</java.version>
@@ -23,14 +23,14 @@
         <perishing.constraint.version>1.0-SNAPSHOT</perishing.constraint.version>
         <mybatis.spring.boot.version>2.1.2</mybatis.spring.boot.version>
         <spring-cloud.version>Hoxton.SR6</spring-cloud.version>
-        <floor.cache>1.0-SNAPSHOT</floor.cache>
-        <floor.config>1.0-SNAPSHOT</floor.config>
-        <floor.coordination>1.0-SNAPSHOT</floor.coordination>
-        <floor.storage.file>1.0-SNAPSHOT</floor.storage.file>
-        <floor.persistent>1.0-SNAPSHOT</floor.persistent>
-        <floor.repository>1.0-SNAPSHOT</floor.repository>
-        <floor.search>1.0-SNAPSHOT</floor.search>
-        <floor.dependencies>1.0-SNAPSHOT</floor.dependencies>
+        <floor.cache>2.0.0</floor.cache>
+        <floor.config>2.0.0</floor.config>
+        <floor.coordination>2.0.0</floor.coordination>
+        <floor.storage.file>2.0.0</floor.storage.file>
+        <floor.persistent>2.0.0</floor.persistent>
+        <floor.repository>2.0.0</floor.repository>
+        <floor.search>2.0.0</floor.search>
+        <floor.dependencies>2.0.0</floor.dependencies>
     </properties>
 
     <dependencyManagement>
