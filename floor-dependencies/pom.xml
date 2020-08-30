@@ -31,6 +31,7 @@
         <floor.repository>2.0.0</floor.repository>
         <floor.search>2.0.0</floor.search>
         <floor.dependencies>2.0.0</floor.dependencies>
+        <floor.domain>2.0.0</floor.domain>
     </properties>
 
     <dependencyManagement>
@@ -89,6 +90,12 @@
 
             <dependency>
                 <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-persistent-connector</artifactId>
+                <version>${floor.persistent}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
                 <artifactId>floor-repository</artifactId>
                 <version>${floor.repository}</version>
             </dependency>
@@ -97,6 +104,12 @@
                 <groupId>org.excellent-cancer</groupId>
                 <artifactId>floor-search</artifactId>
                 <version>${floor.search}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.excellent-cancer</groupId>
+                <artifactId>floor-domain</artifactId>
+                <version>${floor.domain}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

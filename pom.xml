@@ -24,9 +24,11 @@
         <module>floor-coordination</module>
         <module>floor-file-storage</module>
         <module>floor-persistent</module>
+        <module>floor-persistent-connector</module>
         <module>floor-repository</module>
         <module>floor-search</module>
         <module>floor-dependencies</module>
+        <module>floor-domain</module>
     </modules>
 
     <dependencyManagement>
